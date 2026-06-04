@@ -1,0 +1,1935 @@
+{
+  "name": "030626 - Action Items Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const var1 = $input.first().json.content.parts[0].text\n\nconst parsed = JSON.parse(var1);\n\nreturn parsed.map(item => ({\n  json: {\n    json: {\n      name: item.name,\n      assignee: item.assignee,\n      id: item.id,\n      priority: item.priority,\n      due_date: item.due_date\n    }\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        176
+      ],
+      "id": "6aea0782-b7bd-4467-9242-137d6471bc38",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.monday.com/v2",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjY0ODYzNDA1MywiYWFpIjoxMSwidWlkIjoxMDE1NzE0NzYsImlhZCI6IjIwMjYtMDQtMjJUMDM6MjQ6MjkuMDAwWiIsInBlciI6Im1lOndyaXRlIiwiYWN0aWQiOjE2NTg1NDgzLCJyZ24iOiJ1c2UxIn0.JSDClW-IOGmPeUkkyxgaqVxGkn7x8RRDmSV9q6LO5R4"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"query\": \"{ users { id name }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -2224,
+        1024
+      ],
+      "id": "89c3118a-b128-4339-86b9-15a21fc55d05",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "JVkhLmiXsXXWsdvk",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = JSON.stringify($input.first().json.data.users)\n\nreturn [{\n  JSON:{\n    result: output\n  }\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2000,
+        1024
+      ],
+      "id": "93b6b96c-d555-49b7-b4e2-18e6efeeefc0",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Get many messages').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        5648,
+        368
+      ],
+      "id": "57f4a0a6-f381-443d-864e-18fe61e4b9e8",
+      "name": "Mark a message as read",
+      "webhookId": "6d5f3a6b-9786-459e-98c6-218d868e10e6",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2448,
+        1024
+      ],
+      "id": "8fa3cb99-596d-4a31-a803-ac1f1b9ae125",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 1,
+        "simple": false,
+        "filters": {
+          "q": "from:no-reply@fathom.video after:2026/4/21 -recipient:claire@myadventuregroup.com.au",
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1776,
+        1024
+      ],
+      "id": "96c3ac47-8def-4040-a72d-15f0b467054f",
+      "name": "Get many messages",
+      "webhookId": "2d24d5b0-f0c7-49bd-9835-868b99abf89e",
+      "alwaysOutputData": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dkfeQrltUckqbpZg",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $('Get many messages').first().json;\n\n// --- SUBJECT CLEANING ---\nconst rawSubject = item.subject || '';\nconst subjectMatch = rawSubject.match(/Recap for\\s+\"(.+?)\"/);\nconst cleanSubject = subjectMatch\n  ? subjectMatch[1]\n  : rawSubject.replace(/^Recap for\\s+/i, '').replace(/^\"|\"$/g, '');\n\n// --- DATE FORMATTING ---\nconst rawDate = item.headers.date || '';\nconst dateStr = rawDate.replace(/^Date:\\s*/, '');\nconst date = new Date(dateStr);\n\nconst mm = String(date.getUTCMonth() + 1).padStart(2, '0');\nconst dd = String(date.getUTCDate()).padStart(2, '0');\nconst yy = String(date.getUTCFullYear()).slice(-2);\n\n// Reordered to DD/MM/YY with separators\nconst formattedDate = `${dd}/${mm}/${yy}`;\n\n// --- CONCAT ---\nconst final = `${formattedDate} ${cleanSubject}`;\n\nreturn [\n  {\n    json: {\n      result: final\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1408,
+        784
+      ],
+      "id": "badff598-86f9-4b7c-9963-6a348589e31b",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "resource": "boardGroup",
+        "boardId": "=18408563713",
+        "name": "={{ $('Message a model3').item.json.output[0].content[0].text }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        4176,
+        0
+      ],
+      "id": "9a2dad51-a337-43bd-96cc-8b09c129e6dc",
+      "name": "Create a board group"
+    },
+    {
+      "parameters": {
+        "resource": "boardGroup",
+        "operation": "getAll",
+        "boardId": "=18408563713"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        -992,
+        784
+      ],
+      "id": "db3788e1-8c39-40de-83f3-a3316e394896",
+      "name": "Get many board groups",
+      "credentials": {
+        "mondayComApi": {
+          "id": "aIJpX7wWZgm9WSbO",
+          "name": "Monday.com account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "o3",
+          "mode": "list",
+          "cachedResultName": "O3"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Check whether the value below exists in this list:\n\nValue to check:\n\"{{ $('Code in JavaScript2').item.json.result }}\" \n\nList:\n{{ $json.title }}\n\nRules:\n\nIf the value does NOT exist in the list, return only:\ntrue\nIf the value DOES exist in the list, return only:\nfalse\n\nMatching rules:\n\nDo not require exact word-for-word matching.\nTreat titles as a match if:\nthe dates match, and\nthe overall meaning, topic, or intent of the titles are essentially the same.\nIgnore minor wording differences, punctuation, capitalization, formatting, and extra filler words.\n\nOutput rules:\n\nReturn ONLY either:\ntrue\nor\nfalse\nDo not return any explanation, markdown, or additional text."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -512,
+        784
+      ],
+      "id": "02382cff-3515-4ee9-93ac-6a8a1252fadf",
+      "name": "Message a model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "LN4EQclawr1eXdrx",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0e215dd2-1d34-4c05-b838-9e9dee35a9b4",
+              "leftValue": "={{ $json.output[0].content[0].text }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -208,
+        384
+      ],
+      "id": "df6a0d0c-116a-4298-a7ff-583e0fcc2b2c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all()\n\nreturn items.map(item => {\n  return{\n    json: {\n      title: item.json.title\n    }\n  }\n})"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -864,
+        784
+      ],
+      "id": "ae2fb236-a63c-4253-8097-bb5205a9a501",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "title"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        784
+      ],
+      "id": "88c25ff4-c909-4907-a87a-441983f7b7ae",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "keep": "={{ $('Get many messages').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        5248,
+        208
+      ],
+      "id": "fcca9db4-8bd9-404c-b1f3-1e60c63b4043",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9d0d8e03-6742-4f22-ad9d-e3080cf48bcb",
+              "name": "id",
+              "value": "={{ $('Get many messages').item.json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5024,
+        208
+      ],
+      "id": "e13bd062-e460-4020-b9b8-afc10bf6e23a",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4",
+          "mode": "list",
+          "cachedResultName": "GPT-4"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=input: {{ $('Code in JavaScript2').item.json.result }}\n\nInstructions:\n- use abbreviated or shorthand words. But do not shorten the words that do not have known shorthands.\n- Do not not alter the date.\n- Do not rephrase/rearrange the words just shorten the words that can be shortened.\n- Remove the words like \"recap of your\" if those are the 1st 3 words.\n- Use Title casing, or capitalize the words even if they are already abbreviated.\n- return nothing else."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -1264,
+        768
+      ],
+      "id": "f855c7bb-6238-4f52-964b-c569dd2ce8ea",
+      "name": "Message a model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "LN4EQclawr1eXdrx",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 1,
+        "filters": {
+          "q": "from:no-reply@fathom.video after:2026/4/21",
+          "readStatus": "unread"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1376,
+        1568
+      ],
+      "id": "16addd2f-fc93-4b88-b9fb-cd771186ed05",
+      "name": "Get many messages1",
+      "webhookId": "15665fcb-187f-4c26-b59b-385e2cd85032",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "filters": {
+          "q": "=from:no-reply@fathom.video after:{{ $json.formattedDate }} subject:{{ $json.Subject }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -704,
+        1568
+      ],
+      "id": "62b74c7c-8a5a-4821-b385-95c65dee93fd",
+      "name": "Get many messages2",
+      "webhookId": "e909505d-8bb9-4fb5-8193-3c0ac4779613",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fb88fbc9-2a6d-4034-a43c-691778970ab2",
+              "name": "internalDate",
+              "value": "={{ $json.internalDate }}",
+              "type": "string"
+            },
+            {
+              "id": "c8c58920-d254-49f6-ae91-a8a325a3e0de",
+              "name": "Subject",
+              "value": "={{ $json.Subject }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1152,
+        1568
+      ],
+      "id": "bb8c286a-0c04-4810-b844-1d8b635e6cc7",
+      "name": "Edit Fields2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the internal date timestamp from the incoming n8n item\nconst internalDate = $input.item.json.internalDate; \n\n// 2. Create a Date object\nconst date = new Date(Number(internalDate));\n\n// 3. Subtract 1 day from the date\ndate.setDate(date.getDate() - 1);\n\n// 4. Extract Year, Month, and Day\nconst yyyy = date.getFullYear();\nconst mm = String(date.getMonth() + 1).padStart(2, '0');\nconst dd = String(date.getDate()).padStart(2, '0');\n\n// 5. Format as yyyy/mm/dd\nconst formattedDate = `${yyyy}/${mm}/${dd}`;\n\n// 6. Add the new formatted date to the output item\n$input.item.json.formattedDate = formattedDate;\n\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -928,
+        1568
+      ],
+      "id": "1134e6fb-0c66-45a4-a69f-573bb5d9e047",
+      "name": "Code in JavaScript4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c39acef4-da5a-44de-9562-36eb36362629",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -480,
+        1568
+      ],
+      "id": "b6cbb99b-d074-4ca1-bffc-94111a380ea6",
+      "name": "If1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $('Get a message').first().json;\n// --- SUBJECT CLEANING ---\nconst rawSubject = item.subject || '';\nconst subjectMatch = rawSubject.match(/Recap for\\s+\"(.+?)\"/);\nconst cleanSubject = subjectMatch\n  ? subjectMatch[1]\n  : rawSubject.replace(/^Recap for\\s+/i, '').replace(/^\"|\"$/g, '');\n\n// --- DATE FORMATTING ---\nconst rawDate = item.headers.date || '';\nconst dateStr = rawDate.replace(/^Date:\\s*/, '');\nconst date = new Date(dateStr);\n\nconst mm = String(date.getUTCMonth() + 1).padStart(2, '0');\nconst dd = String(date.getUTCDate()).padStart(2, '0');\nconst yy = String(date.getUTCFullYear()).slice(-2);\n\n// Reordered to DD/MM/YY with separators\nconst formattedDate = `${dd}/${mm}/${yy}`;\n\n// --- CONCAT ---\nconst final = `${formattedDate} ${cleanSubject}`;\n\nreturn [\n  {\n    json: {\n      result: final\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        1664
+      ],
+      "id": "77c5a2c8-9a6b-49c1-b105-719d962b5fe8",
+      "name": "Code in JavaScript5",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "boardGroup",
+        "operation": "getAll",
+        "boardId": "=18408563713"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        192,
+        1664
+      ],
+      "id": "c807b31e-0b5a-4cb3-9883-e0c2c7721f16",
+      "name": "Get many board groups1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "o3",
+          "mode": "list",
+          "cachedResultName": "O3"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Check whether the value below exists in this list:\n\nValue to check:\n\"{{ $('Code in JavaScript5').item.json.result }}\"\n\nList:\n{{ $json.title }}\n\nRules:\n\nIf the value does NOT exist in the list, return only:\ntrue\nIf the value DOES exist in the list, return only:\nfalse\n\nMatching rules:\n\nDo not require exact word-for-word matching.\nTreat titles as a match if:\nthe dates match, and\nthe overall meaning, topic, or intent of the titles are essentially the same.\nIgnore minor wording differences, punctuation, capitalization, formatting, and extra filler words.\n\nOutput rules:\n\nReturn ONLY either:\ntrue\nor\nfalse\nDo not return any explanation, markdown, or additional text."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        864,
+        1664
+      ],
+      "id": "c7227d52-6ab1-4f69-b933-58bd3c9c01a4",
+      "name": "Message a model4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0e215dd2-1d34-4c05-b838-9e9dee35a9b4",
+              "leftValue": "={{ $json.output[0].content[0].text }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1216,
+        1664
+      ],
+      "id": "458d9adb-574d-49f6-93fc-10068db77500",
+      "name": "If2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all()\n\nreturn items.map(item => {\n  return{\n    json: {\n      title: item.json.title\n    }\n  }\n})"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        1664
+      ],
+      "id": "39760a97-4319-4eb8-98d8-bf8e661cd442",
+      "name": "Code in JavaScript6",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "title"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1664
+      ],
+      "id": "bff86ef7-cfab-497f-851c-5b1fb4cac9e9",
+      "name": "Aggregate1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Get many messages1').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        1296
+      ],
+      "id": "2489781a-831c-4e81-a34d-73642f89e709",
+      "name": "Mark a message as read1",
+      "webhookId": "4b26acf7-d635-4a5b-a237-86f538838fb9",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $('Get many messages1').item.json.id }}",
+        "simple": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -256,
+        1664
+      ],
+      "id": "b56afd79-5141-4d57-aa7c-9f37895efe9e",
+      "name": "Get a message",
+      "webhookId": "a43ec681-dc75-4d66-af87-54c574e80cff",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Get a message').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1472,
+        2016
+      ],
+      "id": "aa355b83-4574-4067-a62f-d7727d004131",
+      "name": "Mark a message as read2",
+      "webhookId": "079e6d47-b5c6-4809-9bf0-fd4424d9080a",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "o3",
+          "mode": "list",
+          "cachedResultName": "O3"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=## Role & Task\nYou are an expert project manager. Extract the action items from the text provided below and format them as clean, simple Monday.com task names.\n\n## Input Text:\n{{ $('Get a message').item.json.text }}\n\n## Task Naming Rules\nFor each extracted action item, rewrite the task name using this strict formula: [Verb] + [Deliverable] + [Context].\n1. **Verb:** Isolate the clear action verb.\n2. **Deliverable:** Keep wording simple, non-technical, and close to the original text.\n3. **Context:** If context is missing from the text, deduce the most likely context based on the surrounding message (do not ask questions).\n4. **Language:** Use simple, non-technical English that non-native and non-tech-savvy speakers will easily understand.\n\n## Output Format\nReturn ONLY a valid JSON array. Do not include any conversational filler, markdown formatting (like ```json), or explanations outside of the JSON.\n\nExpected Format:\n[\n  {\n    \"name\": \"Cleaned Task Name Go Here\",\n    \"assignee\": \"Person name or 'Unassigned'\"\n  }\n]"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1440,
+        1568
+      ],
+      "id": "94a405f1-e276-412c-b998-80a27941c8f4",
+      "name": "Message a model5",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2c1a5634-97bb-4990-87a3-ca84a9a6aee8",
+              "name": "responseFromAI",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1792,
+        1568
+      ],
+      "id": "01f4d986-b58c-4538-a1e7-7248af507021",
+      "name": "Edit Fields3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const var1 = $('Message a model6').first().json.output[0].content[0].text\n\nconst parsed = JSON.parse(var1);\n\nreturn parsed.map(item => ({\n  json: {\n    json: {\n      name: item.name,\n      assignee: item.assignee,\n      id: item.id,\n      priority: item.priority,\n      due_date: item.due_date\n    }\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2944,
+        1568
+      ],
+      "id": "745f0df5-f5c0-4f4d-8463-dea39f45fb0a",
+      "name": "Code in JavaScript7",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "o3",
+          "mode": "list",
+          "cachedResultName": "O3"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=instruction: \n- Do not include include items assigned to users without an ID\n- If a due date is mentioned in the action item, use that as due date. Otherwise, use your judgement in assigning the due date between 48 to 72 hrs.\n- Make sure due date falls on a weekday/Business day. \n- provide a json array based on this struction: \n[ { \n\"name\": \"Task description\", \n\"assignee\": \"Person name\", \n\"id\": \"id\",\n\"priority\": \"priority\",\n\"due_date\": \"due_date\"\n} ] \n- get the id from referenceVar\n- you decide on the priority (Low, Medium, High)\n\nstring: \n{{ $json.responseFromAI }}\n\nreferenceVar:\n{{ $('Code in JavaScript1').item.json.JSON.result }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        2016,
+        1568
+      ],
+      "id": "cc182350-8c2e-4d16-8f97-386a9f7ee16c",
+      "name": "Message a model6",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "boardItem",
+        "boardId": "=18408563713",
+        "groupId": "={{ $('Create a board group1').item.json.id }}",
+        "name": "={{ $('Code in JavaScript7').item.json.json.name }}",
+        "additionalFields": {
+          "columnValues": "={\n  \"person\": {\n    \"personsAndTeams\": [\n      {\n        \"id\": \"{{ $('Code in JavaScript7').item.json.json.id }}\",\n        \"kind\": \"person\"\n      }\n    ]\n  },\n\"color_mm2nezc9\": {\n\"label\": \"{{ $json.json.priority }}\"\n},\n\"date_mm2n68r\": {\n\"date\": \"{{ $json.json.due_date }}\"\n}\n}"
+        }
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        3168,
+        1568
+      ],
+      "id": "95c3a17b-be14-4d42-920b-c7aa474d01fe",
+      "name": "Create an item in a board's group1",
+      "alwaysOutputData": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "boardGroup",
+        "boardId": "=18408563713",
+        "name": "={{ $json.output[0].content[0].text }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        1568
+      ],
+      "id": "363cd402-401d-4499-bc19-b86cb7981be6",
+      "name": "Create a board group1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "keep": "={{ $('Get many messages').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        3616,
+        1568
+      ],
+      "id": "7cc6bad6-dd07-4b75-8591-6fe653b86644",
+      "name": "Limit1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9d0d8e03-6742-4f22-ad9d-e3080cf48bcb",
+              "name": "id",
+              "value": "={{ $('Get many messages').item.json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3392,
+        1568
+      ],
+      "id": "a1244794-b70b-4489-9093-f2a93eea5db3",
+      "name": "Edit Fields4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "o3",
+          "mode": "list",
+          "cachedResultName": "O3"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=input: {{ $('Code in JavaScript5').item.json.result }}\n\nInstructions:\n- use abbreviated or shorthand words. But do not shorten the words that do not have known shorthands.\n- Do not not alter the date.\n- Do not rephrase/rearrange the words just shorten the words that can be shortened.\n- Remove the words like \"recap of your\" if those are the 1st 3 words.\n- Use Title casing, or capitalize the words even if they are already abbreviated.\n- return nothing else."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        2368,
+        1568
+      ],
+      "id": "d34a9586-9eec-4bfb-86e7-a70796563147",
+      "name": "Message a model7",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9badda45-253a-4a10-bf26-e3da843dda9d",
+              "leftValue": "={{ $json.threadId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1552,
+        1024
+      ],
+      "id": "a8b3219a-6f64-408c-b930-db0be081dce5",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 1,
+        "simple": false,
+        "filters": {
+          "q": "=from:gemini-notes@google.com after:2026/4/21\nsubject:\"{{ $('Code in JavaScript11').item.json.extractedTitle }}\"\nbefore:{{ $json.dayAfter }}\nafter:{{ $json.dayBefore }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1792,
+        176
+      ],
+      "id": "3a629be2-dc6e-47dd-b5fc-aa4a655f83ee",
+      "name": "Get many messages3",
+      "webhookId": "486f0993-ef5b-4160-8a76-7c82d86bf6ce",
+      "alwaysOutputData": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dkfeQrltUckqbpZg",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Retrieve the input data from the workflow context\nlet inputData = $input.first().json.text || \"\"; \n\n// Extract reference array dynamically and safely handle the stringified JSON format\nlet referenceVar = [];\ntry {\n  let rawReference = $('Code in JavaScript1').item.json.JSON.result;\n  \n  // If it's a string, parse it into an actual array\n  if (typeof rawReference === 'string') {\n    referenceVar = JSON.parse(rawReference);\n  } else {\n    referenceVar = rawReference || [];\n  }\n} catch (e) {\n  // Safe catch block in case parsing fails\n}\n\nconst backupDate = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString().split('T')[0];\n\n// Helper: Match assignee string to an ID from referenceVar\nfunction findIdAndNormalize(assigneeStr) {\n  let cleanName = assigneeStr.replace(/[\\[\\]]/g, '').trim(); \n  \n  if (cleanName === \"Julian\" || cleanName === \"Julienne\") cleanName = \"Julienne Mae Anito\";\n  if (cleanName === \"Cara\") cleanName = \"Cara Erika Mortillero\";\n  if (cleanName === \"Claire\") cleanName = \"Claire Vergara\";\n  if (cleanName === \"Relben\") cleanName = \"Relben Tantio\";\n\n  if (!Array.isArray(referenceVar)) return { id: \"Unassigned\", fullName: \"Unassigned\" };\n\n  const match = referenceVar.find(r => r.name.toLowerCase().includes(cleanName.toLowerCase()));\n  \n  return {\n    id: match ? match.id : \"Unassigned\",\n    fullName: match ? match.name : \"Unassigned\"\n  };\n}\n\nconst finalTasks = [];\n\n// Split on BOTH actual newlines and explicit literal '\\n' characters\nconst lines = inputData.split(/\\\\n|\\n/);\n\n// 2. Loop through every single parsed line\nfor (let line of lines) {\n  line = line.trim();\n  \n  // Look for lines containing target task markers: [Name] Task Title: Description\n  if (line.startsWith('[') && line.includes(']')) {\n    const closeBracketIdx = line.indexOf(']');\n    const rawAssignee = line.substring(1, closeBracketIdx).trim();\n    const remainingText = line.substring(closeBracketIdx + 1).trim();\n\n    if (!remainingText) continue;\n\n    // Split compound assignees (e.g., \"[Marielle, Claire]\")\n    const assigneesArray = rawAssignee.split(/,|\\band\\b/).map(s => s.trim());\n\n    for (const assignee of assigneesArray) {\n      if (assignee.toLowerCase() === \"the group\") continue;\n\n      const mapping = findIdAndNormalize(assignee);\n      if (mapping.id === \"Unassigned\") continue; // Keep your filter: skip unmatched IDs\n\n      // Dynamically calculate simple priorities based on content\n      let priority = \"Medium\";\n      if (/urgent|immediately|critical|fix|deactivate/i.test(remainingText)) priority = \"High\";\n      if (/research|explore|review|compare/i.test(remainingText)) priority = \"Low\";\n\n      // Dynamically calculate due dates based on content markers\n      let due_date = backupDate; \n      if (/this Wednesday/i.test(remainingText)) due_date = \"2026-05-20\"; \n      if (/tomorrow/i.test(remainingText)) due_date = \"2026-05-19\";\n      if (/November 12/i.test(remainingText)) due_date = \"2026-11-12\";\n\n      finalTasks.push({\n        name: remainingText.replace(/^:\\s*/, ''), // Strips any leading colons cleanly\n        assignee: mapping.fullName,\n        id: mapping.id,\n        priority: priority,\n        due_date: due_date\n      });\n    }\n  }\n}\n\n// 3. Output safe message structure if no target data matches\nif (finalTasks.length === 0) {\n  return [{ json: { message: \"No tasks matched with valid referenceVar IDs.\" } }];\n}\n\n// 4. Return items in clean n8n format\nreturn finalTasks.map(task => ({ json: task }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2848,
+        0
+      ],
+      "id": "c3e257e5-4bb1-441c-ae8a-90595d65eb89",
+      "name": "Code in JavaScript9"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3072,
+        0
+      ],
+      "id": "121eba79-29f9-4a99-a5d0-27b32553d4f5",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        -16
+      ],
+      "id": "91e18bc6-8bfe-40b6-ae56-eca0c2546e0a",
+      "name": "Aggregate3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7a9e77ef-3358-4d0a-a648-0197b0886cc7",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2448,
+        -16
+      ],
+      "id": "72f4e734-dc1a-4544-97a2-db68db0dc32c",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0771258d-f8e0-41e3-814e-f6365bad3826",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3296,
+        0
+      ],
+      "id": "e758d08a-65e6-4bdc-b57b-54a03573fd1f",
+      "name": "Edit Fields6"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Retrieve the raw data from the input node\nconst rawText = $('Message a model8').first().json.content.parts[0].text\n\n// Convert the string into a live JavaScript array\nconst rawArray = typeof rawText === 'string' ? JSON.parse(rawText) : rawText;\n\n// Manually map each field, wrapping every single item in a 'json' object\nconst formattedOutput = rawArray.map(item => {\n  // Determine if the fields are nested inside an incoming 'json' object or at the root level\n  const dataSource = item.json ? item.json : item;\n\n  return {\n    json: {\n      name: dataSource.name || \"\",\n      assignee: dataSource.assignee || \"\",\n      id: dataSource.id || \"\",\n      priority: dataSource.priority || \"\",\n      due_date: dataSource.due_date || \"\"\n    }\n  };\n});\n\n// Return the properly structured JSON array\nreturn formattedOutput;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4400,
+        0
+      ],
+      "id": "e2855318-29b3-4745-8064-628a1ea460ff",
+      "name": "Code in JavaScript8"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        3968,
+        0
+      ],
+      "id": "3297be0f-8c8f-40d3-8df2-3d97bcb1a1ad",
+      "name": "Limit2"
+    },
+    {
+      "parameters": {
+        "resource": "boardItem",
+        "boardId": "=18408563713",
+        "groupId": "={{ $('Create a board group').item.json.id }}",
+        "name": "={{ $('Code in JavaScript8').item.json.name }}",
+        "additionalFields": {
+          "columnValues": "={\n  \"person\": {\n    \"personsAndTeams\": [\n      {\n        \"id\": \"{{ $('Code in JavaScript8').item.json.id }}\",\n        \"kind\": \"person\"\n      }\n    ]\n  },\n\"color_mm2nezc9\": {\n\"label\": \"{{ $('Code in JavaScript8').item.json.priority }}\"\n},\n\"date_mm2n68r\": {\n\"date\": \"{{ $('Code in JavaScript8').item.json.due_date }}\"\n}\n}"
+        }
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        4608,
+        0
+      ],
+      "id": "58e9a950-372d-4eb9-8931-f4767a15ded6",
+      "name": "Create an item in a board's group2",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Get many messages1').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3840,
+        1568
+      ],
+      "id": "473aef60-7f44-4668-93ca-2b56f7512bac",
+      "name": "Mark a message as read3",
+      "webhookId": "e860349c-9780-4b4c-bddb-6292c0c9ba75",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8e1402e4-373c-4507-b84a-4a689f17466b",
+              "leftValue": "={{ $json.threadId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1968,
+        176
+      ],
+      "id": "0202fe2b-d2dc-4c73-b85f-1d086f104e73",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Safely check if 'if4' exists and what its value is\nlet if4Value = null;\ntry {\n  if4Value = $('if4').item?.json?.value; // Adjust '.value' to your actual field name if different\n} catch (e) {\n  // If if4 isn't accessible, we handle it safely here\n}\n\n// 2. If 'if4' is explicitly false, stop right here and return null (empty array)\nif (if4Value === false) {\n  return []; \n}\n\n// 3. Now try to safely grab data from 'Edit Fields6'\ntry {\n  const data = $('Edit Fields6').item?.json?.data;\n\n  // If the data is 'error', null, or doesn't exist, return empty string\n  if (!data || data === 'error') {\n    return [{ json: { data: \"\" } }];\n  }\n\n  // Otherwise, return the data\n  return [{ json: { data: data } }];\n\n} catch (error) {\n  // 4. If 'Edit Fields6' didn't execute (referenced node doesn't exist), \n  // it falls back here safely instead of crashing your workflow.\n  return [{ json: { data: \"\" } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3488,
+        0
+      ],
+      "id": "48618457-6e4c-4be9-85b6-2d2704a4e367",
+      "name": "Code in JavaScript10"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an AI assistant tasked with extracting, cleaning, and structuring action items from an email text into a standardized task list.\n\n### Input Data\n- Email Date: {{ $('Get many messages').item.json.date }}\n- list: {{ $json.taskListText }}\n- Reference User IDs: {{ $('Code in JavaScript1').item.json.JSON.result }}\n\n### Task Naming Rules\n1. **Apply the Formula:** Reconstruct the task name using **Verb + Deliverable + Context**.\n2. **Simple and nontechnical:** Make sure to use simple and nontechnical english that non native and non tech savvy speakers will understand.\n\n### Benchmark Examples (Before & After)\n**Example  (Outbound Sales):**\n    * *Input:* \"Follow up on old leads\"\n    * *Corrected Task Name:* `Follow up on old leads for the 12-Month Leadership \n\n### Extraction & Logic Rules\n1. **Assignee & ID Validation:** Map the assignee's name mentioned in the task to their corresponding ID in the \"Reference User IDs\" variable. \n   - **Strict Rule:** If an assignee cannot be found or does not have a matching ID in the reference data, completely exclude that task from the final output.\n2. **Priority Assignment:** Analyze the urgency and context of the task description to assign a priority level: \"Low\", \"Medium\", or \"High\".\n3. **Due Date Calculation:** - Base all calculations on the provided \"Email Date\".\n   - If a specific due date or timeline is explicitly mentioned in the task text, use that date.\n   - If no due date is mentioned, dynamically set a due date exactly 48 to 72 hours from the Email Date.\n   - **Weekend Rule:** If the calculated due date falls on a weekend (Saturday or Sunday), automatically roll it forward to the next immediate business day (Monday). \n   - Format all dates strictly as YYYY-MM-DD.\n\n### Output Format\nReturn ONLY a valid JSON array of objects following the exact schema below. Do not include any conversational text, introductions, or explanations. \n\nImportant: Output ONLY the raw JSON string. Do not wrap the response in markdown code blocks (e.g., do not use ```json ... ```).\n\n[\n  { \n    \"name\": \"Clear, concise task description starting with a verb\", \n    \"assignee\": \"Full name of the person\", \n    \"id\": \"Matching ID string from Reference User IDs\",\n    \"priority\": \"Low\",\n    \"due_date\": \"YYYY-MM-DD\"\n  }\n]"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        736,
+        176
+      ],
+      "id": "b0a9cd0a-9a73-432b-9390-f5ff352ceca7",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XG2PrK6c7CxaKFQR",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the original ISO timestamp from the incoming n8n node\nconst originalDateStr = $('Get many messages').first().json.date;\n\n// 2. Helper function to shift the date and format it as YYYY/MM/DD for Gmail\nfunction getGmailFormattedDate(isoString, daysToShift) {\n    const date = new Date(isoString);\n    date.setDate(date.getDate() + daysToShift);\n    \n    // Extract UTC year, month, and day to avoid local timezone shifts\n    const yyyy = date.getUTCFullYear();\n    const mm = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed\n    const dd = String(date.getUTCDate()).padStart(2, '0');\n    \n    return `${yyyy}/${mm}/${dd}`;\n}\n\n// 3. Calculate the day before (-1) and day after (+1) in YYYY/MM/DD format\nconst dayBefore = getGmailFormattedDate(originalDateStr, -1);\nconst dayAfter = getGmailFormattedDate(originalDateStr, 1);\n\n// 4. Return the data to n8n\nreturn [\n  {\n    json: {\n      originalDate: originalDateStr,\n      dayBefore: dayBefore,\n      dayAfter: dayAfter\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1632,
+        176
+      ],
+      "id": "6dd1d90b-eecf-4d46-84a5-aa150eeb43be",
+      "name": "Code in JavaScript12"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Merge the two JSON arrays below into one array.\n\nRules:\n- Treat any blank list as an empty array [].\n- Remove duplicates using the `id` field.\n- If one list is empty, return the other list unchanged.\n- Return ONLY valid raw JSON.\n- No markdown.\n- No explanation.\n\nList 1: {{ $json.data }}\nList 2: {{ $('Edit Fields5').item.json.data }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        3664,
+        0
+      ],
+      "id": "48c84796-9c6b-4e58-9105-354264e79f38",
+      "name": "Message a model8"
+    },
+    {
+      "parameters": {
+        "resource": "boardGroup",
+        "boardId": "=18408563713",
+        "name": "={{ $('Message a model3').item.json.output[0].content[0].text }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        2464,
+        240
+      ],
+      "id": "fc137f99-e4d0-4c4a-8df7-bccf41ef28aa",
+      "name": "Create a board group2",
+      "credentials": {
+        "mondayComApi": {
+          "id": "aIJpX7wWZgm9WSbO",
+          "name": "Monday.com account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "boardItem",
+        "boardId": "=18408563713",
+        "groupId": "={{ $('Create a board group2').item.json.id }}",
+        "name": "={{ $('Code in JavaScript13').item.json.json.name }}",
+        "additionalFields": {
+          "columnValues": "={\n  \"person\": {\n    \"personsAndTeams\": [\n      {\n        \"id\": \"{{ $('Code in JavaScript13').item.json.json.id }}\",\n        \"kind\": \"person\"\n      }\n    ]\n  },\n\"color_mm2nezc9\": {\n\"label\": \"{{ $('Code in JavaScript13').item.json.json.priority }}\"\n},\n\"date_mm2n68r\": {\n\"date\": \"{{ $('Code in JavaScript13').item.json.json.due_date }}\"\n}\n}"
+        }
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        2896,
+        240
+      ],
+      "id": "ca4e37d4-541a-41d7-8445-0c8d2f08c4cc",
+      "name": "Create an item in a board's group",
+      "alwaysOutputData": false,
+      "credentials": {
+        "mondayComApi": {
+          "id": "aIJpX7wWZgm9WSbO",
+          "name": "Monday.com account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Fetch all items from the \"Code in JavaScript\" node using the modern syntax\nconst pastNodeItems = $('Code in JavaScript').all();\n\n// 2. Map through the items to safely pass them to the next node\nreturn pastNodeItems.map(item => {\n  return {\n    json: item.json,\n    // Optional: Include binary data if the past node had attachments\n    binary: item.binary \n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2672,
+        240
+      ],
+      "id": "a4531f65-b349-4045-ac36-7483bcba5568",
+      "name": "Code in JavaScript13"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Fetch text dynamically using the n8n v1+ data selector syntax\nconst inputText = $('Get many messages').first().json.text || \"\";\n\nconst tasks = [];\n\n// 2. Isolate the explicit \"Action Items\" block\nconst actionItemsSection = inputText.split(\"Action Items ✨\")[1]?.split(\"Meeting Summary ✨\")[0] || \"\";\n\nif (actionItemsSection) {\n  // Split by double newlines to isolate each distinct action item block\n  const blocks = actionItemsSection.split(/\\n\\s*\\n/);\n\n  for (let block of blocks) {\n    // Only target blocks containing a Fathom timestamp/call link\n    if (block.includes(\"https://fathom.video/calls/\")) {\n      \n      // Clean up internal breaks to make it a continuous single-line string\n      let cleanedBlock = block.replace(/\\n/g, ' ').replace(/\\s+/g, ' ').trim();\n\n      // Strip out image URLs and tracking URLs\n      cleanedBlock = cleanedBlock\n        .replace(/\\[https:\\/\\/storage\\.googleapis\\.com[^\\]]+\\]/g, '')\n        .replace(/\\[https:\\/\\/fathom\\.video\\/calls\\/[^\\]]+\\]/g, '')\n        .trim();\n\n      // Extract Assignee (Last 2 capitalized words, e.g., \"Marielle Buscato\" or \"James Castrission\")\n      const match = cleanedBlock.match(/^(.*?)\\s+([A-Z][a-zA-Z]+(?:\\s[A-Z][a-zA-Z]+)+)\\s*$/);\n      \n      if (match) {\n        let taskName = match[1].trim();\n        const assignee = match[2].trim();\n        \n        // Strip trailing/leading punctuation, markdown artifacts, or timestamps leftovers\n        taskName = taskName\n          .replace(/[;\\s-\\*]+$/, '')\n          .replace(/^[\\s-\\*]+/, '')\n          .replace(/https:\\/\\/fathom\\.video\\/calls\\/\\S*/g, '') // strip loose links\n          .trim();\n\n        if (taskName) {\n          tasks.push({\n            name: taskName,\n            assignee: assignee || \"Unassigned\"\n          });\n        }\n      }\n    }\n  }\n}\n\n// 3. Return formatted as an array of items, each containing a 'json' object\nreturn tasks.map(task => ({ json: task }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        16,
+        176
+      ],
+      "id": "93746d2b-b290-42c0-83ef-c637d012d22a",
+      "name": "Code in JavaScript14"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get all incoming items from the previous node\nconst items = $input.all();\n\n// 2. Map through the items to create a formatted string for each task\nconst formattedTasks = items.map(item => {\n  const name = item.json.name || 'No Task Name';\n  const assignee = item.json.assignee || 'Unassigned';\n  \n  return `- ${name} (Assignee: ${assignee})`;\n});\n\n// 3. Join all the task strings with a newline character\nconst combinedText = formattedTasks.join('\\n');\n\n// 4. Return the result as a single text string inside an n8n-friendly format\nreturn [\n  {\n    json: {\n      taskListText: combinedText\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        176
+      ],
+      "id": "8b4838d4-bed2-49b1-812e-a9c79456bd6f",
+      "name": "Code in JavaScript15"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pull the subject directly from the 'Get many messages' node\nconst inputString = $('Get many messages').first().json.subject || \"\"; \nlet extractedTitle = inputString; \n\n// Case 1: \"recap of your TITLE\"\nconst case1Regex = /^recap of your (.+)$/i;\n\n// Case 2: \"recap for \"TITLE\"\" (handles standard and smart quotes)\nconst case2Regex = /^recap for [\"'“‘](.+)[\"'”’]$/i;\n\nif (case1Regex.test(inputString)) {\n  extractedTitle = inputString.match(case1Regex)[1];\n} else if (case2Regex.test(inputString)) {\n  extractedTitle = inputString.match(case2Regex)[1];\n}\n\n// Return exactly one item with the extracted title string\nreturn [\n  {\n    json: {\n      extractedTitle: extractedTitle.trim()\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        176
+      ],
+      "id": "459873e6-ecf9-4aa5-b3c5-2036ed996072",
+      "name": "Code in JavaScript11"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Message a model3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a board group": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript14",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many board groups": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model3": {
+      "main": [
+        [
+          {
+            "node": "Get many board groups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Get many messages2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "Get many board groups1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many board groups1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model4": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Message a model4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a message": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Message a model5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark a message as read2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model5": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Message a model6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript7": {
+      "main": [
+        [
+          {
+            "node": "Create an item in a board's group1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model6": {
+      "main": [
+        [
+          {
+            "node": "Message a model7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an item in a board's group1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a board group1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model7": {
+      "main": [
+        [
+          {
+            "node": "Create a board group1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages3": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript9": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript8": {
+      "main": [
+        [
+          {
+            "node": "Create an item in a board's group2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit2": {
+      "main": [
+        [
+          {
+            "node": "Create a board group",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an item in a board's group2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a board group2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript10": {
+      "main": [
+        [
+          {
+            "node": "Message a model8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript12": {
+      "main": [
+        [
+          {
+            "node": "Get many messages3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model8": {
+      "main": [
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a board group2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript13": {
+      "main": [
+        [
+          {
+            "node": "Create an item in a board's group",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an item in a board's group": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript14": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript15": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript11": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a3e587a4-4fb5-41b9-a201-88ccb6b9176d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
+  },
+  "id": "GCk1E24sjnduJTkP",
+  "tags": []
+}
