@@ -1,5 +1,5 @@
 {
-  "name": "030626 - Email Handling Agent",
+  "name": "080626 - Email Handling Agent",
   "nodes": [
     {
       "parameters": {
@@ -14,8 +14,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        2256,
-        0
+        2160,
+        -320
       ],
       "id": "96648c96-70cb-45de-b99d-54c43d99a6a6",
       "name": "Create a draft",
@@ -39,8 +39,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        2464,
-        0
+        2336,
+        -320
       ],
       "id": "d22313ca-ad93-4661-b242-8d79ca01c817",
       "name": "Add label to thread",
@@ -60,8 +60,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        2672,
-        0
+        2560,
+        -320
       ],
       "id": "0a28cc72-fa1c-414d-b9dd-602dac20caf7",
       "name": "Mark a message as read",
@@ -113,8 +113,8 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.1,
       "position": [
-        2000,
-        0
+        1776,
+        -320
       ],
       "id": "c93a2692-d74c-4c4c-a346-10a4bb1ce8e9",
       "name": "Message a model",
@@ -134,7 +134,7 @@
       "typeVersion": 2,
       "position": [
         1152,
-        0
+        -320
       ],
       "id": "936a6736-eda0-4886-ae48-75e82a0b396d",
       "name": "Get a document",
@@ -203,7 +203,7 @@
         "operation": "getAll",
         "limit": 1,
         "filters": {
-          "q": "-notifications@monday.com has:attachment",
+          "q": "has:attachment\nis:important \nafter:2026/05/01 \n-filename:ics \n-unsubscribe \n-\"Google Alert\" \n-\"Automatic reply\" \n-from:(myadventuregroup.com.au OR fathom.com OR monday.com OR calendar-notification@google.com OR notifications@calendly.com OR calendly.com OR noreply OR no-reply OR notifications OR alerts OR support OR info OR update OR service OR donotreply OR mailer OR vimeo OR yourbooking.qantas.com.au OR payments OR .ai) \n-subject:Concert",
           "readStatus": "unread"
         }
       },
@@ -252,8 +252,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        160,
-        -304
+        112,
+        16
       ],
       "id": "7a08a207-b18e-43cd-898f-7f8345dd53ce",
       "name": "If"
@@ -275,8 +275,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        992,
-        0
+        944,
+        -320
       ],
       "id": "814272f6-4abe-493d-8e43-0c74372f3be9",
       "name": "Edit Fields"
@@ -288,8 +288,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1328,
-        0
+        1344,
+        -320
       ],
       "id": "ba4c07a5-b682-41ed-b247-17ad94ab4bc5",
       "name": "Code in JavaScript"
@@ -301,8 +301,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1520,
-        0
+        1568,
+        -320
       ],
       "id": "487d09f9-61cb-4ef6-9d87-216a484146e3",
       "name": "Code in JavaScript1"
@@ -317,8 +317,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        768,
-        0
+        736,
+        -320
       ],
       "id": "1b6fa0ea-04a3-4bb9-9b4c-8ee0c24b6386",
       "name": "Get a message1",
@@ -329,6 +329,195 @@
           "name": "Gmail account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 1,
+        "simple": false,
+        "filters": {
+          "q": "-has:attachment\nis:important \nafter:2026/05/01 \n-filename:ics \n-unsubscribe \n-\"Google Alert\" \n-\"Automatic reply\" \n-from:(myadventuregroup.com.au OR fathom.com OR monday.com OR calendar-notification@google.com OR notifications@calendly.com OR calendly.com OR noreply OR no-reply OR notifications OR alerts OR support OR info OR update OR service OR donotreply OR mailer OR vimeo OR yourbooking.qantas.com.au OR payments OR .ai) \n-subject:Concert",
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        384,
+        208
+      ],
+      "id": "244080a0-8268-48ca-8719-1c49cacf800a",
+      "name": "Get many messages",
+      "webhookId": "572571a1-7edb-40fd-bf52-d498fae220ce",
+      "alwaysOutputData": false,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dkfeQrltUckqbpZg",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $('Get many messages').item.json.subject }}",
+        "emailType": "html",
+        "message": "={{ $('Message a model1').item.json.content.parts[0].text }}\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%\" width=\"100%\"><tbody><tr><td><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;line-height:1.15\"><tbody><tr><td style=\"height:1px;width:120px;vertical-align:top;padding:.01px 1px\"><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td style=\"vertical-align:top;padding:.01px 1px 0.01px 0.01px;width:120px;text-align:center\"><img border=\"0\" src=\"https://ci3.googleusercontent.com/meips/ADKq_NbrZbwtn0EKHn1lsyoxyTpwXnGZxKMdSc9gsVZqvXDT79fD_JXZktvQfoa99lywhNaTgrCQyEjdpl0kN0pfGx6AcDRBlAvLFNZb-sAts9FhChlcPgdSTuvbPTMv268dBYMjmWRIbex55ehFzKX5IjoVlqn3y1JEp7ZWy49y=s0-d-e1-ft#https://d36urhup7zbd7q.cloudfront.net/u/qpq93D3V16J/4e2cfd65-a50b-4e85-8cc5-45ceaf9e5bad__400x457__.png\" height=\"137\" width=\"120\" alt=\"photo\" style=\"width:120px;vertical-align:middle;border-radius:0;height:137px;border:0;display:block\" class=\"CToWUd\" data-bit=\"iit\"></td></tr></tbody></table></td><td valign=\"top\" style=\"padding:.01px 0.01px 0.01px 14px;vertical-align:top\"><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td style=\"line-height:1.2;padding:.01px 0.01px 14px 0.01px;border-bottom:solid 2px #bdbdbd\" nowrap=\"\"><p style=\"margin:.1px;line-height:120%;font-size:16px\"><span style=\"font-family:Arial;font-size:16px;font-weight:bold;color:#00afdb;letter-spacing:0;white-space:nowrap\">James Castrission</span><br><span style=\"font-family:Arial;font-size:13px;font-weight:bold;color:#646464;white-space:nowrap\">International Keynote Speaker,<span>&nbsp;</span></span><span style=\"font-family:Arial;font-size:13px;font-weight:bold;color:#646464;white-space:nowrap\">MyAdventure Group</span></p></td></tr><tr><td nowrap=\"\" width=\"272\" height=\"0\" style=\"height:0;padding-top:14px;white-space:nowrap;width:272px;font-family:Arial\"><p style=\"margin:1px;line-height:99%;font-size:12px\"><span style=\"white-space:nowrap\"><a href=\"tel:0402904334\" style=\"font-family:Arial;text-decoration:unset\" rel=\"nofollow noreferrer\" target=\"_blank\"><span style=\"line-height:120%;font-family:Arial;font-size:12px;color:#212121;white-space:nowrap\">0402904334</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href=\"https://myadventuregroup.com.au\" style=\"font-family:Arial;text-decoration:unset\" rel=\"nofollow noreferrer\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://myadventuregroup.com.au&amp;source=gmail&amp;ust=1778116515475000&amp;usg=AOvVaw25GlaqThZvU3ljmZHv-3wd\"><span style=\"line-height:120%;font-family:Arial;font-size:12px;color:#212121;white-space:nowrap\">myadventuregrou<wbr>p.com.au</span></a></span></p></td></tr><tr><td nowrap=\"\" width=\"218\" height=\"0\" style=\"height:0;padding-top:8px;white-space:nowrap;width:218px;font-family:Arial\"><p style=\"margin:1px;line-height:99%;font-size:12px\"><span style=\"white-space:nowrap\"><a href=\"mailto:james@myadventuregroup.com.au\" style=\"font-family:Arial;text-decoration:unset\" rel=\"nofollow noreferrer\" target=\"_blank\"><span style=\"line-height:120%;font-family:Arial;font-size:12px;color:#212121;white-space:nowrap\">james@myadventuregroup.com.au</span></a></span></p></td></tr><tr><td nowrap=\"\" width=\"300\" height=\"0\" style=\"height:0;padding-top:8px;white-space:nowrap;width:300px;font-family:Arial\"><p style=\"margin:1px;line-height:99%;font-size:12px\"><span style=\"color:rgb(33,33,33)\">49 Miowera Rd, North Turramurra NSW</span></p></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td height=\"0\" style=\"height:0;line-height:1%;padding-top:16px;font-size:1px\"></td></tr><tr><td><table style=\"border-collapse:collapse;max-width:469px;padding-right:8px;font-size:12px;color:#333333;line-height:normal\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tbody><tr><td height=\"0\" style=\"height:0\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td height=\"0\" style=\"height:0\"><p style=\"margin:1px\"><a href=\"https://www.myadventuregroup.com.au/free-consult/?utm_source=outbound+mail&amp;utm_medium=email&amp;utm_campaign=keynote\" rel=\"nofollow noreferrer\" style=\"text-decoration:none;display:block\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://www.myadventuregroup.com.au/free-consult/?utm_source%3Doutbound%2Bmail%26utm_medium%3Demail%26utm_campaign%3Dkeynote&amp;source=gmail&amp;ust=1778116515475000&amp;usg=AOvVaw1hUHqCkcZyoVtiBnCvmR5t\"><img src=\"https://ci3.googleusercontent.com/meips/ADKq_NZbttvy3Obnf_Li_ZA41G2EqKFW5Mn9AP98BUC7Bke7GKC6BCzXM3i_VV0vxgS-iizLi2zlyTakCjWbRjdMpqTR1vV7lVDJ_-DTOBjjLFKx_-aS6JXI7aS_TcTE3ZVh0rvl8tkeW7wGuWq2xECNo6P_rJSLh8iLOA24cnZlGhbdsefwdb2fYRFRIyzaBHorOouujDSdkk_6SA3W_i8=s0-d-e1-ft#https://cdn.gifo.wisestamp.com/apps/app_button/full/BOOK%20A%20FREE%2020-MIN.%20CONSULTATION/ffffff/00AFDB/52/10/calendar2-50/left.png\" height=\"39\" alt=\"Meeting Button App\" class=\"CToWUd\" data-bit=\"iit\"></a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td height=\"0\" style=\"height:0;line-height:1%;padding-top:16px;font-size:1px\"></td></tr></tbody></table>",
+        "options": {
+          "threadId": "={{ $('Get many messages').item.json.threadId }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1584,
+        208
+      ],
+      "id": "dc26d2a2-32da-4f3f-9e44-42e40b46908a",
+      "name": "Create a draft1",
+      "webhookId": "c734299c-21dd-4182-ab62-46fbda9d15c7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dkfeQrltUckqbpZg",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.message.threadId }}",
+        "labelIds": [
+          "Label_5559960364296126677"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1760,
+        208
+      ],
+      "id": "7e23468c-dedf-4cf4-b184-90013c4199f6",
+      "name": "Add label to thread1",
+      "webhookId": "d3c6f44b-9f6b-4a60-8733-25e43b0a2c03",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dkfeQrltUckqbpZg",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Create a draft1').item.json.message.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1984,
+        208
+      ],
+      "id": "3efdb53e-ffda-46f5-9ff5-3188fd3d22e6",
+      "name": "Mark a message as read1",
+      "webhookId": "784b764d-2814-49d8-be2e-c53dce19f3a3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dkfeQrltUckqbpZg",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are James, an expert executive assistant. Your task is to draft a professional, concise, and ready-to-send HTML email response based on an incoming email thread, your past writing style, and potentially attached document data.\n\n### INPUT DATA:\n<email_subject>\n{{ $('Get many messages').item.json.subject }}\n</email_subject>\n\n<email_to_respond_to>\n{{ $('Edit Fields1').item.json.text }}\n</email_to_respond_to>\n\n<writing_samples>\n{{ $('Code in JavaScript2').item.json.content }}\n</writing_samples>\n---\n\n### INSTRUCTIONS & LOGIC:\n\n1. **Style Mimicry:** Analyze the <writing_samples>. Mimic the exact tone, sentence structure, vocabulary, and level of formality found there. \n2. **Brevity:** Keep the response short, concise, and direct to the point. Eliminate fluff.\n3. **Salutation:** Begin with an appropriate personalized salutation (e.g., \"Hi [Name],\") by identifying the sender or correct recipient from the <email_to_respond_to> thread.\n4. **No Placeholders:** Never use placeholders (e.g., \"[Insert Date]\", \"[Name]\"). If a piece of information is unknown, write around it naturally. Assume this draft will be sent immediately.\n5. **Sign-off:** You must end the email exactly with this snippet: <br><br>Cheers<br>James\n\n---\n\n### STRICT OUTPUT FORMATTING CONSTRAINTS:\n- **Output Type:** Return ONLY the raw HTML email body.\n- **Line Breaks:** Use `<br>` for all line breaks.\n- **CRITICAL - NO MARKDOWN:** Do NOT wrap the output in markdown code blocks (e.g., do NOT use ```html ... ```). Start directly with the text/HTML.\n- **No Wrappers:** Do NOT include `<html>`, `<head>`, or `<body>` tags. \n- **No Meta-Text:** Do NOT include a subject line, or any conversational introduction/conclusion (e.g., \"Here is your draft:\").\n- **No Extra Signatures:** Do NOT"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        208
+      ],
+      "id": "e9ca984a-298b-424f-b0c0-bfffeb807873",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XG2PrK6c7CxaKFQR",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1pNbq75hStBS26KZ6RynPt31EDvxoCcy6zvD1WpXjmRI/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        896,
+        208
+      ],
+      "id": "ae8985f9-d899-4baf-9f95-ca48c3414ee0",
+      "name": "Get a document1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "BOSN89Vk0pGPd5vU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1a8c61d8-c99f-421e-921b-2f84910cf580",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        208
+      ],
+      "id": "51b8eea8-5300-46c6-b7ae-9964d6396ef1",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        208
+      ],
+      "id": "78cedb14-c4b4-43ad-809a-84c4c37937b9",
+      "name": "Code in JavaScript2"
     }
   ],
   "pinData": {},
@@ -421,7 +610,7 @@
         ],
         [
           {
-            "node": "Get a message1",
+            "node": "Get many messages",
             "type": "main",
             "index": 0
           }
@@ -482,6 +671,83 @@
           }
         ]
       ]
+    },
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a draft1": {
+      "main": [
+        [
+          {
+            "node": "Add label to thread1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to thread1": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Create a draft1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Get a document1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -489,7 +755,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "e9bf39f0-cd42-4f5d-8f32-5fe5b6ad4bab",
+  "versionId": "20d1ea07-3050-4af4-8105-187d7a9e4dce",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
