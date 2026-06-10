@@ -1,0 +1,683 @@
+{
+  "name": "100626 - linkedIn Scraper",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -736,
+        -16
+      ],
+      "id": "b6fe7d17-83df-4a6d-8ce9-c7b778674c8e",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorSource": "store",
+        "actorId": {
+          "__rl": true,
+          "value": "A3cAPGpwBEG8RJwse",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Profile Posts Scraper (No Cookies) (harvestapi/linkedin-profile-posts)",
+          "cachedResultUrl": "https://console.apify.com/actors/A3cAPGpwBEG8RJwse/input"
+        },
+        "customBody": "={\n  \"targetUrls\": [\n    \"{{ $json.linkedin }}\"\n  ],\n  \"maxPosts\": 30,\n  \"postedLimitDate\": \"{{ $now.minus({ days: 1 }).format('yyyy-MM-dd') }}\",\n  \"includeQuotePosts\": false,\n  \"includeReposts\": false\n}"
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        192,
+        352
+      ],
+      "id": "f32e26bd-e4d7-4eec-b183-7a1e0d31524e",
+      "name": "Run an Actor and get dataset",
+      "credentials": {
+        "apifyApi": {
+          "id": "w3LbtvtHVs46k5bb",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Grab all raw items entering the node from Apify\nconst items = $input.all();\n\nif (!items || items.length === 0) {\n    return [{ json: { formattedText: \"No data received from Apify.\" } }];\n}\n\n// 2. Loop through every item and extract the fields verbatim\nconst rawFormattedPosts = items.map((item, index) => {\n    const post = item.json;\n\n    // Convert nested objects/arrays to strings so they don't print as [object Object]\n    const contentAttributesStr = JSON.stringify(post.contentAttributes);\n    const authorStr = JSON.stringify(post.author);\n    const postedAtStr = JSON.stringify(post.postedAt);\n    const postImagesStr = JSON.stringify(post.postImages);\n    const socialContentStr = JSON.stringify(post.socialContent);\n    const commentsStr = JSON.stringify(post.comments);\n    const headerStr = JSON.stringify(post.header);\n    const engagementStr = JSON.stringify(post.engagement);\n    const reactionsStr = JSON.stringify(post.reactions);\n    const reactionIdsStr = JSON.stringify(post.reactionIds);\n    const commentIdsStr = JSON.stringify(post.commentIds);\n    const queryStr = JSON.stringify(post.query);\n    const articleStr = post.article ? JSON.stringify(post.article) : undefined;\n    const postVideoStr = post.postVideo ? JSON.stringify(post.postVideo) : undefined;\n\n    // Build the string using Apify's exact structure and keys\n    let postString = `Post Array Index: ${index}\n\"type\": \"${post.type}\"\n\"id\": \"${post.id}\"\n\"linkedinUrl\": \"${post.linkedinUrl}\"\n\"content\": \"${post.content}\"\n\"contentAttributes\": ${contentAttributesStr}\n\"author\": ${authorStr}\n\"postedAt\": ${postedAtStr}\n\"postImages\": ${postImagesStr}`;\n\n    // Safely add optional original fields if they exist in the post object\n    if (postVideoStr) postString += `\\n\"postVideo\": ${postVideoStr}`;\n    if (articleStr) postString += `\\n\"article\": ${articleStr}`;\n\n    postString += `\n\"socialContent\": ${socialContentStr}\n\"comments\": ${commentsStr}\n\"header\": ${headerStr}\n\"entityId\": \"${post.entityId}\"\n\"shareUrn\": \"${post.shareUrn}\"\n\"shareLinkedinUrl\": \"${post.shareLinkedinUrl}\"\n\"engagement\": ${engagementStr}\n\"reactions\": ${reactionsStr}\n\"reactionIds\": ${reactionIdsStr}\n\"commentIds\": ${commentIdsStr}\n\"query\": ${queryStr}`;\n\n    return postString;\n});\n\n// 3. Join all items back into a single massive string separated by newlines\nconst finalSingleString = rawFormattedPosts.join('\\n\\n,\\n\\n');\n\n// 4. Return it as an object property n8n can map downstream\nreturn [\n    {\n        json: {\n            formattedText: finalSingleString\n        }\n    }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        352
+      ],
+      "id": "58d91639-4b54-463c-8104-e17ce4d030a8",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.documentId }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        32,
+        -416
+      ],
+      "id": "d333bc6d-e83c-4206-a6b8-1b4cca4828c3",
+      "name": "Get a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "BOSN89Vk0pGPd5vU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Grab the raw content block containing the escaped string\nconst rawTextString = $input.first().json.content\n\nif (!rawTextString) {\n    return [{ json: { error: \"No content string found to convert.\" } }];\n}\n\ntry {\n    // 2. Split the massive text block by our custom item separator\n    const postBlocks = rawTextString.split(/\\n\\n,\\n\\n|\\r\\n\\r\\n,\\r\\n\\r\\n/);\n    const parsedItems = [];\n\n    // Keys that represent primitive string fields\n    const stringKeys = [\"type\", \"id\", \"linkedinUrl\", \"content\", \"entityId\", \"shareUrn\", \"shareLinkedinUrl\"];\n\n    // 3. Process each plain text post block\n    for (const block of postBlocks) {\n        if (!block.trim()) continue;\n\n        const reconstructedObject = {};\n        \n        // Find positions of bracketed JSON fragments or string literals\n        const lines = block.split('\\n');\n        \n        // Combine lines back to process properties reliably\n        const normalizedBlock = lines.map(line => line.trim()).join(' ');\n\n        // Function to extract text data between programmatic boundaries\n        const extractValue = (targetKey) => {\n            const pattern = new RegExp(`\"${targetKey}\":\\\\s*(.*)`);\n            const match = normalizedBlock.match(pattern);\n            if (!match) return undefined;\n\n            let residue = match[1].trim();\n\n            // Handle string types wrapped in double quotes\n            if (stringKeys.includes(targetKey)) {\n                if (residue.startsWith('\"')) {\n                    // Pull text up to the concluding quote boundary\n                    const endQuoteIdx = residue.indexOf('\"', 1);\n                    return endQuoteIdx !== -1 ? residue.substring(1, endQuoteIdx) : residue;\n                }\n                return residue;\n            }\n\n            // Handle complex objects / arrays\n            if (residue.startsWith('{') || residue.startsWith('[')) {\n                let depth = 0;\n                let endIdx = 0;\n                const openChar = residue[0];\n                const closeChar = openChar === '{' ? '}' : ']';\n\n                for (let i = 0; i < residue.length; i++) {\n                    if (residue[i] === openChar) depth++;\n                    else if (residue[i] === closeChar) depth--;\n                    \n                    if (depth === 0) {\n                        endIdx = i + 1;\n                        break;\n                    }\n                }\n                const jsonSegment = residue.substring(0, endIdx);\n                try {\n                    return JSON.parse(jsonSegment);\n                } catch (e) {\n                    return [];\n                }\n            }\n            return null;\n        };\n\n        // 4. Map back every original property explicitly\n        reconstructedObject.type = extractValue('type');\n        reconstructedObject.id = extractValue('id');\n        reconstructedObject.linkedinUrl = extractValue('linkedinUrl');\n        \n        // Extract raw content body preserving its exact structural returns\n        const contentMatch = block.match(/\"content\":\\s*\"([\\s\\S]*?)\"\\s*\\n\\s*\"contentAttributes\":/);\n        reconstructedObject.content = contentMatch ? contentMatch[1] : extractValue('content');\n\n        reconstructedObject.contentAttributes = extractValue('contentAttributes') || [];\n        reconstructedObject.author = extractValue('author');\n        reconstructedObject.postedAt = extractValue('postedAt');\n        reconstructedObject.postImages = extractValue('postImages') || [];\n\n        // Conditionals for dynamic elements like video and articles\n        if (block.includes('\"postVideo\":')) reconstructedObject.postVideo = extractValue('postVideo');\n        if (block.includes('\"article\":')) reconstructedObject.article = extractValue('article');\n\n        reconstructedObject.socialContent = extractValue('socialContent');\n        reconstructedObject.comments = extractValue('comments') || [];\n        reconstructedObject.header = extractValue('header');\n        reconstructedObject.entityId = extractValue('entityId');\n        reconstructedObject.shareUrn = extractValue('shareUrn');\n        reconstructedObject.shareLinkedinUrl = extractValue('shareLinkedinUrl');\n        reconstructedObject.engagement = extractValue('engagement');\n        reconstructedObject.reactions = extractValue('reactions') || [];\n        reconstructedObject.reactionIds = extractValue('reactionIds') || [];\n        reconstructedObject.commentIds = extractValue('commentIds') || [];\n        reconstructedObject.query = extractValue('query');\n\n        // Add to execution output schema\n        parsedItems.push({ json: reconstructedObject });\n    }\n\n    return parsedItems;\n\n} catch (error) {\n    return [{\n        json: { \n            error: \"Failed parsing plain-text block layout.\",\n            details: error.message\n        }\n    }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -416
+      ],
+      "id": "21dfee38-5d5a-4e95-9c82-86fa05e69ad8",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// 1. Grab the 'text' string from the CURRENT item\nconst rawText = $json.content.parts[0].text;\n\nif (!rawText) {\n  return { error: \"No text field found on this item.\" };\n}\n\ntry {\n  // 2. Parse the stringified JSON\n  const parsedJson = JSON.parse(rawText);\n  \n  // 3. Check if OpenAI wrapped this specific item's data inside an array [ ]\n  if (Array.isArray(parsedJson)) {\n    // If it's an array, extract the first object out of it\n    return parsedJson[0] || { error: \"Array was empty\" };\n  }\n  \n  // If it's already a clean object, return it directly\n  return parsedJson;\n  \n} catch (error) {\n  return {\n    error: \"Failed to parse text into JSON\",\n    details: error.message,\n    originalText: rawText\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        -272
+      ],
+      "id": "ca9f2e4f-137b-46fb-a490-3510c105fb40",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=1479600808#gid=1479600808",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1479600808,
+          "mode": "list",
+          "cachedResultName": "LinkedIn",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1479600808"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.ID }}",
+            "Content": "={{ $('Code in JavaScript2').item.json.content }}",
+            "link": "={{ $('Code in JavaScript2').item.json.linkedinUrl }}",
+            "Competitor": "={{ $json.competitor }}",
+            "Date of post": "={{ new Date($('Code in JavaScript2').item.json.postedAt.date).toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' }) }}",
+            "Description": "={{ $json.Description }}",
+            "Company": "={{ $json.Company || \" \" }}",
+            "POC": "={{ $json.POC || \" \" }}",
+            "speaking engagement?": "={{ $json.is_speaking_engagement }}",
+            "DateTime Logged (Aus)": "={{ $now.setZone('Australia/Sydney').format('dd-MM-yyyy hh:mm:ss a') }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Competitor",
+              "displayName": "Competitor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date of post",
+              "displayName": "Date of post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "speaking engagement?",
+              "displayName": "speaking engagement?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "POC",
+              "displayName": "POC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DateTime Logged (Aus)",
+              "displayName": "DateTime Logged (Aus)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Have we reached out to this person?",
+              "displayName": "Have we reached out to this person?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Created a Deal in Active Campaign",
+              "displayName": "Created a Deal in Active Campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Next Course of Action (w/ James approval",
+              "displayName": "Next Course of Action (w/ James approval",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1424,
+        -272
+      ],
+      "id": "2b3b0247-d2d2-45ea-b16a-5e34702d8645",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        448,
+        -416
+      ],
+      "id": "f1d74b02-6640-4d79-b33f-b4d3c7a35f73",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an expert data extraction assistant specializing in competitive intelligence. Your task is to analyze the provided `Input_Data`, which contains the text of a scraped LinkedIn post from a keynote speaker who competes with James Castrission.\n\n### Input Data:\n- **Input_Data**: {{ $json.content }}\n- **Input ID**: {{ $json.id }}\n- **Competitor Name**: {{ $json.author.name }}\n\n### Step-by-Step Extraction Rules:\n1. **Determine Relevance First**: Analyze the text to determine if the competitor is explicitly discussing, promoting, or recapping a **speaking engagement** they were booked for. \n2. **Handle Non-Relevance**: If the post is NOT about a speaking engagement, set `is_speaking_engagement` to `false`, provide a brief description of what the post actually is, and set all other fields to `null`.\n3. **Extract Entities**: If it is a speaking engagement, extract the specific Company and Point of Contact (POC). Do not guess; if not explicitly stated, return `null`.\n\n### Field Definitions:\n- `is_speaking_engagement` (boolean): `true` if the post confirms they were booked/spoke at an event; `false` otherwise. Cannot be null.\n- `Description` (string): A concise 1-2 sentence summary of the engagement (e.g., topic, event name, audience, or general post context). Cannot be null.\n- `Company` (string or null): The specific company, organization, or client that booked the competitor.\n- `POC` (string or null): The specific Point of Contact, event organizer, or person who thanked/coordinated with the speaker.\n- `ID` (string): Pass through the exact value from {{ $json.id }}.\n- `competitor` (string): Pass through the exact value from {{ $json.author.name }}.\n\n### Output Constraints:\n- Return ONLY a valid, raw JSON array containing exactly one object.\n- Do NOT wrap the response in markdown code blocks (e.g., do NOT use ```json ... ```).\n- Do NOT include any conversational preamble, explanation, or postscript. Output must begin with `[` and end with `]`.\n\n### Expected Output Schema:\n[\n  {\n    \"ID\": \"{{ $json.id }}\",\n    \"competitor\": \"{{ $json.author.name }}\",\n    \"is_speaking_engagement\": true,\n    \"Description\": \"Example description of the keynote event.\",\n    \"Company\": \"Example Corp\",\n    \"POC\": \"Jane Doe\"\n  }\n]"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        -272
+      ],
+      "id": "9c1d505c-966b-4388-a98d-003829e975e6",
+      "name": "Message a model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XG2PrK6c7CxaKFQR",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Create a document').item.json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.formattedText }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        576,
+        352
+      ],
+      "id": "e8de355c-f36a-45b0-8cbd-11543ec321c6",
+      "name": "Update a document1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "BOSN89Vk0pGPd5vU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": "sharedWithMe",
+        "folderId": "={{ '1L9bRYIZA0ydiMEZH3QUVMNA75gLW8ISI' }}",
+        "title": "={{ 'LinkedIn Scraped Data ' + $now.setZone('Australia/Sydney').format('dd-MM-yyyy') }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -592,
+        -16
+      ],
+      "id": "513b36b3-780a-4c3b-89de-5b28df70e253",
+      "name": "Create a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "BOSN89Vk0pGPd5vU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ [\n'julienne@myadventuregroup.com.au', 'liv@myadventuregroup.com.au', 'james@myadventuregroup.com.au',\n'jaycel@myadventuregroup.com.au',\n'claire@myadventuregroup.com.au',\n'marielle@myadventuregroup.com.au'\n].join(', ') }}",
+        "subject": "Automated LinkedIn Scraping (Test)",
+        "message": "<div style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;\">\n    <p>Hi,</p>\n    \n    <p>Your daily LinkedIn Scraping Automation has been executed successfully. Updates logged in the attached sheet:</p>\n    \n    <p style=\"margin-bottom: 20px;\"><strong>Sheet:</strong> Social Media Scraping Sheet</p>\n    \n    <p style=\"margin: 20px 0;\">\n        <a href=\"https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=1479600808#gid=1479600808\" \n           style=\"background-color: #0a66c2; color: #ffffff !important; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; display: inline-block;\">\n           Open Google Sheet\n        </a>\n    </p>\n    \n    <hr style=\"border: 0; border-top: 1px solid #eeeeee; margin-top: 30px;\">\n    \n    <p style=\"color: #777777; font-size: 0.9em; margin-top: 15px;\">\n        Thanks,<br>\n        <strong>n8n Automation</strong>\n    </p>\n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        -512
+      ],
+      "id": "8307025a-11b8-4fe2-a0be-a14b96581a9e",
+      "name": "Send a message",
+      "webhookId": "71e757b4-7ed4-42dd-b4a0-d6cf72c1582d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        784,
+        -512
+      ],
+      "id": "89eaff10-621f-4136-a9cb-b5648d46a62a",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=1178046266#gid=1178046266",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $json.EngagementLevels }}",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        32,
+        352
+      ],
+      "id": "52c8cbf4-1456-4674-8b49-074888f640fd",
+      "name": "GetRows",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=993586065#gid=993586065",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 993586065,
+          "mode": "list",
+          "cachedResultName": "EngagementLevels",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=993586065"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -448,
+        -16
+      ],
+      "id": "4cdb42fc-ed4b-474c-9669-0ac5c7562bde",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -192,
+        -16
+      ],
+      "id": "f827d837-801e-4e0c-8a85-d39af5ab7f1e",
+      "name": "Loop Over Items1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run an Actor and get dataset": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Update a document1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a document": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetRows": {
+      "main": [
+        [
+          {
+            "node": "Run an Actor and get dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Get a document",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GetRows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "37402326-8aa8-45b1-a456-97fbebc1f069",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
+  },
+  "id": "gQzYFJpg8GtL0Wkl",
+  "tags": []
+}
