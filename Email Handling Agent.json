@@ -1,5 +1,5 @@
 {
-  "name": "080626 - Email Handling Agent",
+  "name": "100626 - Email Handling Agent",
   "nodes": [
     {
       "parameters": {
@@ -60,7 +60,7 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        2560,
+        2800,
         -320
       ],
       "id": "0a28cc72-fa1c-414d-b9dd-602dac20caf7",
@@ -411,27 +411,6 @@
     },
     {
       "parameters": {
-        "operation": "markAsRead",
-        "messageId": "={{ $('Create a draft1').item.json.message.id }}"
-      },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
-      "position": [
-        1984,
-        208
-      ],
-      "id": "3efdb53e-ffda-46f5-9ff5-3188fd3d22e6",
-      "name": "Mark a message as read1",
-      "webhookId": "784b764d-2814-49d8-be2e-c53dce19f3a3",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "dkfeQrltUckqbpZg",
-          "name": "Gmail account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "modelId": {
           "__rl": true,
           "value": "models/gemini-3.5-flash",
@@ -518,6 +497,69 @@
       ],
       "id": "78cedb14-c4b4-43ad-809a-84c4c37937b9",
       "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Get many messages').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1968,
+        208
+      ],
+      "id": "593b0084-56dc-4637-9af9-9e12c7fc3a54",
+      "name": "Mark a message as read1",
+      "webhookId": "9d915db6-f2cd-4993-a15d-363316b165de",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dkfeQrltUckqbpZg",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Create a draft1').item.json.message.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2176,
+        208
+      ],
+      "id": "acdee7dd-377c-4cb1-a018-d9bfe80869ea",
+      "name": "Mark a message as read2",
+      "webhookId": "a0f5f26f-7ba3-47a1-ba1f-b7ab278e72c6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Get a message').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2544,
+        -320
+      ],
+      "id": "4bc2e086-2c7e-4150-a3d5-6e7b4cbd1614",
+      "name": "Mark a message as read3",
+      "webhookId": "9d915db6-f2cd-4993-a15d-363316b165de",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dkfeQrltUckqbpZg",
+          "name": "Gmail account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -537,7 +579,7 @@
       "main": [
         [
           {
-            "node": "Mark a message as read",
+            "node": "Mark a message as read3",
             "type": "main",
             "index": 0
           }
@@ -748,14 +790,36 @@
           }
         ]
       ]
+    },
+    "Mark a message as read1": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark a message as read3": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "20d1ea07-3050-4af4-8105-187d7a9e4dce",
+  "versionId": "381ed9f1-c07b-49e3-b453-498cf51fc4e6",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
