@@ -1,17 +1,17 @@
 {
-  "name": "030626 - Action Items Automation",
+  "name": "110626 - Action Items Automation",
   "nodes": [
     {
       "parameters": {
-        "jsCode": "const var1 = $input.first().json.content.parts[0].text\n\nconst parsed = JSON.parse(var1);\n\nreturn parsed.map(item => ({\n  json: {\n    json: {\n      name: item.name,\n      assignee: item.assignee,\n      id: item.id,\n      priority: item.priority,\n      due_date: item.due_date\n    }\n  }\n}));"
+        "jsCode": "const var1 = $('Message a model1').first().json.content.parts[0].text\n\nconst parsed = JSON.parse(var1);\n\nreturn parsed.map(item => ({\n  json: {\n    json: {\n      name: item.name,\n      assignee: item.assignee,\n      id: item.id,\n      priority: item.priority,\n      due_date: item.due_date\n    }\n  }\n}));"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1264,
+        1568,
         176
       ],
-      "id": "6aea0782-b7bd-4467-9242-137d6471bc38",
+      "id": "4d4d2dab-7456-461e-b808-07c025f9a1e2",
       "name": "Code in JavaScript"
     },
     {
@@ -40,7 +40,7 @@
         -2224,
         1024
       ],
-      "id": "89c3118a-b128-4339-86b9-15a21fc55d05",
+      "id": "bbb3393e-6648-4cbe-a8a3-8fb0621c8d0c",
       "name": "HTTP Request",
       "credentials": {
         "httpHeaderAuth": {
@@ -59,7 +59,7 @@
         -2000,
         1024
       ],
-      "id": "93b6b96c-d555-49b7-b4e2-18e6efeeefc0",
+      "id": "6f9de942-d2ee-44ab-a060-42b4e6fb1cd3",
       "name": "Code in JavaScript1"
     },
     {
@@ -70,12 +70,18 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        5648,
-        368
+        2880,
+        752
       ],
-      "id": "57f4a0a6-f381-443d-864e-18fe61e4b9e8",
+      "id": "e96affc2-0d99-4043-91c6-f712f5ce0202",
       "name": "Mark a message as read",
-      "webhookId": "6d5f3a6b-9786-459e-98c6-218d868e10e6",
+      "webhookId": "c2e17bd9-78bd-44a1-a55f-735e9a53530a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dkfeQrltUckqbpZg",
+          "name": "Gmail account"
+        }
+      },
       "onError": "continueRegularOutput"
     },
     {
@@ -94,7 +100,7 @@
         -2448,
         1024
       ],
-      "id": "8fa3cb99-596d-4a31-a803-ac1f1b9ae125",
+      "id": "1a33665d-b6b4-4421-bc0f-6021f22de9e3",
       "name": "Schedule Trigger"
     },
     {
@@ -114,9 +120,9 @@
         -1776,
         1024
       ],
-      "id": "96c3ac47-8def-4040-a72d-15f0b467054f",
+      "id": "25e0418e-34a4-4708-8978-3a2e9bbc184f",
       "name": "Get many messages",
-      "webhookId": "2d24d5b0-f0c7-49bd-9835-868b99abf89e",
+      "webhookId": "fd5becfd-b214-4e9c-bf2a-10175b5092d5",
       "alwaysOutputData": true,
       "credentials": {
         "gmailOAuth2": {
@@ -133,9 +139,9 @@
       "typeVersion": 2,
       "position": [
         -1408,
-        784
+        768
       ],
-      "id": "badff598-86f9-4b7c-9963-6a348589e31b",
+      "id": "69386469-e689-45e6-94df-83905f383a7f",
       "name": "Code in JavaScript2"
     },
     {
@@ -147,11 +153,12 @@
       "type": "n8n-nodes-base.mondayCom",
       "typeVersion": 1,
       "position": [
-        4176,
-        0
+        3808,
+        -144
       ],
-      "id": "9a2dad51-a337-43bd-96cc-8b09c129e6dc",
-      "name": "Create a board group"
+      "id": "e07c1ed8-6989-4f17-88f1-edc705e270ef",
+      "name": "Create a board group",
+      "disabled": true
     },
     {
       "parameters": {
@@ -162,48 +169,15 @@
       "type": "n8n-nodes-base.mondayCom",
       "typeVersion": 1,
       "position": [
-        -992,
-        784
+        -928,
+        768
       ],
-      "id": "db3788e1-8c39-40de-83f3-a3316e394896",
+      "id": "0ef2fb97-c1e9-4c6b-8bc3-63345f1f93eb",
       "name": "Get many board groups",
       "credentials": {
         "mondayComApi": {
           "id": "aIJpX7wWZgm9WSbO",
           "name": "Monday.com account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "o3",
-          "mode": "list",
-          "cachedResultName": "O3"
-        },
-        "responses": {
-          "values": [
-            {
-              "content": "=Check whether the value below exists in this list:\n\nValue to check:\n\"{{ $('Code in JavaScript2').item.json.result }}\" \n\nList:\n{{ $json.title }}\n\nRules:\n\nIf the value does NOT exist in the list, return only:\ntrue\nIf the value DOES exist in the list, return only:\nfalse\n\nMatching rules:\n\nDo not require exact word-for-word matching.\nTreat titles as a match if:\nthe dates match, and\nthe overall meaning, topic, or intent of the titles are essentially the same.\nIgnore minor wording differences, punctuation, capitalization, formatting, and extra filler words.\n\nOutput rules:\n\nReturn ONLY either:\ntrue\nor\nfalse\nDo not return any explanation, markdown, or additional text."
-            }
-          ]
-        },
-        "builtInTools": {},
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 2.1,
-      "position": [
-        -512,
-        784
-      ],
-      "id": "02382cff-3515-4ee9-93ac-6a8a1252fadf",
-      "name": "Message a model2",
-      "credentials": {
-        "openAiApi": {
-          "id": "LN4EQclawr1eXdrx",
-          "name": "OpenAI account"
         }
       }
     },
@@ -219,7 +193,7 @@
           "conditions": [
             {
               "id": "0e215dd2-1d34-4c05-b838-9e9dee35a9b4",
-              "leftValue": "={{ $json.output[0].content[0].text }}",
+              "leftValue": "={{ $json.content.parts[0].text }}",
               "rightValue": "true",
               "operator": {
                 "type": "string",
@@ -234,10 +208,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -208,
-        384
+        -64,
+        768
       ],
-      "id": "df6a0d0c-116a-4298-a7ff-583e0fcc2b2c",
+      "id": "729a4072-d393-46db-a910-123676e6c6da",
       "name": "If"
     },
     {
@@ -247,10 +221,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -864,
-        784
+        -768,
+        768
       ],
-      "id": "ae2fb236-a63c-4253-8097-bb5205a9a501",
+      "id": "6b94280a-f0ef-4d84-8f8a-65051827d380",
       "name": "Code in JavaScript3"
     },
     {
@@ -267,10 +241,10 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        -672,
-        784
+        -608,
+        768
       ],
-      "id": "88c25ff4-c909-4907-a87a-441983f7b7ae",
+      "id": "a702446f-dc30-469d-85a0-e8717e4681da",
       "name": "Aggregate"
     },
     {
@@ -280,10 +254,10 @@
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
-        5248,
-        208
+        2256,
+        176
       ],
-      "id": "fcca9db4-8bd9-404c-b1f3-1e60c63b4043",
+      "id": "df0af93d-d9b4-42aa-b69a-4420cd7425ab",
       "name": "Limit"
     },
     {
@@ -303,44 +277,11 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        5024,
-        208
+        2032,
+        176
       ],
-      "id": "e13bd062-e460-4020-b9b8-afc10bf6e23a",
+      "id": "33aeba76-afe0-4c36-b626-604b710792e6",
       "name": "Edit Fields1"
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "gpt-4",
-          "mode": "list",
-          "cachedResultName": "GPT-4"
-        },
-        "responses": {
-          "values": [
-            {
-              "content": "=input: {{ $('Code in JavaScript2').item.json.result }}\n\nInstructions:\n- use abbreviated or shorthand words. But do not shorten the words that do not have known shorthands.\n- Do not not alter the date.\n- Do not rephrase/rearrange the words just shorten the words that can be shortened.\n- Remove the words like \"recap of your\" if those are the 1st 3 words.\n- Use Title casing, or capitalize the words even if they are already abbreviated.\n- return nothing else."
-            }
-          ]
-        },
-        "builtInTools": {},
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 2.1,
-      "position": [
-        -1264,
-        768
-      ],
-      "id": "f855c7bb-6238-4f52-964b-c569dd2ce8ea",
-      "name": "Message a model3",
-      "credentials": {
-        "openAiApi": {
-          "id": "LN4EQclawr1eXdrx",
-          "name": "OpenAI account"
-        }
-      }
     },
     {
       "parameters": {
@@ -357,9 +298,15 @@
         -1376,
         1568
       ],
-      "id": "16addd2f-fc93-4b88-b9fb-cd771186ed05",
+      "id": "4bff26f3-614e-417b-a140-9dba28e466a9",
       "name": "Get many messages1",
-      "webhookId": "15665fcb-187f-4c26-b59b-385e2cd85032",
+      "webhookId": "e49fd158-f208-493b-9531-2d021c37c83b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      },
       "disabled": true
     },
     {
@@ -376,9 +323,15 @@
         -704,
         1568
       ],
-      "id": "62b74c7c-8a5a-4821-b385-95c65dee93fd",
+      "id": "34e9dc54-e7ed-4622-aa7d-1afc12f1c060",
       "name": "Get many messages2",
-      "webhookId": "e909505d-8bb9-4fb5-8193-3c0ac4779613",
+      "webhookId": "c1e42d49-8ef6-4cab-a26d-2b24cdfe5e52",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      },
       "disabled": true
     },
     {
@@ -407,7 +360,7 @@
         -1152,
         1568
       ],
-      "id": "bb8c286a-0c04-4810-b844-1d8b635e6cc7",
+      "id": "292cb35d-62cf-4ac2-82d0-1482c0bd0fac",
       "name": "Edit Fields2",
       "disabled": true
     },
@@ -421,7 +374,7 @@
         -928,
         1568
       ],
-      "id": "1134e6fb-0c66-45a4-a69f-573bb5d9e047",
+      "id": "df441412-4478-46b7-9e3a-58c9a9dde837",
       "name": "Code in JavaScript4",
       "disabled": true
     },
@@ -455,7 +408,7 @@
         -480,
         1568
       ],
-      "id": "b6cbb99b-d074-4ca1-bffc-94111a380ea6",
+      "id": "665a2883-1341-4157-a0d7-0039dbd8460a",
       "name": "If1",
       "disabled": true
     },
@@ -469,7 +422,7 @@
         -32,
         1664
       ],
-      "id": "77c5a2c8-9a6b-49c1-b105-719d962b5fe8",
+      "id": "08114a8d-7764-4227-b10c-660209b14621",
       "name": "Code in JavaScript5",
       "disabled": true
     },
@@ -485,7 +438,7 @@
         192,
         1664
       ],
-      "id": "c807b31e-0b5a-4cb3-9883-e0c2c7721f16",
+      "id": "a40ef13a-c287-4746-89e3-98be2140a29d",
       "name": "Get many board groups1",
       "disabled": true
     },
@@ -513,7 +466,7 @@
         864,
         1664
       ],
-      "id": "c7227d52-6ab1-4f69-b933-58bd3c9c01a4",
+      "id": "ebabd7ff-e434-4797-8dfd-46d49cfbfc13",
       "name": "Message a model4",
       "disabled": true
     },
@@ -547,7 +500,7 @@
         1216,
         1664
       ],
-      "id": "458d9adb-574d-49f6-93fc-10068db77500",
+      "id": "5419efa7-d99d-4605-8b83-832618dbc5df",
       "name": "If2",
       "disabled": true
     },
@@ -561,7 +514,7 @@
         416,
         1664
       ],
-      "id": "39760a97-4319-4eb8-98d8-bf8e661cd442",
+      "id": "96f2dce8-02d5-4a02-9564-8a79c841b4db",
       "name": "Code in JavaScript6",
       "disabled": true
     },
@@ -582,7 +535,7 @@
         640,
         1664
       ],
-      "id": "bff86ef7-cfab-497f-851c-5b1fb4cac9e9",
+      "id": "5a6b4506-9aef-4b9a-b8af-779e54268702",
       "name": "Aggregate1",
       "disabled": true
     },
@@ -597,9 +550,15 @@
         -240,
         1296
       ],
-      "id": "2489781a-831c-4e81-a34d-73642f89e709",
+      "id": "2dd6e171-1311-48f0-b344-2b83632ab0c5",
       "name": "Mark a message as read1",
-      "webhookId": "4b26acf7-d635-4a5b-a237-86f538838fb9",
+      "webhookId": "a8d1367f-80e2-4ba5-9831-eb13787d07db",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      },
       "disabled": true
     },
     {
@@ -615,9 +574,15 @@
         -256,
         1664
       ],
-      "id": "b56afd79-5141-4d57-aa7c-9f37895efe9e",
+      "id": "156e6724-cfd5-404d-931a-7da34712cfce",
       "name": "Get a message",
-      "webhookId": "a43ec681-dc75-4d66-af87-54c574e80cff",
+      "webhookId": "0ed9519e-1b96-455d-ba34-353a652e5919",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      },
       "disabled": true
     },
     {
@@ -631,9 +596,15 @@
         1472,
         2016
       ],
-      "id": "aa355b83-4574-4067-a62f-d7727d004131",
+      "id": "18dc863c-8249-45e6-b261-4e36d246df6b",
       "name": "Mark a message as read2",
-      "webhookId": "079e6d47-b5c6-4809-9bf0-fd4424d9080a",
+      "webhookId": "4355d597-9200-4c33-94af-03fc151488e2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      },
       "disabled": true
     },
     {
@@ -660,7 +631,7 @@
         1440,
         1568
       ],
-      "id": "94a405f1-e276-412c-b998-80a27941c8f4",
+      "id": "bb8fe571-44a5-4ab7-8870-0a13d7fd6881",
       "name": "Message a model5",
       "disabled": true
     },
@@ -684,7 +655,7 @@
         1792,
         1568
       ],
-      "id": "01f4d986-b58c-4538-a1e7-7248af507021",
+      "id": "c13f1d70-f18b-4450-8304-51414e404b52",
       "name": "Edit Fields3",
       "disabled": true
     },
@@ -698,7 +669,7 @@
         2944,
         1568
       ],
-      "id": "745f0df5-f5c0-4f4d-8463-dea39f45fb0a",
+      "id": "f226e59b-3949-4209-b6f0-e1fb04cbb429",
       "name": "Code in JavaScript7",
       "disabled": true
     },
@@ -726,7 +697,7 @@
         2016,
         1568
       ],
-      "id": "cc182350-8c2e-4d16-8f97-386a9f7ee16c",
+      "id": "57ca4eb1-c8d0-43e8-b772-d7ce5624fa3d",
       "name": "Message a model6",
       "disabled": true
     },
@@ -746,7 +717,7 @@
         3168,
         1568
       ],
-      "id": "95c3a17b-be14-4d42-920b-c7aa474d01fe",
+      "id": "58ab681a-7717-4cc1-83bc-95432c144024",
       "name": "Create an item in a board's group1",
       "alwaysOutputData": false,
       "disabled": true
@@ -763,7 +734,7 @@
         2720,
         1568
       ],
-      "id": "363cd402-401d-4499-bc19-b86cb7981be6",
+      "id": "a17a697a-bc97-4ceb-9641-f11fa7d79ccc",
       "name": "Create a board group1",
       "disabled": true
     },
@@ -777,7 +748,7 @@
         3616,
         1568
       ],
-      "id": "7cc6bad6-dd07-4b75-8591-6fe653b86644",
+      "id": "d34caaa6-ac45-424c-b708-363869e08b69",
       "name": "Limit1",
       "disabled": true
     },
@@ -801,7 +772,7 @@
         3392,
         1568
       ],
-      "id": "a1244794-b70b-4489-9093-f2a93eea5db3",
+      "id": "6e0d0e81-78f7-4d63-9c21-2703771e8356",
       "name": "Edit Fields4",
       "disabled": true
     },
@@ -829,7 +800,7 @@
         2368,
         1568
       ],
-      "id": "d34a9586-9eec-4bfb-86e7-a70796563147",
+      "id": "82c96a74-8f02-4585-a253-cbef5d62386c",
       "name": "Message a model7",
       "disabled": true
     },
@@ -864,35 +835,8 @@
         -1552,
         1024
       ],
-      "id": "a8b3219a-6f64-408c-b930-db0be081dce5",
+      "id": "94a485f7-0a7c-499e-89f6-c3c533504603",
       "name": "If3"
-    },
-    {
-      "parameters": {
-        "operation": "getAll",
-        "limit": 1,
-        "simple": false,
-        "filters": {
-          "q": "=from:gemini-notes@google.com after:2026/4/21\nsubject:\"{{ $('Code in JavaScript11').item.json.extractedTitle }}\"\nbefore:{{ $json.dayAfter }}\nafter:{{ $json.dayBefore }}"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
-      "position": [
-        1792,
-        176
-      ],
-      "id": "3a629be2-dc6e-47dd-b5fc-aa4a655f83ee",
-      "name": "Get many messages3",
-      "webhookId": "486f0993-ef5b-4160-8a76-7c82d86bf6ce",
-      "alwaysOutputData": true,
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "dkfeQrltUckqbpZg",
-          "name": "Gmail account"
-        }
-      }
     },
     {
       "parameters": {
@@ -901,11 +845,12 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2848,
-        0
+        2320,
+        -144
       ],
-      "id": "c3e257e5-4bb1-441c-ae8a-90595d65eb89",
-      "name": "Code in JavaScript9"
+      "id": "e5c7e297-df6b-479b-97c0-2af2c0bbdc4a",
+      "name": "Code in JavaScript9",
+      "disabled": true
     },
     {
       "parameters": {
@@ -915,11 +860,12 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        3072,
-        0
+        2592,
+        -144
       ],
-      "id": "121eba79-29f9-4a99-a5d0-27b32553d4f5",
-      "name": "Aggregate2"
+      "id": "5f1e77ac-8c11-4a38-a0c8-80c180a8b68f",
+      "name": "Aggregate2",
+      "disabled": true
     },
     {
       "parameters": {
@@ -929,11 +875,12 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        2224,
-        -16
+        1840,
+        -144
       ],
-      "id": "91e18bc6-8bfe-40b6-ae56-eca0c2546e0a",
-      "name": "Aggregate3"
+      "id": "208d95f1-f801-4e08-b17b-242c19edf3b9",
+      "name": "Aggregate3",
+      "disabled": true
     },
     {
       "parameters": {
@@ -952,11 +899,12 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2448,
-        -16
+        2064,
+        -144
       ],
-      "id": "72f4e734-dc1a-4544-97a2-db68db0dc32c",
-      "name": "Edit Fields5"
+      "id": "56af7ade-3e00-4125-b95d-db06284b31f5",
+      "name": "Edit Fields5",
+      "disabled": true
     },
     {
       "parameters": {
@@ -975,11 +923,12 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        3296,
-        0
+        2848,
+        -144
       ],
-      "id": "e758d08a-65e6-4bdc-b57b-54a03573fd1f",
-      "name": "Edit Fields6"
+      "id": "798cb1ef-4a47-420f-9887-22a2219aee37",
+      "name": "Edit Fields6",
+      "disabled": true
     },
     {
       "parameters": {
@@ -988,22 +937,24 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4400,
-        0
+        4032,
+        -144
       ],
-      "id": "e2855318-29b3-4745-8064-628a1ea460ff",
-      "name": "Code in JavaScript8"
+      "id": "f39301da-ffc9-4108-99a4-f08581bcd382",
+      "name": "Code in JavaScript8",
+      "disabled": true
     },
     {
       "parameters": {},
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
-        3968,
-        0
+        3600,
+        -144
       ],
-      "id": "3297be0f-8c8f-40d3-8df2-3d97bcb1a1ad",
-      "name": "Limit2"
+      "id": "08d88b47-ebdf-4ca0-8c15-23c52f6d77bb",
+      "name": "Limit2",
+      "disabled": true
     },
     {
       "parameters": {
@@ -1018,12 +969,13 @@
       "type": "n8n-nodes-base.mondayCom",
       "typeVersion": 1,
       "position": [
-        4608,
-        0
+        4240,
+        -144
       ],
-      "id": "58e9a950-372d-4eb9-8931-f4767a15ded6",
+      "id": "fa66cb53-539a-4dd4-860c-6192b7ce55a9",
       "name": "Create an item in a board's group2",
-      "alwaysOutputData": false
+      "alwaysOutputData": false,
+      "disabled": true
     },
     {
       "parameters": {
@@ -1036,10 +988,177 @@
         3840,
         1568
       ],
-      "id": "473aef60-7f44-4668-93ca-2b56f7512bac",
+      "id": "1a1ce6f4-3933-4913-89ca-f31c264e9a69",
       "name": "Mark a message as read3",
-      "webhookId": "e860349c-9780-4b4c-bddb-6292c0c9ba75",
+      "webhookId": "ad6d9ec5-681d-4d86-9a2d-7ee302dff22f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      },
       "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Safely check if 'if4' exists and what its value is\nlet if4Value = null;\ntry {\n  if4Value = $('if4').item?.json?.value; // Adjust '.value' to your actual field name if different\n} catch (e) {\n  // If if4 isn't accessible, we handle it safely here\n}\n\n// 2. If 'if4' is explicitly false, stop right here and return null (empty array)\nif (if4Value === false) {\n  return []; \n}\n\n// 3. Now try to safely grab data from 'Edit Fields6'\ntry {\n  const data = $('Edit Fields6').item?.json?.data;\n\n  // If the data is 'error', null, or doesn't exist, return empty string\n  if (!data || data === 'error') {\n    return [{ json: { data: \"\" } }];\n  }\n\n  // Otherwise, return the data\n  return [{ json: { data: data } }];\n\n} catch (error) {\n  // 4. If 'Edit Fields6' didn't execute (referenced node doesn't exist), \n  // it falls back here safely instead of crashing your workflow.\n  return [{ json: { data: \"\" } }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        -144
+      ],
+      "id": "7a1fc7b1-5758-434f-afd2-dde78f5b6271",
+      "name": "Code in JavaScript10",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an AI assistant tasked with extracting, cleaning, and structuring action items from an email text into a standardized task list.\n\n### Input Data\n- Email Date: {{ $('Get many messages').item.json.date }}\n- list: {{ $json.taskListText }}\n- Reference User IDs: {{ $('Code in JavaScript1').item.json.JSON.result }}\n\n### Task Naming Rules\n1. **Apply the Formula:** Reconstruct the task name using **Verb + Deliverable + Context**.\n2. **Simple and nontechnical:** Make sure to use simple and nontechnical english that non native and non tech savvy speakers will understand.\n\n### Benchmark Examples (Before & After)\n**Example  (Outbound Sales):**\n    * *Input:* \"Follow up on old leads\"\n    * *Corrected Task Name:* `Follow up on old leads for the 12-Month Leadership \n\n### Extraction & Logic Rules\n1. **Assignee & ID Validation:** Map the assignee's name mentioned in the task to their corresponding ID in the \"Reference User IDs\" variable. \n   - **Strict Rule:** If an assignee cannot be found or does not have a matching ID in the reference data, assign the task to Claire.\n2. **Priority Assignment:** Analyze the urgency and context of the task description to assign a priority level: \"Low\", \"Medium\", or \"High\".\n3. **Due Date Calculation:** - Base all calculations on the provided \"Email Date\".\n   - If a specific due date or timeline is explicitly mentioned in the task text, use that date.\n   - If no due date is mentioned, dynamically set a due date exactly 48 to 72 hours from the Email Date.\n   - **Weekend Rule:** If the calculated due date falls on a weekend (Saturday or Sunday), automatically roll it forward to the next immediate business day (Monday). \n   - Format all dates strictly as YYYY-MM-DD.\n\n### Output Format\nReturn ONLY a valid JSON array of objects following the exact schema below. Do not include any conversational text, introductions, or explanations. \n\nImportant: Output ONLY the raw JSON string. Do not wrap the response in markdown code blocks (e.g., do not use ```json ... ```).\n\n[\n  { \n    \"name\": \"Clear, concise task description starting with a verb\", \n    \"assignee\": \"Full name of the person\", \n    \"id\": \"Matching ID string from Reference User IDs\",\n    \"priority\": \"Low\",\n    \"due_date\": \"YYYY-MM-DD\"\n  }\n]"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        176
+      ],
+      "id": "f6a7feb8-8635-44a4-8628-41fe92d0fb64",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XG2PrK6c7CxaKFQR",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the original ISO timestamp from the incoming n8n node\nconst originalDateStr = $('Get many messages').first().json.date;\n\n// 2. Helper function to shift the date and format it as YYYY/MM/DD for Gmail\nfunction getGmailFormattedDate(isoString, daysToShift) {\n    const date = new Date(isoString);\n    date.setDate(date.getDate() + daysToShift);\n    \n    // Extract UTC year, month, and day to avoid local timezone shifts\n    const yyyy = date.getUTCFullYear();\n    const mm = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed\n    const dd = String(date.getUTCDate()).padStart(2, '0');\n    \n    return `${yyyy}/${mm}/${dd}`;\n}\n\n// 3. Calculate the day before (-1) and day after (+1) in YYYY/MM/DD format\nconst dayBefore = getGmailFormattedDate(originalDateStr, -1);\nconst dayAfter = getGmailFormattedDate(originalDateStr, 1);\n\n// 4. Return the data to n8n\nreturn [\n  {\n    json: {\n      originalDate: originalDateStr,\n      dayBefore: dayBefore,\n      dayAfter: dayAfter\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        176
+      ],
+      "id": "b428e3d0-1282-4c42-a718-7573d67809d6",
+      "name": "Code in JavaScript12"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Merge the two JSON arrays below into one array.\n\nRules:\n- Treat any blank list as an empty array [].\n- Remove duplicates using the `id` field.\n- If one list is empty, return the other list unchanged.\n- Return ONLY valid raw JSON.\n- No markdown.\n- No explanation.\n\nList 1: {{ $json.data }}\nList 2: {{ $('Edit Fields5').item.json.data }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        3296,
+        -144
+      ],
+      "id": "2becc802-48b7-4551-9a17-a453c486df45",
+      "name": "Message a model8",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "boardGroup",
+        "boardId": "=18408563713",
+        "name": "={{ $('Message a model').item.json.content.parts[0].text }}"
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        176
+      ],
+      "id": "9c520c6a-835a-4683-a6e0-e4e95a03b212",
+      "name": "Create a board group2",
+      "credentials": {
+        "mondayComApi": {
+          "id": "aIJpX7wWZgm9WSbO",
+          "name": "Monday.com account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "boardItem",
+        "boardId": "=18408563713",
+        "groupId": "={{ $('Create a board group2').item.json.id }}",
+        "name": "={{ $('Code in JavaScript').item.json.json.name }}",
+        "additionalFields": {
+          "columnValues": "={\n  \"person\": {\n    \"personsAndTeams\": [\n      {\n        \"id\": \"{{ $('Code in JavaScript').item.json.json.id }}\",\n        \"kind\": \"person\"\n      }\n    ]\n  },\n\"color_mm2nezc9\": {\n\"label\": \"{{ $('Code in JavaScript').item.json.json.priority }}\"\n},\n\"date_mm2n68r\": {\n\"date\": \"{{ $('Code in JavaScript').item.json.json.due_date }}\"\n}\n}"
+        }
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        1792,
+        176
+      ],
+      "id": "28f6dd46-4126-461f-8d2c-54584985ea9e",
+      "name": "Create an item in a board's group",
+      "alwaysOutputData": false,
+      "credentials": {
+        "mondayComApi": {
+          "id": "aIJpX7wWZgm9WSbO",
+          "name": "Monday.com account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Fetch text dynamically using the n8n v1+ data selector syntax\nconst inputText = $('Get many messages').first().json.text || \"\";\n\nconst tasks = [];\n\n// 2. Isolate the explicit \"Action Items\" block\nconst actionItemsSection = inputText.split(\"Action Items ✨\")[1]?.split(\"Meeting Summary ✨\")[0] || \"\";\n\nif (actionItemsSection) {\n  // Split by double newlines to isolate each distinct action item block\n  const blocks = actionItemsSection.split(/\\n\\s*\\n/);\n\n  for (let block of blocks) {\n    // Look for /share/ or /calls/ to match the text structure safely\n    if (block.includes(\"https://fathom.video/share/\") || block.includes(\"https://fathom.video/calls/\")) {\n      \n      // Clean up internal breaks to make it a continuous single-line string\n      let cleanedBlock = block.replace(/\\n/g, ' ').replace(/\\s+/g, ' ').trim();\n\n      // Strip out image URLs and tracking URLs\n      cleanedBlock = cleanedBlock\n        .replace(/\\[https:\\/\\/storage\\.googleapis\\.com[^\\]]+\\]/g, '')\n        .replace(/\\[https:\\/\\/fathom\\.video\\/(?:calls|share)\\/[^\\]]+\\]/g, '')\n        .trim();\n\n      // Attempt to match an assignee (looks for 1 to 3 capitalized words at the very end)\n      const nameMatch = cleanedBlock.match(/\\s+([A-Z][a-zA-Z]+(?:\\s[A-Z][a-zA-Z]+){0,2})\\s*$/);\n      \n      let taskName = \"\";\n      let assignee = \"\";\n\n      if (nameMatch) {\n        // If a name structure is found, separate the task and the assignee\n        assignee = nameMatch[1].trim();\n        taskName = cleanedBlock.substring(0, cleanedBlock.lastIndexOf(nameMatch[0])).trim();\n      } else {\n        // If no name structure matches at the end, the whole text is the task\n        taskName = cleanedBlock;\n        assignee = \"Claire Vergara\";\n      }\n        \n      // Strip trailing/leading punctuation, markdown artifacts, or timestamps leftovers\n      taskName = taskName\n        .replace(/[;\\s-\\*]+$/, '')\n        .replace(/^[\\s-\\*]+/, '')\n        .replace(/https:\\/\\/fathom\\.video\\/(?:calls|share)\\/\\S*/g, '')\n        .trim();\n\n      if (taskName) {\n        tasks.push({\n          name: taskName,\n          assignee: assignee || \"Claire Vergara\" // Extra safety fallback\n        });\n      }\n    }\n  }\n}\n\n// 3. Return formatted as an array of items, each containing a 'json' object\nreturn tasks.map(task => ({ json: task }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        176
+      ],
+      "id": "12f9f1b8-6276-47ec-9e18-f1575a09bc62",
+      "name": "Code in JavaScript14"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get all incoming items from the previous node\nconst items = $input.all();\n\n// 2. Map through the items to create a formatted string for each task\nconst formattedTasks = items.map(item => {\n  const name = item.json.name || 'No Task Name';\n  const assignee = item.json.assignee || 'Unassigned';\n  \n  return `- ${name} (Assignee: ${assignee})`;\n});\n\n// 3. Join all the task strings with a newline character\nconst combinedText = formattedTasks.join('\\n');\n\n// 4. Return the result as a single text string inside an n8n-friendly format\nreturn [\n  {\n    json: {\n      taskListText: combinedText\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        176
+      ],
+      "id": "6eb7c6eb-c99b-4cc3-ab1e-31f8e0c443e8",
+      "name": "Code in JavaScript15"
     },
     {
       "parameters": {
@@ -1069,24 +1188,54 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        1968,
-        176
+        1616,
+        -128
       ],
-      "id": "0202fe2b-d2dc-4c73-b85f-1d086f104e73",
-      "name": "If4"
+      "id": "db4772c6-72a0-4f9f-9cc4-f27f7202cc85",
+      "name": "If4",
+      "disabled": true
     },
     {
       "parameters": {
-        "jsCode": "// 1. Safely check if 'if4' exists and what its value is\nlet if4Value = null;\ntry {\n  if4Value = $('if4').item?.json?.value; // Adjust '.value' to your actual field name if different\n} catch (e) {\n  // If if4 isn't accessible, we handle it safely here\n}\n\n// 2. If 'if4' is explicitly false, stop right here and return null (empty array)\nif (if4Value === false) {\n  return []; \n}\n\n// 3. Now try to safely grab data from 'Edit Fields6'\ntry {\n  const data = $('Edit Fields6').item?.json?.data;\n\n  // If the data is 'error', null, or doesn't exist, return empty string\n  if (!data || data === 'error') {\n    return [{ json: { data: \"\" } }];\n  }\n\n  // Otherwise, return the data\n  return [{ json: { data: data } }];\n\n} catch (error) {\n  // 4. If 'Edit Fields6' didn't execute (referenced node doesn't exist), \n  // it falls back here safely instead of crashing your workflow.\n  return [{ json: { data: \"\" } }];\n}"
+        "operation": "getAll",
+        "limit": 1,
+        "simple": false,
+        "filters": {
+          "q": "=from:gemini-notes@google.com after:2026/4/21\nsubject:\"{{ $('Code in JavaScript11').item.json.extractedTitle }}\"\nbefore:{{ $json.dayAfter }}\nafter:{{ $json.dayBefore }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        -128
+      ],
+      "id": "21b97775-f422-49d0-b60f-c5bb4b11a111",
+      "name": "Get many messages3",
+      "webhookId": "cc23b926-06b0-4d25-8668-f0daa5848dd8",
+      "alwaysOutputData": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pull the subject directly from the 'Get many messages' node\nconst inputString = $('Get many messages').first().json.subject || \"\"; \nlet extractedTitle = inputString; \n\n// Case 1: \"recap of your TITLE\"\nconst case1Regex = /^recap of your (.+)$/i;\n\n// Case 2: \"recap for \"TITLE\"\" (handles standard and smart quotes)\nconst case2Regex = /^recap for [\"'“‘](.+)[\"'”’]$/i;\n\nif (case1Regex.test(inputString)) {\n  extractedTitle = inputString.match(case1Regex)[1];\n} else if (case2Regex.test(inputString)) {\n  extractedTitle = inputString.match(case2Regex)[1];\n}\n\n// Return exactly one item with the extracted title string\nreturn [\n  {\n    json: {\n      extractedTitle: extractedTitle.trim()\n    }\n  }\n];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3488,
-        0
+        1200,
+        -128
       ],
-      "id": "48618457-6e4c-4be9-85b6-2d2704a4e367",
-      "name": "Code in JavaScript10"
+      "id": "2b74d292-995b-4d23-9587-2db37df79bfc",
+      "name": "Code in JavaScript11",
+      "disabled": true
     },
     {
       "parameters": {
@@ -1099,7 +1248,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are an AI assistant tasked with extracting, cleaning, and structuring action items from an email text into a standardized task list.\n\n### Input Data\n- Email Date: {{ $('Get many messages').item.json.date }}\n- list: {{ $json.taskListText }}\n- Reference User IDs: {{ $('Code in JavaScript1').item.json.JSON.result }}\n\n### Task Naming Rules\n1. **Apply the Formula:** Reconstruct the task name using **Verb + Deliverable + Context**.\n2. **Simple and nontechnical:** Make sure to use simple and nontechnical english that non native and non tech savvy speakers will understand.\n\n### Benchmark Examples (Before & After)\n**Example  (Outbound Sales):**\n    * *Input:* \"Follow up on old leads\"\n    * *Corrected Task Name:* `Follow up on old leads for the 12-Month Leadership \n\n### Extraction & Logic Rules\n1. **Assignee & ID Validation:** Map the assignee's name mentioned in the task to their corresponding ID in the \"Reference User IDs\" variable. \n   - **Strict Rule:** If an assignee cannot be found or does not have a matching ID in the reference data, completely exclude that task from the final output.\n2. **Priority Assignment:** Analyze the urgency and context of the task description to assign a priority level: \"Low\", \"Medium\", or \"High\".\n3. **Due Date Calculation:** - Base all calculations on the provided \"Email Date\".\n   - If a specific due date or timeline is explicitly mentioned in the task text, use that date.\n   - If no due date is mentioned, dynamically set a due date exactly 48 to 72 hours from the Email Date.\n   - **Weekend Rule:** If the calculated due date falls on a weekend (Saturday or Sunday), automatically roll it forward to the next immediate business day (Monday). \n   - Format all dates strictly as YYYY-MM-DD.\n\n### Output Format\nReturn ONLY a valid JSON array of objects following the exact schema below. Do not include any conversational text, introductions, or explanations. \n\nImportant: Output ONLY the raw JSON string. Do not wrap the response in markdown code blocks (e.g., do not use ```json ... ```).\n\n[\n  { \n    \"name\": \"Clear, concise task description starting with a verb\", \n    \"assignee\": \"Full name of the person\", \n    \"id\": \"Matching ID string from Reference User IDs\",\n    \"priority\": \"Low\",\n    \"due_date\": \"YYYY-MM-DD\"\n  }\n]"
+              "content": "=Input:\n{{ $('Code in JavaScript2').item.json.result }}\n\nInstructions:\n\n* Replace words only with widely recognized abbreviations/shorthands where available.\n* Do not change, reformat, or abbreviate dates.\n* Preserve the original word order, phrasing, punctuation, and structure. Only shorten eligible words.\n* If the text begins with the exact phrase \"Recap Of Your\" (first 3 words), remove those words.\n* Convert all words and abbreviations to Title Case (e.g., \"Meeting\" → \"Meeting\", \"ASAP\" → \"Asap\", \"FYI\" → \"Fyi\").\n* Do not expand, rewrite, rearrange, or summarize any content.\n* Return only the transformed text with no additional commentary, labels, quotes, or formatting."
             }
           ]
         },
@@ -1109,11 +1258,11 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.2,
       "position": [
-        736,
-        176
+        -1200,
+        768
       ],
-      "id": "b0a9cd0a-9a73-432b-9390-f5ff352ceca7",
-      "name": "Message a model1",
+      "id": "94aae7b9-15dc-4340-bf2d-7888102a18ed",
+      "name": "Message a model",
       "credentials": {
         "googlePalmApi": {
           "id": "XG2PrK6c7CxaKFQR",
@@ -1123,19 +1272,6 @@
     },
     {
       "parameters": {
-        "jsCode": "// 1. Get the original ISO timestamp from the incoming n8n node\nconst originalDateStr = $('Get many messages').first().json.date;\n\n// 2. Helper function to shift the date and format it as YYYY/MM/DD for Gmail\nfunction getGmailFormattedDate(isoString, daysToShift) {\n    const date = new Date(isoString);\n    date.setDate(date.getDate() + daysToShift);\n    \n    // Extract UTC year, month, and day to avoid local timezone shifts\n    const yyyy = date.getUTCFullYear();\n    const mm = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed\n    const dd = String(date.getUTCDate()).padStart(2, '0');\n    \n    return `${yyyy}/${mm}/${dd}`;\n}\n\n// 3. Calculate the day before (-1) and day after (+1) in YYYY/MM/DD format\nconst dayBefore = getGmailFormattedDate(originalDateStr, -1);\nconst dayAfter = getGmailFormattedDate(originalDateStr, 1);\n\n// 4. Return the data to n8n\nreturn [\n  {\n    json: {\n      originalDate: originalDateStr,\n      dayBefore: dayBefore,\n      dayAfter: dayAfter\n    }\n  }\n];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1632,
-        176
-      ],
-      "id": "6dd1d90b-eecf-4d46-84a5-aa150eeb43be",
-      "name": "Code in JavaScript12"
-    },
-    {
-      "parameters": {
         "modelId": {
           "__rl": true,
           "value": "models/gemini-3.1-flash-lite",
@@ -1145,7 +1281,7 @@
         "messages": {
           "values": [
             {
-              "content": "=Merge the two JSON arrays below into one array.\n\nRules:\n- Treat any blank list as an empty array [].\n- Remove duplicates using the `id` field.\n- If one list is empty, return the other list unchanged.\n- Return ONLY valid raw JSON.\n- No markdown.\n- No explanation.\n\nList 1: {{ $json.data }}\nList 2: {{ $('Edit Fields5').item.json.data }}"
+              "content": "=Check whether the value below exists in this list:\n\nValue to check:\n\"{{ $('Code in JavaScript2').item.json.result }}\" \n\nList:\n{{ $json.title }}\n\nRules:\n\nIf the value does NOT exist in the list, return only:\ntrue\nIf the value DOES exist in the list, return only:\nfalse\n\nMatching rules:\n-Do not require exact word-for-word matching.\n-return false if the the overall meaning, topic, or intent of the titles are essentially the same and the dates and date formats are also the same (the date formats have to match to count them as a match)\n-return true if the the overall meaning, topic, or intent of the titles are essentially the same but the dates are not the same\n-Ignore minor wording differences, punctuation, capitalization, formatting, and extra filler words.\n\nOutput rules:\n\nReturn ONLY either:\ntrue\nor\nfalse\nDo not return any explanation, markdown, or additional text."
             }
           ]
         },
@@ -1155,110 +1291,17 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.2,
       "position": [
-        3664,
-        0
+        -400,
+        768
       ],
-      "id": "48c84796-9c6b-4e58-9105-354264e79f38",
-      "name": "Message a model8"
-    },
-    {
-      "parameters": {
-        "resource": "boardGroup",
-        "boardId": "=18408563713",
-        "name": "={{ $('Message a model3').item.json.output[0].content[0].text }}"
-      },
-      "type": "n8n-nodes-base.mondayCom",
-      "typeVersion": 1,
-      "position": [
-        2464,
-        240
-      ],
-      "id": "fc137f99-e4d0-4c4a-8df7-bccf41ef28aa",
-      "name": "Create a board group2",
+      "id": "d618564c-95bc-4b75-91ed-b2af46a45be7",
+      "name": "Message a model9",
       "credentials": {
-        "mondayComApi": {
-          "id": "aIJpX7wWZgm9WSbO",
-          "name": "Monday.com account"
+        "googlePalmApi": {
+          "id": "XG2PrK6c7CxaKFQR",
+          "name": "Google Gemini(PaLM) Api account"
         }
       }
-    },
-    {
-      "parameters": {
-        "resource": "boardItem",
-        "boardId": "=18408563713",
-        "groupId": "={{ $('Create a board group2').item.json.id }}",
-        "name": "={{ $('Code in JavaScript13').item.json.json.name }}",
-        "additionalFields": {
-          "columnValues": "={\n  \"person\": {\n    \"personsAndTeams\": [\n      {\n        \"id\": \"{{ $('Code in JavaScript13').item.json.json.id }}\",\n        \"kind\": \"person\"\n      }\n    ]\n  },\n\"color_mm2nezc9\": {\n\"label\": \"{{ $('Code in JavaScript13').item.json.json.priority }}\"\n},\n\"date_mm2n68r\": {\n\"date\": \"{{ $('Code in JavaScript13').item.json.json.due_date }}\"\n}\n}"
-        }
-      },
-      "type": "n8n-nodes-base.mondayCom",
-      "typeVersion": 1,
-      "position": [
-        2896,
-        240
-      ],
-      "id": "ca4e37d4-541a-41d7-8445-0c8d2f08c4cc",
-      "name": "Create an item in a board's group",
-      "alwaysOutputData": false,
-      "credentials": {
-        "mondayComApi": {
-          "id": "aIJpX7wWZgm9WSbO",
-          "name": "Monday.com account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// 1. Fetch all items from the \"Code in JavaScript\" node using the modern syntax\nconst pastNodeItems = $('Code in JavaScript').all();\n\n// 2. Map through the items to safely pass them to the next node\nreturn pastNodeItems.map(item => {\n  return {\n    json: item.json,\n    // Optional: Include binary data if the past node had attachments\n    binary: item.binary \n  };\n});"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        2672,
-        240
-      ],
-      "id": "a4531f65-b349-4045-ac36-7483bcba5568",
-      "name": "Code in JavaScript13"
-    },
-    {
-      "parameters": {
-        "jsCode": "// 1. Fetch text dynamically using the n8n v1+ data selector syntax\nconst inputText = $('Get many messages').first().json.text || \"\";\n\nconst tasks = [];\n\n// 2. Isolate the explicit \"Action Items\" block\nconst actionItemsSection = inputText.split(\"Action Items ✨\")[1]?.split(\"Meeting Summary ✨\")[0] || \"\";\n\nif (actionItemsSection) {\n  // Split by double newlines to isolate each distinct action item block\n  const blocks = actionItemsSection.split(/\\n\\s*\\n/);\n\n  for (let block of blocks) {\n    // Only target blocks containing a Fathom timestamp/call link\n    if (block.includes(\"https://fathom.video/calls/\")) {\n      \n      // Clean up internal breaks to make it a continuous single-line string\n      let cleanedBlock = block.replace(/\\n/g, ' ').replace(/\\s+/g, ' ').trim();\n\n      // Strip out image URLs and tracking URLs\n      cleanedBlock = cleanedBlock\n        .replace(/\\[https:\\/\\/storage\\.googleapis\\.com[^\\]]+\\]/g, '')\n        .replace(/\\[https:\\/\\/fathom\\.video\\/calls\\/[^\\]]+\\]/g, '')\n        .trim();\n\n      // Extract Assignee (Last 2 capitalized words, e.g., \"Marielle Buscato\" or \"James Castrission\")\n      const match = cleanedBlock.match(/^(.*?)\\s+([A-Z][a-zA-Z]+(?:\\s[A-Z][a-zA-Z]+)+)\\s*$/);\n      \n      if (match) {\n        let taskName = match[1].trim();\n        const assignee = match[2].trim();\n        \n        // Strip trailing/leading punctuation, markdown artifacts, or timestamps leftovers\n        taskName = taskName\n          .replace(/[;\\s-\\*]+$/, '')\n          .replace(/^[\\s-\\*]+/, '')\n          .replace(/https:\\/\\/fathom\\.video\\/calls\\/\\S*/g, '') // strip loose links\n          .trim();\n\n        if (taskName) {\n          tasks.push({\n            name: taskName,\n            assignee: assignee || \"Unassigned\"\n          });\n        }\n      }\n    }\n  }\n}\n\n// 3. Return formatted as an array of items, each containing a 'json' object\nreturn tasks.map(task => ({ json: task }));"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        16,
-        176
-      ],
-      "id": "93746d2b-b290-42c0-83ef-c637d012d22a",
-      "name": "Code in JavaScript14"
-    },
-    {
-      "parameters": {
-        "jsCode": "// 1. Get all incoming items from the previous node\nconst items = $input.all();\n\n// 2. Map through the items to create a formatted string for each task\nconst formattedTasks = items.map(item => {\n  const name = item.json.name || 'No Task Name';\n  const assignee = item.json.assignee || 'Unassigned';\n  \n  return `- ${name} (Assignee: ${assignee})`;\n});\n\n// 3. Join all the task strings with a newline character\nconst combinedText = formattedTasks.join('\\n');\n\n// 4. Return the result as a single text string inside an n8n-friendly format\nreturn [\n  {\n    json: {\n      taskListText: combinedText\n    }\n  }\n];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        224,
-        176
-      ],
-      "id": "8b4838d4-bed2-49b1-812e-a9c79456bd6f",
-      "name": "Code in JavaScript15"
-    },
-    {
-      "parameters": {
-        "jsCode": "// Pull the subject directly from the 'Get many messages' node\nconst inputString = $('Get many messages').first().json.subject || \"\"; \nlet extractedTitle = inputString; \n\n// Case 1: \"recap of your TITLE\"\nconst case1Regex = /^recap of your (.+)$/i;\n\n// Case 2: \"recap for \"TITLE\"\" (handles standard and smart quotes)\nconst case2Regex = /^recap for [\"'“‘](.+)[\"'”’]$/i;\n\nif (case1Regex.test(inputString)) {\n  extractedTitle = inputString.match(case1Regex)[1];\n} else if (case2Regex.test(inputString)) {\n  extractedTitle = inputString.match(case2Regex)[1];\n}\n\n// Return exactly one item with the extracted title string\nreturn [\n  {\n    json: {\n      extractedTitle: extractedTitle.trim()\n    }\n  }\n];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1440,
-        176
-      ],
-      "id": "459873e6-ecf9-4aa5-b3c5-2036ed996072",
-      "name": "Code in JavaScript11"
     }
   ],
   "pinData": {},
@@ -1267,7 +1310,7 @@
       "main": [
         [
           {
-            "node": "Code in JavaScript11",
+            "node": "Create an item in a board's group",
             "type": "main",
             "index": 0
           }
@@ -1322,7 +1365,7 @@
       "main": [
         [
           {
-            "node": "Message a model3",
+            "node": "Message a model",
             "type": "main",
             "index": 0
           }
@@ -1334,17 +1377,6 @@
         [
           {
             "node": "Code in JavaScript8",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Message a model2": {
-      "main": [
-        [
-          {
-            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -1395,7 +1427,7 @@
       "main": [
         [
           {
-            "node": "Message a model2",
+            "node": "Message a model9",
             "type": "main",
             "index": 0
           }
@@ -1418,17 +1450,6 @@
         [
           {
             "node": "Limit",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Message a model3": {
-      "main": [
-        [
-          {
-            "node": "Get many board groups",
             "type": "main",
             "index": 0
           }
@@ -1680,17 +1701,6 @@
         ]
       ]
     },
-    "Get many messages3": {
-      "main": [
-        [
-          {
-            "node": "If4",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Code in JavaScript9": {
       "main": [
         [
@@ -1770,13 +1780,7 @@
     },
     "Create an item in a board's group2": {
       "main": [
-        [
-          {
-            "node": "Edit Fields1",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Limit1": {
@@ -1784,24 +1788,6 @@
         [
           {
             "node": "Mark a message as read3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If4": {
-      "main": [
-        [
-          {
-            "node": "Aggregate3",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Create a board group2",
             "type": "main",
             "index": 0
           }
@@ -1823,7 +1809,7 @@
       "main": [
         [
           {
-            "node": "Code in JavaScript",
+            "node": "Code in JavaScript12",
             "type": "main",
             "index": 0
           }
@@ -1834,7 +1820,7 @@
       "main": [
         [
           {
-            "node": "Get many messages3",
+            "node": "Create a board group2",
             "type": "main",
             "index": 0
           }
@@ -1856,18 +1842,7 @@
       "main": [
         [
           {
-            "node": "Code in JavaScript13",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code in JavaScript13": {
-      "main": [
-        [
-          {
-            "node": "Create an item in a board's group",
+            "node": "Code in JavaScript",
             "type": "main",
             "index": 0
           }
@@ -1907,11 +1882,56 @@
         ]
       ]
     },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Get many messages3": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Code in JavaScript11": {
       "main": [
         [
           {
-            "node": "Code in JavaScript12",
+            "node": "Get many messages3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Get many board groups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model9": {
+      "main": [
+        [
+          {
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -1919,17 +1939,17 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "a3e587a4-4fb5-41b9-a201-88ccb6b9176d",
+  "versionId": "e0ff85dd-084f-4320-b6ec-c4303f6332d5",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
   },
-  "id": "GCk1E24sjnduJTkP",
+  "id": "wMX4t7qL0rG6No9K",
   "tags": []
 }
