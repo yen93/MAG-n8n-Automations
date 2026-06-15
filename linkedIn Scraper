@@ -1,25 +1,6 @@
 {
-  "name": "100626 - linkedIn Scraper",
+  "name": "150626 - linkedIn Scraper",
   "nodes": [
-    {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "triggerAtHour": 8
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        -736,
-        -16
-      ],
-      "id": "b6fe7d17-83df-4a6d-8ce9-c7b778674c8e",
-      "name": "Schedule Trigger"
-    },
     {
       "parameters": {
         "operation": "Run actor and get dataset",
@@ -31,16 +12,17 @@
           "cachedResultName": "LinkedIn Profile Posts Scraper (No Cookies) (harvestapi/linkedin-profile-posts)",
           "cachedResultUrl": "https://console.apify.com/actors/A3cAPGpwBEG8RJwse/input"
         },
-        "customBody": "={\n  \"targetUrls\": [\n    \"{{ $json.linkedin }}\"\n  ],\n  \"maxPosts\": 30,\n  \"postedLimitDate\": \"{{ $now.minus({ days: 1 }).format('yyyy-MM-dd') }}\",\n  \"includeQuotePosts\": false,\n  \"includeReposts\": false\n}"
+        "customBody": "={\n  \"targetUrls\": [\n    \"{{ $json.linkedin }}\"\n  ],\n  \"maxPosts\": 30,\n  \"postedLimitDate\": \"{{ DateTime.fromFormat($('Code in JavaScript1').item.json.latest_timestamp, 'M/d/yyyy H:mm:ss').toISO() }}\",\n  \"includeQuotePosts\": false,\n  \"includeReposts\": false\n}"
       },
       "type": "@apify/n8n-nodes-apify.apify",
       "typeVersion": 1,
       "position": [
-        192,
-        352
+        -384,
+        -208
       ],
       "id": "f32e26bd-e4d7-4eec-b183-7a1e0d31524e",
       "name": "Run an Actor and get dataset",
+      "alwaysOutputData": true,
       "credentials": {
         "apifyApi": {
           "id": "w3LbtvtHVs46k5bb",
@@ -55,31 +37,11 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        400,
-        352
+        32,
+        -208
       ],
       "id": "58d91639-4b54-463c-8104-e17ce4d030a8",
       "name": "Code in JavaScript"
-    },
-    {
-      "parameters": {
-        "operation": "get",
-        "documentURL": "={{ $json.documentId }}"
-      },
-      "type": "n8n-nodes-base.googleDocs",
-      "typeVersion": 2,
-      "position": [
-        32,
-        -416
-      ],
-      "id": "d333bc6d-e83c-4206-a6b8-1b4cca4828c3",
-      "name": "Get a document",
-      "credentials": {
-        "googleDocsOAuth2Api": {
-          "id": "BOSN89Vk0pGPd5vU",
-          "name": "Google Docs account"
-        }
-      }
     },
     {
       "parameters": {
@@ -88,7 +50,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        240,
+        656,
         -416
       ],
       "id": "21dfee38-5d5a-4e95-9c82-86fa05e69ad8",
@@ -102,7 +64,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1152,
+        1568,
         -272
       ],
       "id": "ca9f2e4f-137b-46fb-a490-3510c105fb40",
@@ -120,7 +82,7 @@
           "__rl": true,
           "value": 1479600808,
           "mode": "list",
-          "cachedResultName": "LinkedIn",
+          "cachedResultName": "linkedIn",
           "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1479600808"
         },
         "columns": {
@@ -135,7 +97,9 @@
             "Company": "={{ $json.Company || \" \" }}",
             "POC": "={{ $json.POC || \" \" }}",
             "speaking engagement?": "={{ $json.is_speaking_engagement }}",
-            "DateTime Logged (Aus)": "={{ $now.setZone('Australia/Sydney').format('dd-MM-yyyy hh:mm:ss a') }}"
+            "DateTime Logged (Aus)": "={{ $now.setZone('Australia/Sydney').format('dd-MM-yyyy hh:mm:ss a') }}",
+            "Event Name": "={{ $json[\"Event Name\"] || \" \" }}",
+            "engagement date": "={{ $json.engagement_date }}"
           },
           "matchingColumns": [
             "id"
@@ -198,6 +162,26 @@
               "removed": false
             },
             {
+              "id": "engagement date",
+              "displayName": "engagement date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Event Name",
+              "displayName": "Event Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
               "id": "Description",
               "displayName": "Description",
               "required": false,
@@ -235,31 +219,24 @@
               "removed": false
             },
             {
-              "id": "Have we reached out to this person?",
-              "displayName": "Have we reached out to this person?",
+              "id": "EmailFinder",
+              "displayName": "EmailFinder",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "canBeUsedToMatch": true,
+              "removed": false
             },
             {
-              "id": "Created a Deal in Active Campaign",
-              "displayName": "Created a Deal in Active Campaign",
+              "id": "temp tag",
+              "displayName": "temp tag",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "Next Course of Action (w/ James approval",
-              "displayName": "Next Course of Action (w/ James approval",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
+              "canBeUsedToMatch": true,
+              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -270,7 +247,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        1424,
+        1840,
         -272
       ],
       "id": "2b3b0247-d2d2-45ea-b16a-5e34702d8645",
@@ -284,13 +261,13 @@
     },
     {
       "parameters": {
-        "batchSize": 10,
+        "batchSize": 5,
         "options": {}
       },
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        448,
+        864,
         -416
       ],
       "id": "f1d74b02-6640-4d79-b33f-b4d3c7a35f73",
@@ -307,7 +284,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are an expert data extraction assistant specializing in competitive intelligence. Your task is to analyze the provided `Input_Data`, which contains the text of a scraped LinkedIn post from a keynote speaker who competes with James Castrission.\n\n### Input Data:\n- **Input_Data**: {{ $json.content }}\n- **Input ID**: {{ $json.id }}\n- **Competitor Name**: {{ $json.author.name }}\n\n### Step-by-Step Extraction Rules:\n1. **Determine Relevance First**: Analyze the text to determine if the competitor is explicitly discussing, promoting, or recapping a **speaking engagement** they were booked for. \n2. **Handle Non-Relevance**: If the post is NOT about a speaking engagement, set `is_speaking_engagement` to `false`, provide a brief description of what the post actually is, and set all other fields to `null`.\n3. **Extract Entities**: If it is a speaking engagement, extract the specific Company and Point of Contact (POC). Do not guess; if not explicitly stated, return `null`.\n\n### Field Definitions:\n- `is_speaking_engagement` (boolean): `true` if the post confirms they were booked/spoke at an event; `false` otherwise. Cannot be null.\n- `Description` (string): A concise 1-2 sentence summary of the engagement (e.g., topic, event name, audience, or general post context). Cannot be null.\n- `Company` (string or null): The specific company, organization, or client that booked the competitor.\n- `POC` (string or null): The specific Point of Contact, event organizer, or person who thanked/coordinated with the speaker.\n- `ID` (string): Pass through the exact value from {{ $json.id }}.\n- `competitor` (string): Pass through the exact value from {{ $json.author.name }}.\n\n### Output Constraints:\n- Return ONLY a valid, raw JSON array containing exactly one object.\n- Do NOT wrap the response in markdown code blocks (e.g., do NOT use ```json ... ```).\n- Do NOT include any conversational preamble, explanation, or postscript. Output must begin with `[` and end with `]`.\n\n### Expected Output Schema:\n[\n  {\n    \"ID\": \"{{ $json.id }}\",\n    \"competitor\": \"{{ $json.author.name }}\",\n    \"is_speaking_engagement\": true,\n    \"Description\": \"Example description of the keynote event.\",\n    \"Company\": \"Example Corp\",\n    \"POC\": \"Jane Doe\"\n  }\n]"
+              "content": "=# Role & Objective\nYou are an expert data extraction assistant specializing in corporate competitive intelligence. Your task is to analyze raw text scraped from a competitor's LinkedIn profile and extract structured data regarding their speaking engagements.\n\n# Data Context\n- **Input_Data**: {{ $json.content }}\n- **Input ID**: {{ $json.id }}\n- **Competitor Name**: {{ $json.author.name }}\n\n# Strict Processing Rules\nFollow these steps sequentially to evaluate the data:\n\n1. **Relevance Check**: Determine if the text explicitly discusses, promotes, or recaps a corporate speaking engagement, keynote address, workshop, or event they were booked for.\n2. **Conditional Extraction**:\n   - **If RELEVANT**: \n     - Set `is_speaking_engagement` to `true`.\n     - Extract the client company and any mentioned point of contact (POC). Do not invent names; if a field is not explicitly mentioned, return `null`.\n     - Provide an official event name if mentioned. If missing but context allows, infer a concise event name (e.g., \"Company Annual Gala\"). This field must NEVER be null if `is_speaking_engagement` is `true`.\n     - Extract or infer the date of the event/engagement if mentioned in the post. You must normalize this date into the **Australian Date Format (DD/MM/YYYY)** (e.g., 25/12/2026). If the exact day cannot be determined but the month is known, fallback to \"MM/YYYY\". If no date context exists at all, return `null`.\n   - **If NOT RELEVANT**: \n     - Set `is_speaking_engagement` to `false`.\n     - Summarize the actual nature of the post in the `Description`.\n     - Set `Company`, `POC`, `eventName`, and `engagement_date` strictly to `null`.\n\n# Output Schema Definition\nMap your final extraction precisely to this structure:\n\n- `ID` (string): Pass through the exact value from {{ $json.id }}\n- `competitor` (string): Pass through the exact value from {{ $json.author.name }}\n- `is_speaking_engagement` (boolean): `true` if it confirms an event booking; `false` otherwise. Cannot be null.\n- `Description` (string): A concise 1-2 sentence summary of the keynote/event, or general post context if not an event. Cannot be null.\n- `Company` (string or null): The specific company or organization that booked the competitor.\n- `POC` (string or null): The event organizer or specific person who booked/coordinated with the speaker.\n- `eventName` (string or null): The official or inferred name of the event. Must NEVER be null if `is_speaking_engagement` is true. Must be null if `is_speaking_engagement` is false.\n- `engagement_date` (string or null): The specific date when the speaking event occurred or will occur, strictly formatted as **DD/MM/YYYY**. Must ONLY have a value if `is_speaking_engagement` is true. Must be null if `is_speaking_engagement` is false.\n\n# Formatting Constraint (Absolute)\n- Return **ONLY** a valid, raw JSON array containing exactly one object matching the structure below.\n- Do **NOT** wrap the response in markdown code blocks (do not use ```json ... \n```).\n- Do **NOT** include conversational preamble, thoughts, explanations, or postscripts. \n- The output must start with `[` and end with `]`.\n\n[\n  {\n    \"ID\": \"{{ $json.id }}\",\n    \"competitor\": \"{{ $json.author.name }}\",\n    \"is_speaking_engagement\": true,\n    \"Description\": \"...\",\n    \"Company\": \"...\",\n    \"POC\": \"...\",\n    \"eventName\": \"...\",\n    \"engagement_date\": \"DD/MM/YYYY\"\n  }\n]"
             }
           ]
         },
@@ -317,7 +294,7 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.2,
       "position": [
-        800,
+        1232,
         -272
       ],
       "id": "9c1d505c-966b-4388-a98d-003829e975e6",
@@ -345,8 +322,8 @@
       "type": "n8n-nodes-base.googleDocs",
       "typeVersion": 2,
       "position": [
-        576,
-        352
+        208,
+        -208
       ],
       "id": "e8de355c-f36a-45b0-8cbd-11543ec321c6",
       "name": "Update a document1",
@@ -366,8 +343,8 @@
       "type": "n8n-nodes-base.googleDocs",
       "typeVersion": 2,
       "position": [
-        -592,
-        -16
+        -704,
+        -208
       ],
       "id": "513b36b3-780a-4c3b-89de-5b28df70e253",
       "name": "Create a document",
@@ -379,35 +356,12 @@
       }
     },
     {
-      "parameters": {
-        "sendTo": "={{ [\n'julienne@myadventuregroup.com.au', 'liv@myadventuregroup.com.au', 'james@myadventuregroup.com.au',\n'jaycel@myadventuregroup.com.au',\n'claire@myadventuregroup.com.au',\n'marielle@myadventuregroup.com.au'\n].join(', ') }}",
-        "subject": "Automated LinkedIn Scraping (Test)",
-        "message": "<div style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;\">\n    <p>Hi,</p>\n    \n    <p>Your daily LinkedIn Scraping Automation has been executed successfully. Updates logged in the attached sheet:</p>\n    \n    <p style=\"margin-bottom: 20px;\"><strong>Sheet:</strong> Social Media Scraping Sheet</p>\n    \n    <p style=\"margin: 20px 0;\">\n        <a href=\"https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=1479600808#gid=1479600808\" \n           style=\"background-color: #0a66c2; color: #ffffff !important; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; display: inline-block;\">\n           Open Google Sheet\n        </a>\n    </p>\n    \n    <hr style=\"border: 0; border-top: 1px solid #eeeeee; margin-top: 30px;\">\n    \n    <p style=\"color: #777777; font-size: 0.9em; margin-top: 15px;\">\n        Thanks,<br>\n        <strong>n8n Automation</strong>\n    </p>\n</div>",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
-      "position": [
-        1024,
-        -512
-      ],
-      "id": "8307025a-11b8-4fe2-a0be-a14b96581a9e",
-      "name": "Send a message",
-      "webhookId": "71e757b4-7ed4-42dd-b4a0-d6cf72c1582d",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "SwjlZakMLClOxHff",
-          "name": "Gmail account 2"
-        }
-      }
-    },
-    {
       "parameters": {},
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
-        784,
-        -512
+        1200,
+        -640
       ],
       "id": "89eaff10-621f-4136-a9cb-b5648d46a62a",
       "name": "Limit"
@@ -416,12 +370,12 @@
       "parameters": {
         "documentId": {
           "__rl": true,
-          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=1178046266#gid=1178046266",
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=1479600808#gid=1479600808",
           "mode": "url"
         },
         "sheetName": {
           "__rl": true,
-          "value": "={{ $json.EngagementLevels }}",
+          "value": "={{ $('Loop Over Items1').item.json[\"Batch to Process\"] }}",
           "mode": "name"
         },
         "options": {}
@@ -429,8 +383,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        32,
-        352
+        -544,
+        -208
       ],
       "id": "52c8cbf4-1456-4674-8b49-074888f640fd",
       "name": "GetRows",
@@ -445,26 +399,732 @@
       "parameters": {
         "documentId": {
           "__rl": true,
-          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=993586065#gid=993586065",
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?pli=1&gid=1479600808#gid=1479600808",
           "mode": "url"
         },
         "sheetName": {
           "__rl": true,
-          "value": 993586065,
+          "value": 1479600808,
           "mode": "list",
-          "cachedResultName": "EngagementLevels",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=993586065"
+          "cachedResultName": "linkedIn",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1479600808"
         },
         "options": {}
       },
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -448,
-        -16
+        -304,
+        160
       ],
-      "id": "4cdb42fc-ed4b-474c-9669-0ac5c7562bde",
-      "name": "Get row(s) in sheet",
+      "id": "8d9e574a-283f-48b5-a067-1b086c87c5f8",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?pli=1&gid=1479600808#gid=1479600808",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1741728749,
+          "mode": "list",
+          "cachedResultName": "linkedInEmailList",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1741728749"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "LinkedInPostID": "={{ $('Loop Over Items2').item.json.id }}",
+            "Event": "={{ $json.content.parts[0].text }}"
+          },
+          "matchingColumns": [
+            "LinkedInPostID"
+          ],
+          "schema": [
+            {
+              "id": "LinkedInPostID",
+              "displayName": "LinkedInPostID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Competitor",
+              "displayName": "Competitor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Event",
+              "displayName": "Event",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Firstname",
+              "displayName": "Firstname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lastname",
+              "displayName": "Lastname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DateTime Logged (Aus)",
+              "displayName": "DateTime Logged (Aus)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Drafted?",
+              "displayName": "Email Drafted?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        144
+      ],
+      "id": "3aa512d6-755c-4ec6-a1aa-fb56a2de395d",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7a74df3d-fa7a-4333-bf11-1dcb0f7939ed",
+              "leftValue": "={{ !!$json[\"Event Name\"] && $json[\"Event Name\"].trim().length > 0 }}",
+              "rightValue": " \\S",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "197567b6-3826-4cb7-894d-167f9d1b9afb",
+              "leftValue": "={{ !!$json.Company && $json.Company.trim().length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -144,
+        160
+      ],
+      "id": "d19c278b-768a-4708-86fd-1d637ce61a6f",
+      "name": "If1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        304,
+        -32
+      ],
+      "id": "cf604bcb-7d02-48ff-a799-d2867fe1cb00",
+      "name": "Loop Over Items2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Extract the event name from the LinkedIn post below. \n\nRules:\n1. Output the event name and NOTHING else. \n2. Do not include introductory text, explanations, or punctuation.\n3. If no official event name is mentioned, infer a concise event name based on the context (e.g., \"Company Annual Gala\" or \"Tech Networking Mixer\").\n\nLinkedIn Post:\n{{ $json.Content }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        496,
+        144
+      ],
+      "id": "b5b288db-72a5-4333-8b8a-6e81a69eea42",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XG2PrK6c7CxaKFQR",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -512,
+        416
+      ],
+      "id": "40f0dbff-1fe3-48bb-8e81-b8d46424b932",
+      "name": "Schedule Trigger1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?pli=1&gid=1479600808#gid=1479600808",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1479600808,
+          "mode": "list",
+          "cachedResultName": "linkedIn",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1479600808"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -304,
+        416
+      ],
+      "id": "e8ab9880-33e4-4662-852f-81e352e7780b",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?pli=1&gid=1479600808#gid=1479600808",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1741728749,
+          "mode": "list",
+          "cachedResultName": "linkedInEmailList",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1741728749"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "LinkedInPostID": "={{ $json.id }}",
+            "Event": "={{ $json[\"Event Name\"] }}"
+          },
+          "matchingColumns": [
+            "LinkedInPostID"
+          ],
+          "schema": [
+            {
+              "id": "LinkedInPostID",
+              "displayName": "LinkedInPostID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Competitor",
+              "displayName": "Competitor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Event",
+              "displayName": "Event",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Firstname",
+              "displayName": "Firstname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lastname",
+              "displayName": "Lastname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DateTime Logged (Aus)",
+              "displayName": "DateTime Logged (Aus)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Drafted?",
+              "displayName": "Email Drafted?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        640,
+        400
+      ],
+      "id": "d715b226-da62-4348-aeea-521a47ba32ba",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7a74df3d-fa7a-4333-bf11-1dcb0f7939ed",
+              "leftValue": "={{ !!$json[\"Event Name\"] && $json[\"Event Name\"].trim().length > 0 }}",
+              "rightValue": " \\S",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -144,
+        416
+      ],
+      "id": "b22404bc-f22f-4f2b-9fc3-5cf4866ef0dc",
+      "name": "If",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -496,
+        160
+      ],
+      "id": "d9f46138-1003-4505-952c-bc300a4b2041",
+      "name": "Schedule Trigger2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1728,
+        -416
+      ],
+      "id": "f12f9fde-2137-4a3d-9df5-a7bd7c9acba9",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1VYcNlfcjrjsKuA4FjKNEhTlkk4utjn7L3VlgWLedU54/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 406694574,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VYcNlfcjrjsKuA4FjKNEhTlkk4utjn7L3VlgWLedU54/edit#gid=406694574"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1520,
+        -416
+      ],
+      "id": "d28365c9-7279-42d5-a64d-9114bba46bc9",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7a74df3d-fa7a-4333-bf11-1dcb0f7939ed",
+              "leftValue": "={{ !!$json.Status && $json.Status.trim().length > 0 }}",
+              "rightValue": " \\S",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1360,
+        -416
+      ],
+      "id": "2c3cd926-e80a-47e3-a9d4-29d7eebdab0a",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Fetch all items from the \"Get row(s) in sheet3\" node\nconst sheetItems = $('Get row(s) in sheet3').all();\n\n// 2. Define your batch target variable dynamically \nconst batchVar = $('If2').first().json[\"Batch to Process\"]; \n\n// Extract just the raw JSON data from the n8n item structures\nconst allRows = sheetItems.map(item => item.json);\n\n// 3. Filter the rows that match your primary conditions\nconst matchingRows = allRows.filter(row => {\n  return row[\"Batch to Process\"] === batchVar && row[\"Status\"] === \"processed\";\n});\n\n// 4. Condition Handling\nif (matchingRows.length > 0) {\n  // Scenario A: Matches found -> Sort chronologically to get the newest timestamp first\n  matchingRows.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));\n\n  return [{\n    json: {\n      latest_timestamp: matchingRows[0].Timestamp,\n      row_number: matchingRows[0].row_number,\n      status: matchingRows[0].Status,\n      type: \"exact_match\"\n    }\n  }];\n} else {\n  // Scenario B: No exact matches -> Find the absolute latest timestamp available and subtract 15 days\n  const rowsWithDates = allRows.filter(row => row.Timestamp);\n  \n  if (rowsWithDates.length === 0) {\n    // Ultimate fallback if the sheet is completely empty or has no timestamps at all\n    return [{ json: { latest_timestamp: null, message: \"No timestamps found anywhere in the sheet.\" } }];\n  }\n\n  // Sort all rows by date to find the absolute newest one\n  rowsWithDates.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));\n  const absoluteLatestDate = new Date(rowsWithDates[0].Timestamp);\n\n  // Subtract 15 days\n  const fallbackDate = new Date(absoluteLatestDate);\n  fallbackDate.setDate(fallbackDate.getDate() - 15);\n\n  // Manual clean format to guarantee \"M/D/YYYY H:MM:SS\" structure without Node framework quirks\n  const formattedFallbackDate = `${fallbackDate.getMonth() + 1}/${fallbackDate.getDate()}/${fallbackDate.getFullYear()} ${fallbackDate.getHours()}:${String(fallbackDate.getMinutes()).padStart(2, '0')}:${String(fallbackDate.getSeconds()).padStart(2, '0')}`;\n\n  return [{\n    json: {\n      latest_timestamp: formattedFallbackDate,\n      row_number: null,\n      status: null,\n      type: \"fallback_15_days_prior\",\n      note: `No match for ${batchVar}. Subtracted 15 days from newest sheet date (${rowsWithDates[0].Timestamp}).`\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -864,
+        -208
+      ],
+      "id": "37ffafa5-3d09-4f29-9963-35b144f0957d",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.documentId }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        368,
+        -208
+      ],
+      "id": "483ea5ca-96d8-40e8-99fa-2b0915902509",
+      "name": "Get a document1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "BOSN89Vk0pGPd5vU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1VYcNlfcjrjsKuA4FjKNEhTlkk4utjn7L3VlgWLedU54/edit?resourcekey=&gid=406694574#gid=406694574",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 406694574,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VYcNlfcjrjsKuA4FjKNEhTlkk4utjn7L3VlgWLedU54/edit#gid=406694574"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $('Loop Over Items1').item.json.Timestamp }}",
+            "Status": "processed"
+          },
+          "matchingColumns": [
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Requestor",
+              "displayName": "Requestor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Batch to Process",
+              "displayName": "Batch to Process",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1616,
+        -640
+      ],
+      "id": "4fb248a2-c130-4f32-9b7b-cd76f70890e5",
+      "name": "Update row in sheet3",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "F1CKaGz9MR2OlBfo",
@@ -479,31 +1139,129 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -192,
-        -16
+        -1136,
+        -720
       ],
-      "id": "f827d837-801e-4e0c-8a85-d39af5ab7f1e",
+      "id": "74e1909c-f48f-463e-88ed-50d1496a0967",
       "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        -944
+      ],
+      "id": "3c450ebf-09c9-4b8c-bf46-e2b947b0a141",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ [\n'julienne@myadventuregroup.com.au', 'liv@myadventuregroup.com.au', 'james@myadventuregroup.com.au',\n'jaycel@myadventuregroup.com.au',\n'claire@myadventuregroup.com.au',\n'marielle@myadventuregroup.com.au'\n].join(', ') }}",
+        "subject": "Automated LinkedIn Scraping (Test)",
+        "message": "<div style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;\">\n    <p>Hi,</p>\n    \n    <p>Your daily LinkedIn Scraping Automation has been executed successfully. Updates logged in the attached sheet:</p>\n    \n    <p style=\"margin-bottom: 20px;\"><strong>Sheet:</strong> Social Media Scraping Sheet</p>\n    \n    <p style=\"margin: 20px 0;\">\n        <a href=\"https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=1479600808#gid=1479600808\" \n           style=\"background-color: #0a66c2; color: #ffffff !important; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; display: inline-block;\">\n           Open Google Sheet\n        </a>\n    </p>\n    \n    <hr style=\"border: 0; border-top: 1px solid #eeeeee; margin-top: 30px;\">\n    \n    <p style=\"color: #777777; font-size: 0.9em; margin-top: 15px;\">\n        Thanks,<br>\n        <strong>n8n Automation</strong>\n    </p>\n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -624,
+        -944
+      ],
+      "id": "68b288e7-f965-43a5-91ba-edbc96436391",
+      "name": "Send a message1",
+      "webhookId": "71e757b4-7ed4-42dd-b4a0-d6cf72c1582d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "=1D7u7F8yzB1x1KXVr9OhvfXXcncXr3_eHAfzA1JIsX5k"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        16,
+        -416
+      ],
+      "id": "7141db68-6998-45b5-aeea-c68e9ec11d4a",
+      "name": "Get a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "BOSN89Vk0pGPd5vU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -192,
+        -416
+      ],
+      "id": "360a9e54-4b31-42d3-8a08-25a8b5b5a555",
+      "name": "Schedule Trigger3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "01462800-12bc-46e8-848d-e09e0f3902b5",
+              "leftValue": "={{ Object.keys($input.first().json).length > 0 }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -176,
+        -208
+      ],
+      "id": "c13eb5f3-d5ac-401f-a70c-0cfdca41701d",
+      "name": "If3"
     }
   ],
   "pinData": {},
   "connections": {
-    "Schedule Trigger": {
-      "main": [
-        [
-          {
-            "node": "Create a document",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Run an Actor and get dataset": {
       "main": [
         [
           {
-            "node": "Code in JavaScript",
+            "node": "If3",
             "type": "main",
             "index": 0
           }
@@ -515,17 +1273,6 @@
         [
           {
             "node": "Update a document1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get a document": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript2",
             "type": "main",
             "index": 0
           }
@@ -598,7 +1345,7 @@
       "main": [
         [
           {
-            "node": "Get row(s) in sheet",
+            "node": "GetRows",
             "type": "main",
             "index": 0
           }
@@ -609,7 +1356,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items1",
+            "node": "Get a document1",
             "type": "main",
             "index": 0
           }
@@ -620,7 +1367,7 @@
       "main": [
         [
           {
-            "node": "Send a message",
+            "node": "Update row in sheet3",
             "type": "main",
             "index": 0
           }
@@ -638,7 +1385,162 @@
         ]
       ]
     },
-    "Get row(s) in sheet": {
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Create a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet3": {
       "main": [
         [
           {
@@ -653,14 +1555,59 @@
       "main": [
         [
           {
-            "node": "Get a document",
+            "node": "Limit1",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "GetRows",
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document": {
+      "main": [
+        []
+      ]
+    },
+    "Schedule Trigger3": {
+      "main": [
+        [
+          {
+            "node": "Get a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet3",
             "type": "main",
             "index": 0
           }
@@ -668,12 +1615,12 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "37402326-8aa8-45b1-a456-97fbebc1f069",
+  "versionId": "0f2c2bd0-0379-41bf-bc7a-2fa91f4f5bb7",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
