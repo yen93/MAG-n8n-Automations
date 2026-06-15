@@ -1,5 +1,5 @@
 {
-  "name": "100626 - Email Handling Agent",
+  "name": "150626 - Email Handling Agent",
   "nodes": [
     {
       "parameters": {
@@ -8,7 +8,8 @@
         "emailType": "html",
         "message": "={{ $('Message a model').item.json.content.parts[0].text }}\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%\" width=\"100%\"><tbody><tr><td><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;line-height:1.15\"><tbody><tr><td style=\"height:1px;width:120px;vertical-align:top;padding:.01px 1px\"><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td style=\"vertical-align:top;padding:.01px 1px 0.01px 0.01px;width:120px;text-align:center\"><img border=\"0\" src=\"https://ci3.googleusercontent.com/meips/ADKq_NbrZbwtn0EKHn1lsyoxyTpwXnGZxKMdSc9gsVZqvXDT79fD_JXZktvQfoa99lywhNaTgrCQyEjdpl0kN0pfGx6AcDRBlAvLFNZb-sAts9FhChlcPgdSTuvbPTMv268dBYMjmWRIbex55ehFzKX5IjoVlqn3y1JEp7ZWy49y=s0-d-e1-ft#https://d36urhup7zbd7q.cloudfront.net/u/qpq93D3V16J/4e2cfd65-a50b-4e85-8cc5-45ceaf9e5bad__400x457__.png\" height=\"137\" width=\"120\" alt=\"photo\" style=\"width:120px;vertical-align:middle;border-radius:0;height:137px;border:0;display:block\" class=\"CToWUd\" data-bit=\"iit\"></td></tr></tbody></table></td><td valign=\"top\" style=\"padding:.01px 0.01px 0.01px 14px;vertical-align:top\"><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td style=\"line-height:1.2;padding:.01px 0.01px 14px 0.01px;border-bottom:solid 2px #bdbdbd\" nowrap=\"\"><p style=\"margin:.1px;line-height:120%;font-size:16px\"><span style=\"font-family:Arial;font-size:16px;font-weight:bold;color:#00afdb;letter-spacing:0;white-space:nowrap\">James Castrission</span><br><span style=\"font-family:Arial;font-size:13px;font-weight:bold;color:#646464;white-space:nowrap\">International Keynote Speaker,<span>&nbsp;</span></span><span style=\"font-family:Arial;font-size:13px;font-weight:bold;color:#646464;white-space:nowrap\">MyAdventure Group</span></p></td></tr><tr><td nowrap=\"\" width=\"272\" height=\"0\" style=\"height:0;padding-top:14px;white-space:nowrap;width:272px;font-family:Arial\"><p style=\"margin:1px;line-height:99%;font-size:12px\"><span style=\"white-space:nowrap\"><a href=\"tel:0402904334\" style=\"font-family:Arial;text-decoration:unset\" rel=\"nofollow noreferrer\" target=\"_blank\"><span style=\"line-height:120%;font-family:Arial;font-size:12px;color:#212121;white-space:nowrap\">0402904334</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href=\"https://myadventuregroup.com.au\" style=\"font-family:Arial;text-decoration:unset\" rel=\"nofollow noreferrer\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://myadventuregroup.com.au&amp;source=gmail&amp;ust=1778116515475000&amp;usg=AOvVaw25GlaqThZvU3ljmZHv-3wd\"><span style=\"line-height:120%;font-family:Arial;font-size:12px;color:#212121;white-space:nowrap\">myadventuregrou<wbr>p.com.au</span></a></span></p></td></tr><tr><td nowrap=\"\" width=\"218\" height=\"0\" style=\"height:0;padding-top:8px;white-space:nowrap;width:218px;font-family:Arial\"><p style=\"margin:1px;line-height:99%;font-size:12px\"><span style=\"white-space:nowrap\"><a href=\"mailto:james@myadventuregroup.com.au\" style=\"font-family:Arial;text-decoration:unset\" rel=\"nofollow noreferrer\" target=\"_blank\"><span style=\"line-height:120%;font-family:Arial;font-size:12px;color:#212121;white-space:nowrap\">james@myadventuregroup.com.au</span></a></span></p></td></tr><tr><td nowrap=\"\" width=\"300\" height=\"0\" style=\"height:0;padding-top:8px;white-space:nowrap;width:300px;font-family:Arial\"><p style=\"margin:1px;line-height:99%;font-size:12px\"><span style=\"color:rgb(33,33,33)\">49 Miowera Rd, North Turramurra NSW</span></p></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td height=\"0\" style=\"height:0;line-height:1%;padding-top:16px;font-size:1px\"></td></tr><tr><td><table style=\"border-collapse:collapse;max-width:469px;padding-right:8px;font-size:12px;color:#333333;line-height:normal\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tbody><tr><td height=\"0\" style=\"height:0\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td height=\"0\" style=\"height:0\"><p style=\"margin:1px\"><a href=\"https://www.myadventuregroup.com.au/free-consult/?utm_source=outbound+mail&amp;utm_medium=email&amp;utm_campaign=keynote\" rel=\"nofollow noreferrer\" style=\"text-decoration:none;display:block\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://www.myadventuregroup.com.au/free-consult/?utm_source%3Doutbound%2Bmail%26utm_medium%3Demail%26utm_campaign%3Dkeynote&amp;source=gmail&amp;ust=1778116515475000&amp;usg=AOvVaw1hUHqCkcZyoVtiBnCvmR5t\"><img src=\"https://ci3.googleusercontent.com/meips/ADKq_NZbttvy3Obnf_Li_ZA41G2EqKFW5Mn9AP98BUC7Bke7GKC6BCzXM3i_VV0vxgS-iizLi2zlyTakCjWbRjdMpqTR1vV7lVDJ_-DTOBjjLFKx_-aS6JXI7aS_TcTE3ZVh0rvl8tkeW7wGuWq2xECNo6P_rJSLh8iLOA24cnZlGhbdsefwdb2fYRFRIyzaBHorOouujDSdkk_6SA3W_i8=s0-d-e1-ft#https://cdn.gifo.wisestamp.com/apps/app_button/full/BOOK%20A%20FREE%2020-MIN.%20CONSULTATION/ffffff/00AFDB/52/10/calendar2-50/left.png\" height=\"39\" alt=\"Meeting Button App\" class=\"CToWUd\" data-bit=\"iit\"></a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td height=\"0\" style=\"height:0;line-height:1%;padding-top:16px;font-size:1px\"></td></tr></tbody></table>",
         "options": {
-          "threadId": "={{ $('Get a message1').item.json.threadId }}"
+          "threadId": "={{ $('Get a message1').item.json.threadId }}",
+          "sendTo": "={{ $('Get many messages').item.json.headers.from.match(/<([^>]+)>/)?.[1] || $('Get a message').item.json.headers.from }}"
         }
       },
       "type": "n8n-nodes-base.gmail",
@@ -17,9 +18,9 @@
         2160,
         -320
       ],
-      "id": "96648c96-70cb-45de-b99d-54c43d99a6a6",
+      "id": "2004ee1b-e0e1-4098-b20a-5dd6091bb6d5",
       "name": "Create a draft",
-      "webhookId": "c734299c-21dd-4182-ab62-46fbda9d15c7",
+      "webhookId": "d745ebf8-cbb2-482b-b407-f1ccc5031ed9",
       "credentials": {
         "gmailOAuth2": {
           "id": "dkfeQrltUckqbpZg",
@@ -42,9 +43,9 @@
         2336,
         -320
       ],
-      "id": "d22313ca-ad93-4661-b242-8d79ca01c817",
+      "id": "42eca1d6-020b-4e1c-b1c6-3866a61c97b6",
       "name": "Add label to thread",
-      "webhookId": "d3c6f44b-9f6b-4a60-8733-25e43b0a2c03",
+      "webhookId": "6c72183b-86b4-4273-ae0f-d5ea13a153d5",
       "credentials": {
         "gmailOAuth2": {
           "id": "dkfeQrltUckqbpZg",
@@ -63,9 +64,9 @@
         2800,
         -320
       ],
-      "id": "0a28cc72-fa1c-414d-b9dd-602dac20caf7",
+      "id": "7b5fcfe0-e2d4-457e-a5b3-751476e10f18",
       "name": "Mark a message as read",
-      "webhookId": "784b764d-2814-49d8-be2e-c53dce19f3a3",
+      "webhookId": "c2fbb2d9-c8b8-4e89-992d-b7b046cd6786",
       "credentials": {
         "gmailOAuth2": {
           "id": "dkfeQrltUckqbpZg",
@@ -89,7 +90,7 @@
         -304,
         16
       ],
-      "id": "4e998046-47ab-41b0-b3fc-d0c4f97f6ceb",
+      "id": "9a025521-6ea7-4c81-95dd-3f7c9facb936",
       "name": "Schedule Trigger"
     },
     {
@@ -116,7 +117,7 @@
         1776,
         -320
       ],
-      "id": "c93a2692-d74c-4c4c-a346-10a4bb1ce8e9",
+      "id": "992056c8-4154-45ba-b2bd-e244f198dcae",
       "name": "Message a model",
       "credentials": {
         "googlePalmApi": {
@@ -136,7 +137,7 @@
         1152,
         -320
       ],
-      "id": "936a6736-eda0-4886-ae48-75e82a0b396d",
+      "id": "d7491a75-c41b-496d-991e-36246a315753",
       "name": "Get a document",
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -164,7 +165,7 @@
         560,
         -320
       ],
-      "id": "07113708-193c-4f9b-b8e2-e119cc9d672c",
+      "id": "aebba9d5-1de5-434d-b915-3447aab355d0",
       "name": "Analyze document",
       "credentials": {
         "googlePalmApi": {
@@ -188,13 +189,13 @@
         384,
         -320
       ],
-      "id": "8e1c1fdf-e895-4abb-93bb-2f805188f0ec",
+      "id": "1278c662-87e6-478f-99bf-317bb96f972e",
       "name": "Get a message",
-      "webhookId": "39b42649-a019-47fd-a4dd-60cc0ae68a37",
+      "webhookId": "7895cbe0-da1b-41be-9a96-e36991b382f4",
       "credentials": {
         "gmailOAuth2": {
-          "id": "dkfeQrltUckqbpZg",
-          "name": "Gmail account"
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
         }
       }
     },
@@ -203,7 +204,7 @@
         "operation": "getAll",
         "limit": 1,
         "filters": {
-          "q": "has:attachment\nis:important \nafter:2026/05/01 \n-filename:ics \n-unsubscribe \n-\"Google Alert\" \n-\"Automatic reply\" \n-from:(myadventuregroup.com.au OR fathom.com OR monday.com OR calendar-notification@google.com OR notifications@calendly.com OR calendly.com OR noreply OR no-reply OR notifications OR alerts OR support OR info OR update OR service OR donotreply OR mailer OR vimeo OR yourbooking.qantas.com.au OR payments OR .ai) \n-subject:Concert",
+          "q": "has:attachment is:important  after:2026/05/01  -filename:ics  -unsubscribe  -\"Google Alert\"  -\"Automatic reply\"  -from:(myadventuregroup.com.au OR fathom.com OR monday.com OR calendar-notification@google.com OR notifications@calendly.com OR calendly.com OR noreply OR no-reply OR notifications OR alerts OR support OR info OR update OR service OR donotreply OR mailer OR vimeo OR yourbooking.qantas.com.au OR payments OR .ai)  -subject:Concert",
           "readStatus": "unread"
         }
       },
@@ -213,9 +214,9 @@
         -96,
         16
       ],
-      "id": "9a97587c-b849-4271-92f7-e4cc9dfd474b",
+      "id": "af6ba78d-bd18-4b5f-99f8-bf425a734d36",
       "name": "Get many messages1",
-      "webhookId": "572571a1-7edb-40fd-bf52-d498fae220ce",
+      "webhookId": "1b25f09f-f445-41ba-91c0-8ce7b62a1ddc",
       "alwaysOutputData": true,
       "credentials": {
         "gmailOAuth2": {
@@ -255,7 +256,7 @@
         112,
         16
       ],
-      "id": "7a08a207-b18e-43cd-898f-7f8345dd53ce",
+      "id": "771dceab-8111-4185-abab-30c9647dc276",
       "name": "If"
     },
     {
@@ -278,7 +279,7 @@
         944,
         -320
       ],
-      "id": "814272f6-4abe-493d-8e43-0c74372f3be9",
+      "id": "ebf6cf77-ca24-4e63-9ece-0d2bae360ba8",
       "name": "Edit Fields"
     },
     {
@@ -291,7 +292,7 @@
         1344,
         -320
       ],
-      "id": "ba4c07a5-b682-41ed-b247-17ad94ab4bc5",
+      "id": "03468db2-8c4d-48f9-93b0-34edc6fdec97",
       "name": "Code in JavaScript"
     },
     {
@@ -304,7 +305,7 @@
         1568,
         -320
       ],
-      "id": "487d09f9-61cb-4ef6-9d87-216a484146e3",
+      "id": "1849e861-d302-46ae-823a-cfdb20c419d8",
       "name": "Code in JavaScript1"
     },
     {
@@ -320,9 +321,9 @@
         736,
         -320
       ],
-      "id": "1b6fa0ea-04a3-4bb9-9b4c-8ee0c24b6386",
+      "id": "1e5c3fde-fa8c-4865-a830-91fd8b925482",
       "name": "Get a message1",
-      "webhookId": "57921da3-b7cb-49a9-8306-2d39520a1f8c",
+      "webhookId": "49760c74-1654-44cc-9e3e-404b37170e3b",
       "credentials": {
         "gmailOAuth2": {
           "id": "dkfeQrltUckqbpZg",
@@ -347,9 +348,9 @@
         384,
         208
       ],
-      "id": "244080a0-8268-48ca-8719-1c49cacf800a",
+      "id": "39ae56ba-b0c1-4f85-b7da-cefbc5d44e46",
       "name": "Get many messages",
-      "webhookId": "572571a1-7edb-40fd-bf52-d498fae220ce",
+      "webhookId": "33abd031-3e2a-4920-999b-5600723abbd8",
       "alwaysOutputData": false,
       "credentials": {
         "gmailOAuth2": {
@@ -365,7 +366,8 @@
         "emailType": "html",
         "message": "={{ $('Message a model1').item.json.content.parts[0].text }}\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"width:100%\" width=\"100%\"><tbody><tr><td><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;line-height:1.15\"><tbody><tr><td style=\"height:1px;width:120px;vertical-align:top;padding:.01px 1px\"><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td style=\"vertical-align:top;padding:.01px 1px 0.01px 0.01px;width:120px;text-align:center\"><img border=\"0\" src=\"https://ci3.googleusercontent.com/meips/ADKq_NbrZbwtn0EKHn1lsyoxyTpwXnGZxKMdSc9gsVZqvXDT79fD_JXZktvQfoa99lywhNaTgrCQyEjdpl0kN0pfGx6AcDRBlAvLFNZb-sAts9FhChlcPgdSTuvbPTMv268dBYMjmWRIbex55ehFzKX5IjoVlqn3y1JEp7ZWy49y=s0-d-e1-ft#https://d36urhup7zbd7q.cloudfront.net/u/qpq93D3V16J/4e2cfd65-a50b-4e85-8cc5-45ceaf9e5bad__400x457__.png\" height=\"137\" width=\"120\" alt=\"photo\" style=\"width:120px;vertical-align:middle;border-radius:0;height:137px;border:0;display:block\" class=\"CToWUd\" data-bit=\"iit\"></td></tr></tbody></table></td><td valign=\"top\" style=\"padding:.01px 0.01px 0.01px 14px;vertical-align:top\"><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td style=\"line-height:1.2;padding:.01px 0.01px 14px 0.01px;border-bottom:solid 2px #bdbdbd\" nowrap=\"\"><p style=\"margin:.1px;line-height:120%;font-size:16px\"><span style=\"font-family:Arial;font-size:16px;font-weight:bold;color:#00afdb;letter-spacing:0;white-space:nowrap\">James Castrission</span><br><span style=\"font-family:Arial;font-size:13px;font-weight:bold;color:#646464;white-space:nowrap\">International Keynote Speaker,<span>&nbsp;</span></span><span style=\"font-family:Arial;font-size:13px;font-weight:bold;color:#646464;white-space:nowrap\">MyAdventure Group</span></p></td></tr><tr><td nowrap=\"\" width=\"272\" height=\"0\" style=\"height:0;padding-top:14px;white-space:nowrap;width:272px;font-family:Arial\"><p style=\"margin:1px;line-height:99%;font-size:12px\"><span style=\"white-space:nowrap\"><a href=\"tel:0402904334\" style=\"font-family:Arial;text-decoration:unset\" rel=\"nofollow noreferrer\" target=\"_blank\"><span style=\"line-height:120%;font-family:Arial;font-size:12px;color:#212121;white-space:nowrap\">0402904334</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href=\"https://myadventuregroup.com.au\" style=\"font-family:Arial;text-decoration:unset\" rel=\"nofollow noreferrer\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://myadventuregroup.com.au&amp;source=gmail&amp;ust=1778116515475000&amp;usg=AOvVaw25GlaqThZvU3ljmZHv-3wd\"><span style=\"line-height:120%;font-family:Arial;font-size:12px;color:#212121;white-space:nowrap\">myadventuregrou<wbr>p.com.au</span></a></span></p></td></tr><tr><td nowrap=\"\" width=\"218\" height=\"0\" style=\"height:0;padding-top:8px;white-space:nowrap;width:218px;font-family:Arial\"><p style=\"margin:1px;line-height:99%;font-size:12px\"><span style=\"white-space:nowrap\"><a href=\"mailto:james@myadventuregroup.com.au\" style=\"font-family:Arial;text-decoration:unset\" rel=\"nofollow noreferrer\" target=\"_blank\"><span style=\"line-height:120%;font-family:Arial;font-size:12px;color:#212121;white-space:nowrap\">james@myadventuregroup.com.au</span></a></span></p></td></tr><tr><td nowrap=\"\" width=\"300\" height=\"0\" style=\"height:0;padding-top:8px;white-space:nowrap;width:300px;font-family:Arial\"><p style=\"margin:1px;line-height:99%;font-size:12px\"><span style=\"color:rgb(33,33,33)\">49 Miowera Rd, North Turramurra NSW</span></p></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td height=\"0\" style=\"height:0;line-height:1%;padding-top:16px;font-size:1px\"></td></tr><tr><td><table style=\"border-collapse:collapse;max-width:469px;padding-right:8px;font-size:12px;color:#333333;line-height:normal\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tbody><tr><td height=\"0\" style=\"height:0\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td height=\"0\" style=\"height:0\"><p style=\"margin:1px\"><a href=\"https://www.myadventuregroup.com.au/free-consult/?utm_source=outbound+mail&amp;utm_medium=email&amp;utm_campaign=keynote\" rel=\"nofollow noreferrer\" style=\"text-decoration:none;display:block\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://www.myadventuregroup.com.au/free-consult/?utm_source%3Doutbound%2Bmail%26utm_medium%3Demail%26utm_campaign%3Dkeynote&amp;source=gmail&amp;ust=1778116515475000&amp;usg=AOvVaw1hUHqCkcZyoVtiBnCvmR5t\"><img src=\"https://ci3.googleusercontent.com/meips/ADKq_NZbttvy3Obnf_Li_ZA41G2EqKFW5Mn9AP98BUC7Bke7GKC6BCzXM3i_VV0vxgS-iizLi2zlyTakCjWbRjdMpqTR1vV7lVDJ_-DTOBjjLFKx_-aS6JXI7aS_TcTE3ZVh0rvl8tkeW7wGuWq2xECNo6P_rJSLh8iLOA24cnZlGhbdsefwdb2fYRFRIyzaBHorOouujDSdkk_6SA3W_i8=s0-d-e1-ft#https://cdn.gifo.wisestamp.com/apps/app_button/full/BOOK%20A%20FREE%2020-MIN.%20CONSULTATION/ffffff/00AFDB/52/10/calendar2-50/left.png\" height=\"39\" alt=\"Meeting Button App\" class=\"CToWUd\" data-bit=\"iit\"></a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td height=\"0\" style=\"height:0;line-height:1%;padding-top:16px;font-size:1px\"></td></tr></tbody></table>",
         "options": {
-          "threadId": "={{ $('Get many messages').item.json.threadId }}"
+          "threadId": "={{ $('Get many messages').item.json.threadId }}",
+          "sendTo": "={{ $('Get many messages').item.json.headers.from.match(/<([^>]+)>/)?.[1] || $('Get many messages').item.json.headers.from }}"
         }
       },
       "type": "n8n-nodes-base.gmail",
@@ -374,9 +376,9 @@
         1584,
         208
       ],
-      "id": "dc26d2a2-32da-4f3f-9e44-42e40b46908a",
+      "id": "a38c7687-89cd-4fae-a90d-2f1cd115c12b",
       "name": "Create a draft1",
-      "webhookId": "c734299c-21dd-4182-ab62-46fbda9d15c7",
+      "webhookId": "78e7e8e8-1128-48b4-8529-d6674a601cf7",
       "credentials": {
         "gmailOAuth2": {
           "id": "dkfeQrltUckqbpZg",
@@ -399,9 +401,9 @@
         1760,
         208
       ],
-      "id": "7e23468c-dedf-4cf4-b184-90013c4199f6",
+      "id": "3c389d4a-d480-4902-bde0-f95f5ad123d8",
       "name": "Add label to thread1",
-      "webhookId": "d3c6f44b-9f6b-4a60-8733-25e43b0a2c03",
+      "webhookId": "14df8261-c96c-4f1e-b6e9-45bc150a9bc6",
       "credentials": {
         "gmailOAuth2": {
           "id": "dkfeQrltUckqbpZg",
@@ -433,7 +435,7 @@
         1248,
         208
       ],
-      "id": "e9ca984a-298b-424f-b0c0-bfffeb807873",
+      "id": "cbb27101-e26a-40c2-b918-eea3f3b98426",
       "name": "Message a model1",
       "credentials": {
         "googlePalmApi": {
@@ -453,7 +455,7 @@
         896,
         208
       ],
-      "id": "ae8985f9-d899-4baf-9f95-ca48c3414ee0",
+      "id": "cb4a461a-ccca-4d15-96f0-677f7ab83ddd",
       "name": "Get a document1",
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -482,7 +484,7 @@
         688,
         208
       ],
-      "id": "51b8eea8-5300-46c6-b7ae-9964d6396ef1",
+      "id": "a3cf24bc-a878-482c-9eaf-45225ab2597b",
       "name": "Edit Fields1"
     },
     {
@@ -495,7 +497,7 @@
         1088,
         208
       ],
-      "id": "78cedb14-c4b4-43ad-809a-84c4c37937b9",
+      "id": "badd645c-3d82-4ac8-9984-44dfc5623b33",
       "name": "Code in JavaScript2"
     },
     {
@@ -509,9 +511,9 @@
         1968,
         208
       ],
-      "id": "593b0084-56dc-4637-9af9-9e12c7fc3a54",
+      "id": "7c75eeb2-290a-4ac0-aa71-cc09787ae547",
       "name": "Mark a message as read1",
-      "webhookId": "9d915db6-f2cd-4993-a15d-363316b165de",
+      "webhookId": "1131fb82-b079-4239-b231-1692f943d891",
       "credentials": {
         "gmailOAuth2": {
           "id": "dkfeQrltUckqbpZg",
@@ -530,15 +532,16 @@
         2176,
         208
       ],
-      "id": "acdee7dd-377c-4cb1-a018-d9bfe80869ea",
+      "id": "5564f1a9-3ed9-4503-8ed4-237b5eb65589",
       "name": "Mark a message as read2",
-      "webhookId": "a0f5f26f-7ba3-47a1-ba1f-b7ab278e72c6",
+      "webhookId": "76ddc159-268e-486a-8a00-6490eba09af6",
       "credentials": {
         "gmailOAuth2": {
           "id": "SwjlZakMLClOxHff",
           "name": "Gmail account 2"
         }
-      }
+      },
+      "disabled": true
     },
     {
       "parameters": {
@@ -551,9 +554,9 @@
         2544,
         -320
       ],
-      "id": "4bc2e086-2c7e-4150-a3d5-6e7b4cbd1614",
+      "id": "0aff2171-e97f-4e2d-a5f9-4655a9d5810c",
       "name": "Mark a message as read3",
-      "webhookId": "9d915db6-f2cd-4993-a15d-363316b165de",
+      "webhookId": "99000395-50b5-48fc-9f81-47fad7aeb793",
       "credentials": {
         "gmailOAuth2": {
           "id": "dkfeQrltUckqbpZg",
@@ -814,16 +817,17 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate"
+    "binaryMode": "separate",
+    "availableInMCP": false
   },
-  "versionId": "381ed9f1-c07b-49e3-b453-498cf51fc4e6",
+  "versionId": "545fa7f2-e9a4-437e-8bcc-7d4cdf49d909",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
   },
-  "id": "7pRxjoXSpLl3z9bo",
+  "id": "pqm8gfpp5UY8s2uC",
   "tags": []
 }
