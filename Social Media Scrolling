@@ -1,0 +1,3154 @@
+{
+  "name": "170626 - linkedIn Scraper",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "Run actor and get dataset",
+        "actorSource": "store",
+        "actorId": {
+          "__rl": true,
+          "value": "A3cAPGpwBEG8RJwse",
+          "mode": "list",
+          "cachedResultName": "LinkedIn Profile Posts Scraper (No Cookies) (harvestapi/linkedin-profile-posts)",
+          "cachedResultUrl": "https://console.apify.com/actors/A3cAPGpwBEG8RJwse/input"
+        },
+        "customBody": "={\n  \"targetUrls\": [\n    \"{{ $json.linkedin }}\"\n  ],\n  \"maxPosts\": 30,\n  \"postedLimitDate\": \"{{ DateTime.fromFormat($('Code in JavaScript1').item.json.latest_timestamp, 'M/d/yyyy H:mm:ss').toISO() }}\",\n  \"includeQuotePosts\": false,\n  \"includeReposts\": false\n}"
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        -608
+      ],
+      "id": "6a11983d-7903-4209-b9ac-ccfbf24ee922",
+      "name": "Run an Actor and get dataset",
+      "alwaysOutputData": true,
+      "credentials": {
+        "apifyApi": {
+          "id": "w3LbtvtHVs46k5bb",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Grab all raw items entering the node from Apify\nconst items = $input.all();\n\nif (!items || items.length === 0) {\n    return [{ json: { formattedText: \"No data received from Apify.\" } }];\n}\n\n// 2. Loop through every item and extract the fields verbatim\nconst rawFormattedPosts = items.map((item, index) => {\n    const post = item.json;\n\n    // Convert nested objects/arrays to strings so they don't print as [object Object]\n    const contentAttributesStr = JSON.stringify(post.contentAttributes);\n    const authorStr = JSON.stringify(post.author);\n    const postedAtStr = JSON.stringify(post.postedAt);\n    const postImagesStr = JSON.stringify(post.postImages);\n    const socialContentStr = JSON.stringify(post.socialContent);\n    const commentsStr = JSON.stringify(post.comments);\n    const headerStr = JSON.stringify(post.header);\n    const engagementStr = JSON.stringify(post.engagement);\n    const reactionsStr = JSON.stringify(post.reactions);\n    const reactionIdsStr = JSON.stringify(post.reactionIds);\n    const commentIdsStr = JSON.stringify(post.commentIds);\n    const queryStr = JSON.stringify(post.query);\n    const articleStr = post.article ? JSON.stringify(post.article) : undefined;\n    const postVideoStr = post.postVideo ? JSON.stringify(post.postVideo) : undefined;\n\n    // Build the string using Apify's exact structure and keys\n    let postString = `Post Array Index: ${index}\n\"type\": \"${post.type}\"\n\"id\": \"${post.id}\"\n\"linkedinUrl\": \"${post.linkedinUrl}\"\n\"content\": \"${post.content}\"\n\"contentAttributes\": ${contentAttributesStr}\n\"author\": ${authorStr}\n\"postedAt\": ${postedAtStr}\n\"postImages\": ${postImagesStr}`;\n\n    // Safely add optional original fields if they exist in the post object\n    if (postVideoStr) postString += `\\n\"postVideo\": ${postVideoStr}`;\n    if (articleStr) postString += `\\n\"article\": ${articleStr}`;\n\n    postString += `\n\"socialContent\": ${socialContentStr}\n\"comments\": ${commentsStr}\n\"header\": ${headerStr}\n\"entityId\": \"${post.entityId}\"\n\"shareUrn\": \"${post.shareUrn}\"\n\"shareLinkedinUrl\": \"${post.shareLinkedinUrl}\"\n\"engagement\": ${engagementStr}\n\"reactions\": ${reactionsStr}\n\"reactionIds\": ${reactionIdsStr}\n\"commentIds\": ${commentIdsStr}\n\"query\": ${queryStr}`;\n\n    return postString;\n});\n\n// 3. Join all items back into a single massive string separated by newlines\nconst finalSingleString = rawFormattedPosts.join('\\n\\n,\\n\\n');\n\n// 4. Return it as an object property n8n can map downstream\nreturn [\n    {\n        json: {\n            formattedText: finalSingleString\n        }\n    }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1872,
+        -1072
+      ],
+      "id": "783fbd9f-7f10-43e0-b731-ef9faa06f8f8",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Grab the raw content block containing the escaped string\nconst rawTextString = $input.first().json.content\n\nif (!rawTextString) {\n    return [{ json: { error: \"No content string found to convert.\" } }];\n}\n\ntry {\n    // 2. Split the massive text block by our custom item separator\n    const postBlocks = rawTextString.split(/\\n\\n,\\n\\n|\\r\\n\\r\\n,\\r\\n\\r\\n/);\n    const parsedItems = [];\n\n    // Keys that represent primitive string fields from raw payload\n    const stringKeys = [\"type\", \"id\", \"linkedinUrl\", \"content\", \"entityId\", \"shareUrn\", \"shareLinkedinUrl\"];\n\n    // 3. Process each plain text post block\n    for (const block of postBlocks) {\n        if (!block.trim()) continue;\n\n        const autoMappedObject = {};\n        \n        // Find positions of bracketed JSON fragments or string literals\n        const lines = block.split('\\n');\n        \n        // Combine lines back to process properties reliably\n        const normalizedBlock = lines.map(line => line.trim()).join(' ');\n\n        // Function to extract text data between programmatic boundaries\n        const extractValue = (targetKey) => {\n            const pattern = new RegExp(`\"${targetKey}\":\\\\s*(.*)`);\n            const match = normalizedBlock.match(pattern);\n            if (!match) return undefined;\n\n            let residue = match[1].trim();\n\n            // Handle string types wrapped in double quotes\n            if (stringKeys.includes(targetKey)) {\n                if (residue.startsWith('\"')) {\n                    // Pull text up to the concluding quote boundary\n                    const endQuoteIdx = residue.indexOf('\"', 1);\n                    return endQuoteIdx !== -1 ? residue.substring(1, endQuoteIdx) : residue;\n                }\n                return residue;\n            }\n\n            // Handle complex objects / arrays\n            if (residue.startsWith('{') || residue.startsWith('[')) {\n                let depth = 0;\n                let endIdx = 0;\n                const openChar = residue[0];\n                const closeChar = openChar === '{' ? '}' : ']';\n\n                for (let i = 0; i < residue.length; i++) {\n                    if (residue[i] === openChar) depth++;\n                    else if (residue[i] === closeChar) depth--;\n                    \n                    if (depth === 0) {\n                        endIdx = i + 1;\n                        break;\n                    }\n                }\n                const jsonSegment = residue.substring(0, endIdx);\n                try {\n                    return JSON.parse(jsonSegment);\n                } catch (e) {\n                    return null;\n                }\n            }\n            return null;\n        };\n\n        // --- EXTRACT RAW OBJECTS ---\n        const author = extractValue('author') || {};\n        const postedAt = extractValue('postedAt') || {};\n        const engagement = extractValue('engagement') || {};\n        const postImages = extractValue('postImages') || [];\n        const postVideo = block.includes('\"postVideo\":') ? extractValue('postVideo') : null;\n        const article = block.includes('\"article\":') ? extractValue('article') : null;\n        const socialContent = extractValue('socialContent') || {};\n        const queryContext = extractValue('query') || {};\n        const contentAttributes = extractValue('contentAttributes') || [];\n\n        // Custom string override pattern for content formatting preservation\n        const contentMatch = block.match(/\"content\":\\s*\"([\\s\\S]*?)\"\\s*\\n\\s*\"contentAttributes\":/);\n        const contentVal = contentMatch ? contentMatch[1] : extractValue('content');\n\n        // --- 4. MAP OBJECT KEYS DIRECTLY TO SNAKE_CASE SQL COLUMNS ---\n        autoMappedObject.id = extractValue('id');\n        autoMappedObject.type = extractValue('type') || 'post';\n        autoMappedObject.linkedin_url = extractValue('linkedinUrl');\n        autoMappedObject.entity_id = extractValue('entityId');\n        autoMappedObject.share_urn = extractValue('shareUrn');\n        autoMappedObject.share_linkedin_url = extractValue('shareLinkedinUrl');\n        \n        // Content\n        autoMappedObject.content = contentVal;\n        autoMappedObject.content_attributes = contentAttributes;\n\n        // Flattened Author Fields (Exactly what you needed)\n        autoMappedObject.author_id = author.id || null;\n        autoMappedObject.author_name = author.name || null;\n        autoMappedObject.author_public_identifier = author.publicIdentifier || null;\n        autoMappedObject.author_info = author.info || null;\n        autoMappedObject.author_full_data = author; // Full object fits cleanly into JSONB\n\n        // Timestamps\n        autoMappedObject.posted_at_timestamp = postedAt.timestamp ? Number(postedAt.timestamp) : null;\n        autoMappedObject.posted_at_date = postedAt.date || null;\n        autoMappedObject.posted_ago_short = postedAt.postedAgoShort || null;\n\n        // Flattened Engagement Counts\n        autoMappedObject.likes_count = engagement.likes !== undefined ? Number(engagement.likes) : 0;\n        autoMappedObject.comments_count = engagement.comments !== undefined ? Number(engagement.comments) : 0;\n        autoMappedObject.shares_count = engagement.shares !== undefined ? Number(engagement.shares) : 0;\n\n        // Compressed Media / Settings JSONB Targets\n        autoMappedObject.media_data = { images: postImages, video: postVideo, article: article };\n        autoMappedObject.social_settings = socialContent;\n        autoMappedObject.raw_query_context = queryContext;\n\n        // Add to execution output schema\n        parsedItems.push({ json: autoMappedObject });\n    }\n\n    return parsedItems;\n\n} catch (error) {\n    return [{\n        json: { \n            error: \"Failed parsing plain-text block layout.\",\n            details: error.message\n        }\n    }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2368,
+        -928
+      ],
+      "id": "8fe9487f-c6c7-4bbb-8987-5a71ace35742",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// 1. Grab the 'text' string from the CURRENT item\nconst rawText = $json.content?.parts?.[0]?.text;\n\nif (!rawText) {\n  return { error: \"No text field found on this item.\" };\n}\n\nconst result = {\n  id: null,\n  is_speaking_engagement: null // Set to null to match your new schema state\n};\n\ntry {\n  // 2. Safe string extraction for ultra-long IDs to prevent rounding corruption\n  const idRegex = /\"id\"\\s*:\\s*([0-9]+)/;\n  const idMatch = rawText.match(idRegex);\n  if (idMatch) {\n    result.id = idMatch[1]; // Safely captures the exact 19-digit number as a string text block\n  }\n\n  // 3. Parse the JSON to grab the remaining parameters smoothly\n  const parsedJson = JSON.parse(rawText);\n  const targetObj = Array.isArray(parsedJson) ? (parsedJson[0] || {}) : parsedJson;\n\n  // Handle the boolean assignment carefully\n  if (targetObj.is_speaking_engagement !== undefined) {\n    result.is_speaking_engagement = targetObj.is_speaking_engagement;\n  }\n\n  // Fallback if the regex somehow missed the ID but JSON found something\n  if (!result.id && targetObj.id) {\n    result.id = String(targetObj.id);\n  }\n\n  return result;\n\n} catch (error) {\n  // Fallback parser if LLM syntax is broken or wrapped heavily in Markdown blocks\n  if (!result.id) {\n    const backupIdRegex = /(?:id)\\s*:\\s*`?[\"']?([0-9a-zA-Z_-]+)[\"']?`?/i;\n    const backupIdMatch = rawText.match(backupIdRegex);\n    if (backupIdMatch) result.id = backupIdMatch[1].trim();\n  }\n\n  const speakingRegex = /(?:is_speaking_engagement)\\s*:\\s*`?[\"']?(true|false|null)[\"']?`?/i;\n  const speakingMatch = rawText.match(speakingRegex);\n  if (speakingMatch) {\n    const matchStr = speakingMatch[1].toLowerCase();\n    result.is_speaking_engagement = matchStr === \"null\" ? null : matchStr === \"true\";\n  }\n\n  if (result.id || result.is_speaking_engagement !== null) {\n    return result;\n  }\n\n  return {\n    error: \"Failed to parse text via standalone string lookup or fallback Regex layer.\",\n    details: error.message,\n    originalText: rawText\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5168,
+        384
+      ],
+      "id": "ec66b94d-bdc8-452d-8751-651f56427203",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4464,
+        240
+      ],
+      "id": "2082883d-e49c-435e-87db-cd8ea93a2f60",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an expert data classification assistant. Your sole task is to analyze the provided text and determine if it describes a \"speaking engagement.\"\n\nA speaking engagement includes events where a person is presenting, giving a speech, participating in a panel discussion, delivering a keynote, lecturing, or hosting a seminar/webinar. \n\nAnalyze the text and return a valid JSON array containing a single object with the keys \"id\" and \"is_speaking_engagement\". Do not include any other commentary, fields, or markdown formatting.\n\n### ID:\n{{ $json.id }}\n\n### Input Text:\n{{ $json.content }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        4832,
+        384
+      ],
+      "id": "70f45ce4-71b1-4bc9-b706-41d2a675777a",
+      "name": "Message a model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XG2PrK6c7CxaKFQR",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Edit Fields').item.json.documentId }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.formattedText }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2048,
+        -1072
+      ],
+      "id": "21758762-356f-423a-b8d7-aa8f731d5ae4",
+      "name": "Update a document1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "BOSN89Vk0pGPd5vU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": "sharedWithMe",
+        "folderId": "=1L9bRYIZA0ydiMEZH3QUVMNA75gLW8ISI",
+        "title": "={{ 'LinkedIn Scraped Data - ' + $('Loop Over Items1').item.json[\"Batch to Process\"] + ' - ' + $now.setZone('Australia/Sydney').format('dd-MM-yyyy') }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        352,
+        208
+      ],
+      "id": "a452f6ef-2d21-4291-9f24-a59bcc03e7a6",
+      "name": "Create a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "BOSN89Vk0pGPd5vU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        4736,
+        -16
+      ],
+      "id": "ba085c35-0860-4319-87c8-407715a6aaaa",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=1479600808#gid=1479600808",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Loop Over Items1').item.json[\"Batch to Process\"] }}",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        -608
+      ],
+      "id": "ff75273c-c3fd-4272-97d4-810473c6b097",
+      "name": "GetRows",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?pli=1&gid=1479600808#gid=1479600808",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1479600808,
+          "mode": "list",
+          "cachedResultName": "linkedIn",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1479600808"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1792,
+        736
+      ],
+      "id": "23881285-805d-43ea-a8fc-34906fe36377",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?pli=1&gid=1479600808#gid=1479600808",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1741728749,
+          "mode": "list",
+          "cachedResultName": "linkedInEmailList",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1741728749"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "LinkedInPostID": "={{ $('Loop Over Items2').item.json.id }}",
+            "Event": "={{ $json.content.parts[0].text }}"
+          },
+          "matchingColumns": [
+            "LinkedInPostID"
+          ],
+          "schema": [
+            {
+              "id": "LinkedInPostID",
+              "displayName": "LinkedInPostID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Competitor",
+              "displayName": "Competitor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Event",
+              "displayName": "Event",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Firstname",
+              "displayName": "Firstname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lastname",
+              "displayName": "Lastname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DateTime Logged (Aus)",
+              "displayName": "DateTime Logged (Aus)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Drafted?",
+              "displayName": "Email Drafted?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -640,
+        720
+      ],
+      "id": "af254da9-90ec-4b44-94b3-7d958733d4c4",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7a74df3d-fa7a-4333-bf11-1dcb0f7939ed",
+              "leftValue": "={{ !!$json[\"Event Name\"] && $json[\"Event Name\"].trim().length > 0 }}",
+              "rightValue": " \\S",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "197567b6-3826-4cb7-894d-167f9d1b9afb",
+              "leftValue": "={{ !!$json.Company && $json.Company.trim().length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1632,
+        736
+      ],
+      "id": "dc317e37-0efa-458e-b0c4-1eaf47339e23",
+      "name": "If1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1184,
+        544
+      ],
+      "id": "d87943bf-e66e-45d3-82d2-869660908966",
+      "name": "Loop Over Items2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Extract the event name from the LinkedIn post below. \n\nRules:\n1. Output the event name and NOTHING else. \n2. Do not include introductory text, explanations, or punctuation.\n3. If no official event name is mentioned, infer a concise event name based on the context (e.g., \"Company Annual Gala\" or \"Tech Networking Mixer\").\n\nLinkedIn Post:\n{{ $json.Content }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -992,
+        720
+      ],
+      "id": "0751fbc3-cc52-4eaa-889f-f5c1671fceb6",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XG2PrK6c7CxaKFQR",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2000,
+        992
+      ],
+      "id": "3719286e-1dcd-480a-842e-d8bfb2e18223",
+      "name": "Schedule Trigger1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?pli=1&gid=1479600808#gid=1479600808",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1479600808,
+          "mode": "list",
+          "cachedResultName": "linkedIn",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1479600808"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1792,
+        992
+      ],
+      "id": "94761a6c-6f53-4976-b47d-dd05df0d00f6",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?pli=1&gid=1479600808#gid=1479600808",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1741728749,
+          "mode": "list",
+          "cachedResultName": "linkedInEmailList",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1741728749"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "LinkedInPostID": "={{ $json.id }}",
+            "Event": "={{ $json[\"Event Name\"] }}"
+          },
+          "matchingColumns": [
+            "LinkedInPostID"
+          ],
+          "schema": [
+            {
+              "id": "LinkedInPostID",
+              "displayName": "LinkedInPostID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Competitor",
+              "displayName": "Competitor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Event",
+              "displayName": "Event",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Firstname",
+              "displayName": "Firstname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lastname",
+              "displayName": "Lastname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DateTime Logged (Aus)",
+              "displayName": "DateTime Logged (Aus)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Drafted?",
+              "displayName": "Email Drafted?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -848,
+        976
+      ],
+      "id": "9b51df80-450c-4b2b-8264-89543425080d",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7a74df3d-fa7a-4333-bf11-1dcb0f7939ed",
+              "leftValue": "={{ !!$json[\"Event Name\"] && $json[\"Event Name\"].trim().length > 0 }}",
+              "rightValue": " \\S",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1632,
+        992
+      ],
+      "id": "46493847-b728-415a-ba57-43868a1e99b6",
+      "name": "If",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1984,
+        736
+      ],
+      "id": "b82d359a-8aad-4db9-bea9-3f92eb584cc7",
+      "name": "Schedule Trigger2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1984,
+        -656
+      ],
+      "id": "cf08dfd5-8b22-4c3d-b571-38b04b00cd96",
+      "name": "Schedule Trigger",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1VYcNlfcjrjsKuA4FjKNEhTlkk4utjn7L3VlgWLedU54/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 406694574,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VYcNlfcjrjsKuA4FjKNEhTlkk4utjn7L3VlgWLedU54/edit#gid=406694574"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1776,
+        -656
+      ],
+      "id": "0efd55df-670f-46d1-a0d1-3349160bc89b",
+      "name": "Get row(s) in sheet3",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7a74df3d-fa7a-4333-bf11-1dcb0f7939ed",
+              "leftValue": "={{ !!$json.Status && $json.Status.trim().length > 0 }}",
+              "rightValue": " \\S",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1616,
+        -656
+      ],
+      "id": "b9b37afb-c60b-4eb5-9773-fc69e66df84d",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.documentId }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2208,
+        -1072
+      ],
+      "id": "ee3b7db0-69ca-46d3-90fd-710162bbaeaf",
+      "name": "Get a document1",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "BOSN89Vk0pGPd5vU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1VYcNlfcjrjsKuA4FjKNEhTlkk4utjn7L3VlgWLedU54/edit?resourcekey=&gid=406694574#gid=406694574",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 406694574,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VYcNlfcjrjsKuA4FjKNEhTlkk4utjn7L3VlgWLedU54/edit#gid=406694574"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.Timestamp ?? $('If2').item?.json?.Timestamp ?? 'No Timestamp Found' }}",
+            "Status": "processed"
+          },
+          "matchingColumns": [
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Requestor",
+              "displayName": "Requestor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Batch to Process",
+              "displayName": "Batch to Process",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        6192,
+        -640
+      ],
+      "id": "d1f9e01a-64f4-4368-8e64-27dfa19c4ee3",
+      "name": "Update row in sheet3",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1296,
+        -672
+      ],
+      "id": "4780f5f3-9b97-484a-a24f-5836b658ffd9",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ [\n'julienne@myadventuregroup.com.au', 'liv@myadventuregroup.com.au', 'james@myadventuregroup.com.au',\n'jaycel@myadventuregroup.com.au',\n'claire@myadventuregroup.com.au',\n'marielle@myadventuregroup.com.au'\n].join(', ') }}",
+        "subject": "Automated LinkedIn Scraping (Test)",
+        "message": "<div style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;\">\n    <p>Hi,</p>\n    \n    <p>Your daily LinkedIn Scraping Automation has been executed successfully. Updates logged in the attached sheet:</p>\n    \n    <p style=\"margin-bottom: 20px;\"><strong>Sheet:</strong> Social Media Scraping Sheet</p>\n    \n    <p style=\"margin: 20px 0;\">\n        <a href=\"https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=1479600808#gid=1479600808\" \n           style=\"background-color: #0a66c2; color: #ffffff !important; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; display: inline-block;\">\n           Open Google Sheet\n        </a>\n    </p>\n    \n    <hr style=\"border: 0; border-top: 1px solid #eeeeee; margin-top: 30px;\">\n    \n    <p style=\"color: #777777; font-size: 0.9em; margin-top: 15px;\">\n        Thanks,<br>\n        <strong>n8n Automation</strong>\n    </p>\n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        688,
+        -1664
+      ],
+      "id": "9ef60470-2140-4b75-86ab-cf32c281509f",
+      "name": "Send a message1",
+      "webhookId": "f39a138c-1840-4162-9130-e64bff2843ae",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "=1ZD8BL3xytfRumQ0p-NnCPodL0ZP9-fM-FQw7OHMcEkI"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1840,
+        -1264
+      ],
+      "id": "343d2ec0-6e35-41a2-b681-29e2f04d82fc",
+      "name": "Get a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "BOSN89Vk0pGPd5vU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1680,
+        -1264
+      ],
+      "id": "94c0f2d8-c728-4d29-b543-66ed02e8de9f",
+      "name": "Schedule Trigger3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "01462800-12bc-46e8-848d-e09e0f3902b5",
+              "leftValue": "={{ Object.keys($input.first().json).length > 0 }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1472,
+        -608
+      ],
+      "id": "1973eef7-c318-4f33-8797-c20d815121ea",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "sendTo": "=julienne@myadventuregroup.com.au",
+        "subject": "Automated LinkedIn Scraping (Test)",
+        "message": "<div style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;\">\n    <p>Hi,</p>\n    \n    <p>Your daily LinkedIn Scraping Automation has been executed successfully. Updates logged in the attached sheet:</p>\n    \n    <p style=\"margin-bottom: 20px;\"><strong>Sheet:</strong> Social Media Scraping Sheet</p>\n    \n    <p style=\"margin: 20px 0;\">\n        <a href=\"https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=1479600808#gid=1479600808\" \n           style=\"background-color: #0a66c2; color: #ffffff !important; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; display: inline-block;\">\n           Open Google Sheet\n        </a>\n    </p>\n    \n    <hr style=\"border: 0; border-top: 1px solid #eeeeee; margin-top: 30px;\">\n    \n    <p style=\"color: #777777; font-size: 0.9em; margin-top: 15px;\">\n        Thanks,<br>\n        <strong>n8n Automation</strong>\n    </p>\n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        -1664
+      ],
+      "id": "98d49569-f9ea-4f70-8d4c-f150ca444e27",
+      "name": "Send a message",
+      "webhookId": "a099b7b9-eeec-44a0-869f-adcae4c91974",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        352,
+        -1664
+      ],
+      "id": "5a051b5c-c2d3-4748-a114-e75cf1b8b274",
+      "name": "Limit3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the incoming items\nlet items = $input.all();\n\n// 2. Check if the incoming payload is just an empty array structure: [{}]\nconst isEmptyObjectArray = \n  items.length === 1 && \n  typeof items[0].json === 'object' && \n  items[0].json !== null && \n  Object.keys(items[0].json).length === 0;\n\n// 3. If it is empty, fallback to the \"Get many rows\" node output instead\nif (isEmptyObjectArray) {\n  items = $(\"Get many rows\").all();\n}\n\n// 4. Filter down to only items where \"is_speaking_engagement\" is strictly null\nconst filteredItems = items.filter(item => {\n  // Checks for strict null values (unassigned state)\n  return item.json[\"is_speaking_engagement\"] === null;\n});\n\n// Return the filtered list to the next node\nreturn filteredItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4000,
+        240
+      ],
+      "id": "dfd17923-c297-46d5-868b-4f492ae3b099",
+      "name": "Code in JavaScript6",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// 1. Grab the 'text' string from the CURRENT item\nconst rawText = $json.content?.parts?.[0]?.text;\n\nif (!rawText) {\n  return { error: \"No text field found on this item.\" };\n}\n\ntry {\n  // Try parsing as normal JSON first\n  const parsedJson = JSON.parse(rawText);\n  return Array.isArray(parsedJson) ? (parsedJson[0] || {}) : parsedJson;\n\n} catch (error) {\n  // If JSON parsing fails, gracefully parse the markdown bullet-point layout\n  const result = {};\n  \n  // Regex to capture key-value structures like: - `key`: value or \"key\": value\n  const regex = /(?:-\\s*`?|[\"']?)([a-zA-Z0-9_\\s\\?]+)(?:`?|[\"']?)\\s*:\\s*(.*)/g;\n  let match;\n\n  while ((match = regex.exec(rawText)) !== null) {\n    let key = match[1].trim();\n    let value = match[2].trim();\n\n    // Clean up key variations (like matching JSON payload keys)\n    if (key === \"ID\") key = \"ID\";\n    if (key === \"competitor\") key = \"competitor\";\n\n    // Clean up stringified values, stripping extra quotes or trailing syntax\n    value = value.replace(/^[\"'`]|[\"'`]$/g, '').trim();\n\n    // Convert literal type representations cleanly\n    if (value === \"null\") {\n      result[key] = null;\n    } else if (value === \"false\") {\n      result[key] = false;\n    } else if (value === \"true\") {\n      result[key] = true;\n    } else {\n      result[key] = value;\n    }\n  }\n\n  // Ensure something was actually extracted, otherwise throw the original error\n  if (Object.keys(result).length > 0) {\n    return result;\n  }\n\n  return {\n    error: \"Failed to parse text via JSON or fallback Regex parser\",\n    details: error.message,\n    originalText: rawText\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6352,
+        -224
+      ],
+      "id": "f91c39ed-b7f1-4c7c-9c9c-c85aebcc0ba6",
+      "name": "Code in JavaScript7"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# Role & Objective\nYou are an expert data extraction assistant specializing in corporate competitive intelligence. Your task is to analyze raw text scraped from a competitor's LinkedIn profile and extract structured data regarding their speaking engagements.\n\n# Data Context\n- **Input_Data**: {{ $json.content }}\n- **Input ID**: {{ $json.id }}\n- **Competitor Name**: {{ $json.author_name }}\n- **is_speaking_engagement**: {{ $json.is_speaking_engagement }}\n\n# Strict Processing Rules\nFollow these steps sequentially to evaluate the data:\n\n1. **Relevance Check**: Determine if the text explicitly discusses, promotes, or recaps a corporate speaking engagement, keynote address, workshop, or event they were booked for.\n2. **Conditional Extraction**:\n   - **If RELEVANT**: \n     - Set `is_speaking_engagement` to true.\n     - Extract the client company and any mentioned point of contact (POC). Do not invent names; if a field is not explicitly mentioned, return null.\n     - **Event Name Rule**: Identify and extract the official event name. If an official event name is NOT explicitly mentioned, you MUST logically infer a concise and contextually accurate event name (e.g., \"Snap Fitness Annual Conference\" or \"Corporate Resilience Masterclass\"). This field must **NEVER** be null or empty when `is_speaking_engagement` is true.\n     - Extract or infer the date of the event/engagement if mentioned in the post. You must normalize this date into the **Australian Date Format (DD/MM/YYYY)** (e.g., 25/12/2026). If the exact day cannot be determined but the month is known, fallback to \"MM/YYYY\". If no date context exists at all, return null.\n   - **If NOT RELEVANT**: \n     - Set `is_speaking_engagement` to false.\n     - Summarize the actual nature of the post in the `Description`.\n     - Set `Company`, `POC`, `eventName`, and `engagement_date` strictly to null.\n\n# Output Schema Definition\nProvide your final output strictly as a single JSON object matching this schema. Do not include any conversational filler or markdown formatting outside the JSON block.\n\n{\n  \"ID\": \"string (Pass through the exact value from {{ $json.id }})\",\n  \"is_speaking_engagement\": \"boolean (Pass through the exact value from data context)\",\n  \"Description\": \"string (A concise 1-2 sentence summary of the keynote/event, or general post context if not an event. Cannot be null.)\",\n  \"Company\": \"string or null (The specific company or organization that booked the competitor.)\",\n  \"POC\": \"string or null (The event organizer or specific person who booked/coordinated with the speaker.)\",\n  \"eventName\": \"string or null (The official or inferred name of the event. If is_speaking_engagement is true, this MUST be filled. If false, it MUST be null.)\",\n  \"engagement_date\": \"string or null (The specific date of the event, strictly formatted as DD/MM/YYYY or MM/YYYY. Must be null if no date context exists or if is_speaking_engagement is false.)\"\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        6016,
+        -224
+      ],
+      "id": "40970ab8-9d45-47d2-9c94-233a312d6bd2",
+      "name": "Message a model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XG2PrK6c7CxaKFQR",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c0d5e26d-d432-4208-94e2-7f669be86ba8",
+              "leftValue": "={{ $json.event_name }}",
+              "rightValue": "={{ null }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "f516f79a-9fc8-4be7-8aac-6acbb2adf098",
+              "leftValue": "={{ $json.is_speaking_engagement }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        5376,
+        -16
+      ],
+      "id": "65d11a9b-e92c-4bc0-b9a3-7d42693676d9",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        5728,
+        -320
+      ],
+      "id": "02cc96f3-feb2-44ac-a881-49ebd978b2e4",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        2688,
+        -1504
+      ],
+      "id": "8c592f64-0f1b-41f2-ba7a-87af1c421fc0",
+      "name": "Schedule Trigger4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ 'LinkedIn Scraped Data - ' + $json['Batch to Process'] + ' - ' + DateTime.fromFormat($json.Timestamp, 'M/d/yyyy H:mm:ss', { zone: 'Australia/Sydney' }).toFormat('dd-MM-yyyy') }}",
+        "limit": 1,
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -368,
+        -16
+      ],
+      "id": "0ed42554-9c04-4397-86ed-545944e2121a",
+      "name": "Search files and folders",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "bcBQIDwcwHac7lRx",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "de33a337-bbc3-4bf3-b55b-a40391429acf",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "={{ 'LinkedIn Scraped Data - ' + $('Loop Over Items1').item.json[\"Batch to Process\"] + ' - ' + DateTime.fromFormat($('Loop Over Items1').item.json.Timestamp, 'M/d/yyyy H:mm:ss', { zone: 'Australia/Sydney' }).toFormat('dd-MM-yyyy') }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -208,
+        -16
+      ],
+      "id": "b6d619b3-9c3f-4c6b-be0e-fbc37081cfa5",
+      "name": "If8"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "={{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -432
+      ],
+      "id": "4324c020-9964-4ac9-8134-8207fe2e066f",
+      "name": "Get a document2",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "BOSN89Vk0pGPd5vU",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "aa507569-d4ed-424b-a465-10851145572c",
+              "leftValue": "={{ $json.content }}",
+              "rightValue": "={{ \"\\n\" }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        368,
+        -432
+      ],
+      "id": "ce38c56d-4658-49bf-ad7c-b9bb43f73f83",
+      "name": "If9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "80b377a9-db35-4552-881b-0fa65f144638",
+              "name": "documentId",
+              "value": "={{ $json.documentId ?? $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        -608
+      ],
+      "id": "6bbc0919-3882-4cf5-bf85-a385b83f9f42",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "tableId": "linkedin_posts",
+        "dataToSend": "autoMapInputData",
+        "inputsToIgnore": "author, postedAt, postImages, postVideo, article, socialContent, engagement, query, reactions, reactionIds, commentIds, comments, contentAttributes, header, entityId, shareUrn, shareLinkedinUrl, linkedinUrl"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3296,
+        -1248
+      ],
+      "id": "6358bfa9-4dda-4e26-b033-3322336703bb",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "linkedin_posts",
+        "returnAll": true,
+        "orderBy": "=",
+        "matchType": "allFilters"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2544,
+        -928
+      ],
+      "id": "c5e87e6c-12dd-47e6-a7b2-52c8499e48cd",
+      "name": "Get many rows",
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Grab all the freshly parsed scraped items\nconst scrapedItems = $items(\"Code in JavaScript2\");\n\n// 2. Grab all the existing rows pulled from your Supabase table\nconst existingRows = $items(\"Get many rows\");\n\n// 3. Extract just the IDs from the database into a rapid-lookup Set\nconst existingIds = new Set(existingRows.map(item => item.json.id));\n\n// 4. Filter the scraped items, keeping only ones whose ID is NOT in our database Set\nconst uniqueNewItems = scrapedItems.filter(item => {\n    // Ensure the scraped item has a valid ID before testing\n    if (!item.json.id) return false;\n    \n    // Return true only if the ID doesn't exist in Supabase yet\n    return !existingIds.has(item.json.id);\n});\n\n// 5. Return the clean array of unique new items\nreturn uniqueNewItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2720,
+        -928
+      ],
+      "id": "4a59fce9-a4c3-4ba5-af99-bb4d4481f9f7",
+      "name": "Code in JavaScript8",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "linkedin_posts",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3568,
+        -1248
+      ],
+      "id": "f0e6b457-8d47-4fac-8780-a473809172a2",
+      "name": "Get many rows1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "linkedin_posts",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "is_speaking_engagement",
+              "fieldValue": "={{ $json.is_speaking_engagement }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        5376,
+        384
+      ],
+      "id": "c79676e3-eacc-452b-ba60-6552c212beda",
+      "name": "Update a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "linkedin_posts",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        5168,
+        -16
+      ],
+      "id": "c09c190b-d740-41d1-9950-51988b01c4e7",
+      "name": "Get many rows2",
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        4336,
+        -240
+      ],
+      "id": "b6d1955d-50ed-4989-882c-8479a6cfc730",
+      "name": "Schedule Trigger7",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b23fc092-fdce-4af5-bbb7-9faab45c00d4",
+              "leftValue": "={{ $json.posted_at_timestamp !== undefined }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2928,
+        -928
+      ],
+      "id": "b7622c22-a502-4283-83f4-45471771c4e7",
+      "name": "If10"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "linkedin_posts",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.ID }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "description",
+              "fieldValue": "={{ $json.Description }}"
+            },
+            {
+              "fieldId": "org",
+              "fieldValue": "={{ $json.Company }}"
+            },
+            {
+              "fieldId": "poc",
+              "fieldValue": "={{ $json.POC }}"
+            },
+            {
+              "fieldId": "event_name",
+              "fieldValue": "={{ $json.eventName }}"
+            },
+            {
+              "fieldId": "engagement_date",
+              "fieldValue": "={{ $json.engagement_date }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        6560,
+        -224
+      ],
+      "id": "f76ffe66-1bd1-4d3a-9b3d-d934b3468431",
+      "name": "Update a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e257960a-6acb-4ea1-a15b-7b01b4dd2a7c",
+              "leftValue": "={{ $json.id == undefined }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "d50affcc-9328-41d7-820b-df6a10c9806e",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4192,
+        240
+      ],
+      "id": "96bdc009-c47f-4ccf-829f-551410b56561",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Fetch all items from the \"Get row(s) in sheet3\" node\nconst sheetItems = $('Get row(s) in sheet3').all();\n\n// 2. Define your batch target variable dynamically \nconst batchVar = $('If2').first().json[\"Batch to Process\"]; \n\n// Extract just the raw JSON data from the n8n item structures\nconst allRows = sheetItems.map(item => item.json);\n\n// 3. Filter the rows that match your primary conditions\nconst matchingRows = allRows.filter(row => {\n  return row[\"Batch to Process\"] === batchVar && row[\"Status\"] === \"processed\";\n});\n\n// 4. Condition Handling\nif (matchingRows.length > 0) {\n  // Scenario A: Matches found -> Sort chronologically to get the newest timestamp first\n  matchingRows.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));\n\n  return [{\n    json: {\n      latest_timestamp: matchingRows[0].Timestamp,\n      row_number: matchingRows[0].row_number,\n      status: matchingRows[0].Status,\n      type: \"exact_match\"\n    }\n  }];\n} else {\n  // Scenario B: No exact matches -> Find the absolute latest timestamp available and subtract 15 days\n  const rowsWithDates = allRows.filter(row => row.Timestamp);\n  \n  if (rowsWithDates.length === 0) {\n    // Ultimate fallback if the sheet is completely empty or has no timestamps at all\n    return [{ json: { latest_timestamp: null, message: \"No timestamps found anywhere in the sheet.\" } }];\n  }\n\n  // Sort all rows by date to find the absolute newest one\n  rowsWithDates.sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));\n  const absoluteLatestDate = new Date(rowsWithDates[0].Timestamp);\n\n  // Subtract 15 days\n  const fallbackDate = new Date(absoluteLatestDate);\n  fallbackDate.setDate(fallbackDate.getDate() - 15);\n\n  // Manual clean format to guarantee \"M/D/YYYY H:MM:SS\" structure without Node framework quirks\n  const formattedFallbackDate = `${fallbackDate.getMonth() + 1}/${fallbackDate.getDate()}/${fallbackDate.getFullYear()} ${fallbackDate.getHours()}:${String(fallbackDate.getMinutes()).padStart(2, '0')}:${String(fallbackDate.getSeconds()).padStart(2, '0')}`;\n\n  return [{\n    json: {\n      latest_timestamp: formattedFallbackDate,\n      row_number: null,\n      status: null,\n      type: \"fallback_15_days_prior\",\n      note: `No match for ${batchVar}. Subtracted 15 days from newest sheet date (${rowsWithDates[0].Timestamp}).`\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        208
+      ],
+      "id": "bdc549db-80c8-43ed-afad-d4da8a359360",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7a74df3d-fa7a-4333-bf11-1dcb0f7939ed",
+              "leftValue": "={{ $json.event_name }}",
+              "rightValue": "={{ null }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "ef35cd65-d1d5-449e-bd6e-1bb3522dcb4f",
+              "leftValue": "={{ $json.org }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -560,
+        -1104
+      ],
+      "id": "42d1fd85-3610-4232-8932-32ca2b134f71",
+      "name": "If6"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a lead generation and OSINT specialist. \n\n**Input Company:** {{ $json.org }}\n**id:** {{ $json.id }}\n\nPerform a targeted search to find current information about the input company and execute the following steps:\n\n1. **Identify Website:** Find the official website and primary email domain used by the company.\n2. **Scour Public Data:** Search public web data, documents, directories, and contacts to locate actual, publicly listed, or verified active email addresses matching this organization's domain. Extract email contacts related to roles in events, marketing, L&D, or HR.\n3. **Extract Details:** If an email belongs to a specific person, extract their name and role. If the email is generic or role-based (e.g., info@, contact@, sales@), populate the \"poc_role\" field with the department or function (e.g., \"General Inquiries\", \"Sales Team\") and explicitly set both name fields to the string \"not found\". Under no circumstances should any field contain a literal null, undefined, or empty value. Do not guess or predict email addresses using formulas.\n4. **Format Output:** Output the gathered data as a valid JSON array and absolutely nothing else. Do not include markdown code blocks, explanations, or introductory text.\n\n### Output Schema\nUse this strict JSON schema for the output. Every property value must be a valid text string. If data for a specific field cannot be found or does not apply, use the string \"not found\":\n[\n  {\n    \"id\": \"{{ $json.id }}\",\n    \"org\": \"{{ $json.org }}\",\n    \"poc_firstname\": \"string\",\n    \"poc_lastname\": \"string\",\n    \"poc_role\": \"string\",\n    \"poc_email\": \"string\"\n  }\n]"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        -1024
+      ],
+      "id": "530838d8-efa1-4fda-af95-24a93245dc20",
+      "name": "Message a model1",
+      "retryOnFail": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XG2PrK6c7CxaKFQR",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Extract the raw text string from the AI node's deeply nested response path\nconst rawText = $input.first().json.content.parts[0].text;\n\ntry {\n  // 2. Parse the text string into an actual JavaScript array/object\n  const parsedData = JSON.parse(rawText);\n  \n  // 3. If it's an array, map it into the standard n8n data structure [ { json: {...} }, { json: {...} } ]\n  if (Array.isArray(parsedData)) {\n    return parsedData.map(person => ({ json: person }));\n  }\n  \n  // 4. Fallback if the AI returned a single JSON object instead of an array\n  return [{ json: parsedData }];\n\n} catch (error) {\n  // Catch block in case the AI returned invalid JSON syntax or Markdown blocks\n  return [{\n    json: {\n      error: \"Failed to parse JSON string\",\n      message: error.message,\n      originalText: rawText\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        784,
+        -1024
+      ],
+      "id": "3a8ab49b-9ad4-4ab7-bd43-ca3966db9cdd",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        16,
+        -1360
+      ],
+      "id": "30678b03-11ce-4ad2-949a-f6bdadc475f4",
+      "name": "Loop Over Items4"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1168,
+        -1104
+      ],
+      "id": "3ed30f36-e103-4506-8c1e-9def84c77302",
+      "name": "Schedule Trigger5"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "linkedin_posts",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "is_speaking_engagement",
+              "keyValue": "true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        -1104
+      ],
+      "id": "0d06b81a-c832-48e0-88a7-c02b97e36ee2",
+      "name": "Get a row",
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?gid=1745839069#gid=1745839069",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1745839069,
+          "mode": "list",
+          "cachedResultName": "linkedIn_VerifiedLeads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1745839069"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "Competitor": "={{ $json.author_name }}",
+            "Date of post": "={{ $json.posted_at_date }}",
+            "link": "={{ $json.linkedin_url }}",
+            "Content": "={{ $json.content }}",
+            "speaking engagement?": "={{ $json.is_speaking_engagement }}",
+            "engagement date": "={{ $json.engagement_date }}",
+            "Event Name": "={{ $json.event_name }}",
+            "Description": "={{ $json.description }}",
+            "Company": "={{ $json.org }}",
+            "POC": "={{ $json.poc }}",
+            "DateTime Logged (Aus)": "={{ $json.datetime_logged }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Competitor",
+              "displayName": "Competitor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date of post",
+              "displayName": "Date of post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "speaking engagement?",
+              "displayName": "speaking engagement?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "engagement date",
+              "displayName": "engagement date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Event Name",
+              "displayName": "Event Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "POC",
+              "displayName": "POC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DateTime Logged (Aus)",
+              "displayName": "DateTime Logged (Aus)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -416,
+        -1440
+      ],
+      "id": "e8c8835b-9e2f-44bc-89f1-4ef5e62996a9",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a665ab87-6e7c-4694-9f6a-e772b6bac092",
+              "leftValue": "={{ $json.poc_firstname == null}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        192,
+        -784
+      ],
+      "id": "8872d6b0-83ce-48ec-ae96-5fe9d2fb60e6",
+      "name": "If7"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "linkedin_posts",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "poc_firstname",
+              "fieldValue": "={{ $json.poc_firstname }}"
+            },
+            {
+              "fieldId": "poc_lastname",
+              "fieldValue": "={{ $json.poc_lastname }}"
+            },
+            {
+              "fieldId": "poc_role",
+              "fieldValue": "={{ $json.poc_role }}"
+            },
+            {
+              "fieldId": "poc_email",
+              "fieldValue": "={{ $json.poc_email }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -1024
+      ],
+      "id": "b085a530-bd38-4f4d-b56d-feb8b10a6a78",
+      "name": "Update a row2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?pli=1&gid=1741728749#gid=1741728749",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1745839069,
+          "mode": "list",
+          "cachedResultName": "linkedIn_VerifiedLeads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1745839069"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Get a row1').item.json.id }}",
+            "Competitor": "={{ $('Get a row1').item.json.author_name }}",
+            "Date of post": "={{ $('Get a row1').item.json.posted_at_date }}",
+            "link": "={{ $('Get a row1').item.json.linkedin_url }}",
+            "Content": "={{ $('Get a row1').item.json.content }}",
+            "speaking engagement?": "={{ $('Get a row1').item.json.is_speaking_engagement }}",
+            "Description": "={{ $('Get a row1').item.json.description }}",
+            "Company": "={{ $('Get a row1').item.json.org }}",
+            "POC": "={{ $('Get a row1').item.json.poc }}",
+            "Event Name": "={{ $('Get a row1').item.json.event_name }}",
+            "engagement date": "={{ $('Get a row1').item.json.engagement_date }}",
+            "DateTime Logged (Aus)": "={{ $('Get a row1').item.json.datetime_logged }}",
+            "poc_email": "={{ $('Get a row1').item.json.poc_email }}",
+            "poc_firstname": "={{ $('Get a row1').item.json.poc_firstname }}",
+            "poc_lastname": "={{ $('Get a row1').item.json.poc_lastname }}",
+            "poc_role": "={{ $('Get a row1').item.json.poc_role }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Competitor",
+              "displayName": "Competitor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date of post",
+              "displayName": "Date of post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "speaking engagement?",
+              "displayName": "speaking engagement?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "engagement date",
+              "displayName": "engagement date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Event Name",
+              "displayName": "Event Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "POC",
+              "displayName": "POC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DateTime Logged (Aus)",
+              "displayName": "DateTime Logged (Aus)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "poc_email",
+              "displayName": "poc_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "poc_firstname",
+              "displayName": "poc_firstname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "poc_lastname",
+              "displayName": "poc_lastname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "poc_role",
+              "displayName": "poc_role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1296,
+        -1024
+      ],
+      "id": "bca092a7-1b84-48f8-b7a5-e1be2451e532",
+      "name": "Append row in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "linkedin_posts",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -1024
+      ],
+      "id": "94d62a71-71d2-4093-a3df-cda98e5f5184",
+      "name": "Get a row1",
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "linkedin_posts",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Get a row1').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "is_verified_lead",
+              "fieldValue": "true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        -1024
+      ],
+      "id": "e25eb29d-a039-42f6-86f0-b8cb41e5dbe5",
+      "name": "Update a row3",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Run an Actor and get dataset": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Update a document1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a document": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document1": {
+      "main": [
+        [
+          {
+            "node": "Get a document1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Get many rows2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetRows": {
+      "main": [
+        [
+          {
+            "node": "Run an Actor and get dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger3": {
+      "main": [
+        [
+          {
+            "node": "Get a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit3": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript7": {
+      "main": [
+        [
+          {
+            "node": "Update a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Message a model3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger4": {
+      "main": [
+        [
+          {
+            "node": "Get many rows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "If8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If8": {
+      "main": [
+        [
+          {
+            "node": "Get a document2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document2": {
+      "main": [
+        [
+          {
+            "node": "If9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If9": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "GetRows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Get many rows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript8": {
+      "main": [
+        [
+          {
+            "node": "If10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows2": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger7": {
+      "main": [
+        [
+          {
+            "node": "Get many rows2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If10": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "Get many rows2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Create a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Update a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items4": {
+      "main": [
+        [
+          {
+            "node": "Limit3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger5": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "If6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        []
+      ]
+    },
+    "If7": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row2": {
+      "main": [
+        [
+          {
+            "node": "Get a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Update a row3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "b96a9c74-5e4c-46f7-9b27-b0517f2c3054",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
+  },
+  "id": "p5MthdvS8ydJCVY4",
+  "tags": []
+}
