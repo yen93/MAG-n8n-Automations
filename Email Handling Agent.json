@@ -1,5 +1,5 @@
 {
-  "name": "190626 - Email Handling Agent",
+  "name": "130726 - Email Handling Agent",
   "nodes": [
     {
       "parameters": {
@@ -206,7 +206,7 @@
         "operation": "getAll",
         "limit": 1,
         "filters": {
-          "q": "has:attachment is:important  after:2026/05/01  -filename:ics  -unsubscribe  -\"Google Alert\"  -\"Automatic reply\"  -from:(myadventuregroup.com.au OR fathom.com OR monday.com OR calendar-notification@google.com OR notifications@calendly.com OR calendly.com OR noreply OR no-reply OR notifications OR alerts OR support OR info OR update OR service OR donotreply OR mailer OR vimeo OR yourbooking.qantas.com.au OR payments OR .ai)  -subject:Concert",
+          "q": "has:attachment is:important  after:2026/05/01  -filename:ics  -unsubscribe  -\"Google Alert\"  -\"Automatic reply\"  -from:(myadventuregroup.com.au OR fathom.com OR monday.com OR calendar-notification@google.com OR notifications@calendly.com OR calendly.com OR noreply OR no-reply OR notifications OR alerts OR support OR info OR update OR service OR donotreply OR mailer OR vimeo OR yourbooking.qantas.com.au OR payments OR .ai)  -subject:Concert \n-label:\"FOLLOW UP SEQUENCE-SOC MED\"",
           "readStatus": "unread"
         }
       },
@@ -308,7 +308,8 @@
         -320
       ],
       "id": "1849e861-d302-46ae-823a-cfdb20c419d8",
-      "name": "Code in JavaScript1"
+      "name": "Code in JavaScript1",
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -339,7 +340,7 @@
         "limit": 1,
         "simple": false,
         "filters": {
-          "q": "-has:attachment\nis:important \nafter:2026/05/01 \n-filename:ics \n-unsubscribe \n-\"Google Alert\" \n-\"Automatic reply\" \n-from:(myadventuregroup.com.au OR fathom.com OR monday.com OR calendar-notification@google.com OR notifications@calendly.com OR calendly.com OR noreply OR no-reply OR notifications OR alerts OR support OR info OR update OR service OR donotreply OR mailer OR vimeo OR yourbooking.qantas.com.au OR payments OR .ai) \n-subject:Concert",
+          "q": "-has:attachment\nis:important \nafter:2026/05/01 \n-filename:ics \n-unsubscribe \n-\"Google Alert\" \n-\"Automatic reply\" \n-from:(myadventuregroup.com.au OR fathom.com OR monday.com OR calendar-notification@google.com OR notifications@calendly.com OR calendly.com OR noreply OR no-reply OR notifications OR alerts OR support OR info OR update OR service OR donotreply OR mailer OR vimeo OR yourbooking.qantas.com.au OR payments OR .ai) \n-subject:Concert\n-label:\"FOLLOW UP SEQUENCE-SOC MED\"",
           "readStatus": "unread"
         },
         "options": {}
@@ -375,7 +376,7 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        1584,
+        1488,
         208
       ],
       "id": "a38c7687-89cd-4fae-a90d-2f1cd115c12b",
@@ -400,7 +401,7 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        1760,
+        1664,
         208
       ],
       "id": "3c389d4a-d480-4902-bde0-f95f5ad123d8",
@@ -424,7 +425,7 @@
         "messages": {
           "values": [
             {
-              "content": "=You are James, an expert executive assistant. Your task is to draft a professional, concise, and ready-to-send HTML email response based on an incoming email thread, your past writing style, and potentially attached document data.\n\n### INPUT DATA:\n<email_subject>\n\n</email_subject>\n{{ $('Get many messages').item.json.subject }}\n<email_to_respond_to>\n{{ $('Get many messages').item.json.text }}\n</email_to_respond_to>\n\n<writing_samples>\n{{ $json.content }}\n</writing_samples>\n\n---\n\n### INSTRUCTIONS & LOGIC:\n\n1. **Style Mimicry:** Analyze the <writing_samples>. Mimic the exact tone, sentence structure, vocabulary, and level of formality found there. \n2. **Brevity:** Keep the response short, concise, and direct to the point. Eliminate fluff.\n3. **Data Integration:** \n   - Check the <attached_doc_data>. If it contains relevant information, use it to accurately answer or address the incoming email. \n   - If <attached_doc_data> is empty, missing, or irrelevant, rely solely on the context of the <email_to_respond_to> and your writing style.\n4. **Salutation:** Begin with an appropriate personalized salutation (e.g., \"Hi [Name],\") by identifying the sender or correct recipient from the <email_to_respond_to> thread.\n5. **No Placeholders:** Never use placeholders (e.g., \"[Insert Date]\", \"[Name]\"). If a piece of information is unknown, write around it naturally. Assume this draft will be sent immediately.\n6. **Sign-off:** You must end the email exactly with this snippet and absolutely nothing else after it: <br><br>Cheers<br>James\n\n---\n\n### STRICT OUTPUT FORMATTING CONSTRAINTS:\n- **Output Type:** Return ONLY the raw HTML email body.\n- **Line Breaks:** Use `<br>` for all line breaks.\n- **CRITICAL - NO MARKDOWN:** Do NOT wrap the output in markdown code blocks (e.g., do NOT use ```html ... \n```). Start directly with the text/HTML.\n- **No Wrappers:** Do NOT include `<html>`, `<head>`, or `<body>` tags. \n- **No Meta-Text:** Do NOT include a subject line, or any conversational introduction/conclusion (e.g., \"Here is your draft:\").\n- **No Extra Signatures:** Do NOT append any other sign-offs, names, or signature blocks. The email must end precisely with the snippet specified in instruction #6."
+              "content": "=You are James, an expert executive assistant. Your task is to draft a professional, concise, and ready-to-send HTML email response based on an incoming email thread, your past writing style, and potentially attached document data.\n\n### INPUT DATA:\n<email_subject>\n{{ $('Get many messages').item.json.Subject }}\n</email_subject>\n\n<email_to_respond_to>\n{{ $('Get many messages').item.json.text }}\n</email_to_respond_to>\n\n<writing_samples>\n{{ $json.content }}\n</writing_samples>\n\n---\n\n### INSTRUCTIONS & LOGIC:\n\n1. **Style Mimicry:** Analyze the <writing_samples>. Mimic the exact tone, sentence structure, vocabulary, and level of formality found there. \n2. **Brevity:** Keep the response short, concise, and direct to the point. Eliminate fluff.\n3. **Data Integration:** \n   - Check the <attached_doc_data>. If it contains relevant information, use it to accurately answer or address the incoming email. \n   - If <attached_doc_data> is empty, missing, or irrelevant, rely solely on the context of the <email_to_respond_to> and your writing style.\n4. **Salutation:** Begin with an appropriate personalized salutation (e.g., \"Hi [Name],\") by identifying the sender or correct recipient from the <email_to_respond_to> thread.\n5. **No Placeholders:** Never use placeholders (e.g., \"[Insert Date]\", \"[Name]\"). If a piece of information is unknown, write around it naturally. Assume this draft will be sent immediately.\n6. **Sign-off:** You must end the email exactly with this snippet and absolutely nothing else after it: <br><br>Cheers<br>James\n\n---\n\n### STRICT OUTPUT FORMATTING CONSTRAINTS:\n- **Output Type:** Return ONLY the raw HTML email body.\n- **Line Breaks:** Use `<br>` for all line breaks.\n- **CRITICAL - NO MARKDOWN:** Do NOT wrap the output in markdown code blocks (e.g., do NOT use ```html ... \n```). Start directly with the text/HTML.\n- **No Wrappers:** Do NOT include `<html>`, `<head>`, or `<body>` tags. \n- **No Meta-Text:** Do NOT include a subject line, or any conversational introduction/conclusion (e.g., \"Here is your draft:\").\n- **No Extra Signatures:** Do NOT append any other sign-offs, names, or signature blocks. The email must end precisely with the snippet specified in instruction #6."
             }
           ]
         },
@@ -434,7 +435,7 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.1,
       "position": [
-        1248,
+        1152,
         208
       ],
       "id": "cbb27101-e26a-40c2-b918-eea3f3b98426",
@@ -454,7 +455,7 @@
       "type": "n8n-nodes-base.googleDocs",
       "typeVersion": 2,
       "position": [
-        896,
+        800,
         208
       ],
       "id": "cb4a461a-ccca-4d15-96f0-677f7ab83ddd",
@@ -483,7 +484,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        688,
+        592,
         208
       ],
       "id": "a3cf24bc-a878-482c-9eaf-45225ab2597b",
@@ -496,7 +497,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1088,
+        992,
         208
       ],
       "id": "badd645c-3d82-4ac8-9984-44dfc5623b33",
@@ -510,7 +511,7 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        1968,
+        1872,
         208
       ],
       "id": "7c75eeb2-290a-4ac0-aa71-cc09787ae547",
@@ -531,7 +532,7 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        2176,
+        2080,
         208
       ],
       "id": "5564f1a9-3ed9-4503-8ed4-237b5eb65589",
@@ -819,13 +820,13 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "2a98d4ff-f3c8-446c-914b-cfe7dada18d1",
+  "versionId": "d814353b-1560-4ab6-97f5-20110d2dceed",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
