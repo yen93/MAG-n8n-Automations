@@ -1,5 +1,5 @@
 {
-  "name": "090726 - Soc Med Follow Up Sequence",
+  "name": "130726 - Soc Med Follow Up Sequence",
   "nodes": [
     {
       "parameters": {
@@ -1898,89 +1898,6 @@
       "disabled": true
     },
     {
-      "parameters": {
-        "operation": "update",
-        "tableId": "follow_up_sequence_threads",
-        "matchType": "allFilters",
-        "filters": {
-          "conditions": [
-            {
-              "keyName": "id",
-              "condition": "eq",
-              "keyValue": "={{ $('Loop Over Items10').item.json.id }}"
-            }
-          ]
-        },
-        "fieldsUi": {
-          "fieldValues": [
-            {
-              "fieldId": "status",
-              "fieldValue": "3A"
-            },
-            {
-              "fieldId": "draft_id",
-              "fieldValue": "={{ $json.id }}"
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
-      "position": [
-        176,
-        -2048
-      ],
-      "id": "61008313-8dcb-45d3-b813-f95673aaf380",
-      "name": "Update a row2",
-      "credentials": {
-        "supabaseApi": {
-          "id": "kHRif9Z1yFEMSg4S",
-          "name": "Supabase account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
-      "position": [
-        -288,
-        -2208
-      ],
-      "id": "2e0d5fd6-eadd-4e42-a340-41f3fe4b486a",
-      "name": "Loop Over Items10"
-    },
-    {
-      "parameters": {
-        "resource": "draft",
-        "subject": "={{ $json.subject }}",
-        "emailType": "html",
-        "message": "=<div dir=\"ltr\"><div><font face=\"arial, sans-serif\" color=\"#000000\">Hi {{ $json.poc_firstname }},<br><br>Hope <span class=\"il\">you</span> had a great weekend.<br><br><span id=\"m_-9064955734817335181m_8749859679772110819m_-8459792269622196594gmail-docs-internal-guid-43c9d015-7fff-866b-29c9-bc1e8ad30b8d\"><span style=\"background-color:transparent\"><span>\n<span class=\"il\">I</span> <span class=\"il\">flicked</span> <span class=\"il\">you</span> a <span class=\"il\">couple</span> of emails <span class=\"il\">last</span> <span class=\"il\">week</span> - rather than keep chasing, <span class=\"il\">I</span> thought <span class=\"il\">I</span>’d share something a bit more useful.<br></span><span>\n</span></span><span><br></span>Recently, <span class=\"il\">I</span> wrapped up a 6-month leadership program with Investa. It wasn’t just a keynote - it was a full capability build. The shift in how their leaders showed up under pressure was significant, and the tools continued to have an impact well beyond the sessions.</span></font></div><div><font face=\"arial, sans-serif\" color=\"#000000\"><span><br><span style=\"background-color:transparent\">\n<span>Here’s a short video overview of the program and how it played out:<br>&nbsp;&nbsp;</span></span></span><span style=\"background-color:transparent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap\">\n<img data-emoji=\"👉🏼\" class=\"an1\" alt=\"👉🏼\" aria-label=\"👉🏼\" draggable=\"false\" src=\"https://fonts.gstatic.com/s/e/notoemoji/17.0/1f449_1f3fc/72.png\" loading=\"lazy\" style=\"height: 22px; width: 22px; vertical-align: middle; margin-bottom: 2px;\"></span><span style=\"background-color:transparent;font-variant:small;vertical-align:baseline;white-space:pre-wrap\"> </span><a href=\"https://vimeo.com/1161268208/c738be91f1?share=copy&amp;fl=sv&amp;fe=ci\" style=\"text-decoration:none\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://vimeo.com/1161268208/c738be91f1?share%3Dcopy%26fl%3Dsv%26fe%3Dci&amp;source=gmail&amp;ust=1782270931946000&amp;usg=AOvVaw39P7Auoaky1KLLq8Jk3XZS\"><span style=\"background-color:transparent;font-variant:normal;text-decoration:underline;vertical-align:baseline;white-space:pre-wrap\">WATCH NOW</span></a><br><br>With many organisations focusing on leadership development and capability building this year, <span class=\"il\">I</span>'d be keen to connect with the right person in your team to explore whether something similar could be valuable.<br><span style=\"background-color:transparent\">\n<span><br></span></span></font></div><div><font face=\"arial, sans-serif\" color=\"#000000\"><span style=\"background-color:transparent\">If that’s not <span class=\"il\">you</span>, would <span class=\"il\">you</span> mind pointing me in the right direction?<br></span><span style=\"background-color:transparent\">\n<span><br></span></span></font></div><div><font face=\"arial, sans-serif\" color=\"#000000\"><span style=\"background-color:transparent\">Appreciate the help either way.<br></span><span style=\"background-color:transparent\">\n<span><br></span></span></font></div><span class=\"im\"><div><font face=\"arial, sans-serif\" color=\"#000000\"><span style=\"background-color:transparent\">Cheers<br></span><span style=\"background-color:transparent;white-space:pre-wrap\">James</span></font><br></div><div><div dir=\"ltr\" class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><table style=\"direction:ltr;border-collapse:collapse\"><tbody><tr><td style=\"font-size:0px;height:12px;line-height:0\"></td></tr><tr><td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\" style=\"width:455.788px\"><tbody><tr><td><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;line-height:1.15\"><tbody><tr><td style=\"height:1px;width:120px;vertical-align:top;padding:0.01px 1px\"><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td style=\"vertical-align:top;padding:0.01px 1px 0.01px 0.01px;width:120px;text-align:center\"><img border=\"0\" src=\"https://ci3.googleusercontent.com/meips/ADKq_NbrZbwtn0EKHn1lsyoxyTpwXnGZxKMdSc9gsVZqvXDT79fD_JXZktvQfoa99lywhNaTgrCQyEjdpl0kN0pfGx6AcDRBlAvLFNZb-sAts9FhChlcPgdSTuvbPTMv268dBYMjmWRIbex55ehFzKX5IjoVlqn3y1JEp7ZWy49y=s0-d-e1-ft#https://d36urhup7zbd7q.cloudfront.net/u/qpq93D3V16J/4e2cfd65-a50b-4e85-8cc5-45ceaf9e5bad__400x457__.png\" height=\"137\" width=\"120\" alt=\"photo\" style=\"width:120px;vertical-align:middle;border-radius:0px;height:137px;border:0px;display:block\" class=\"CToWUd\" data-bit=\"iit\"></td></tr></tbody></table></td><td valign=\"top\" style=\"padding:0.01px 0.01px 0.01px 14px;vertical-align:top\"><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td nowrap=\"\" style=\"line-height:1.2;padding:0.01px 0.01px 14px;border-bottom:2px solid rgb(189,189,189)\"><p style=\"margin:0.1px;line-height:19.2px;font-size:16px\"><span style=\"font-family:Arial;font-weight:bold;color:rgb(0,175,219);letter-spacing:0px\">James Castrission</span><br><span style=\"font-family:Arial;font-size:13px;font-weight:bold;color:rgb(100,100,100)\">International Keynote Speaker,&nbsp;</span><span style=\"font-family:Arial;font-size:13px;font-weight:bold;color:rgb(100,100,100)\">MyAdventure Group</span></p></td></tr><tr><td nowrap=\"\" width=\"272\" height=\"0\" style=\"height:0px;padding-top:14px;width:272px;font-family:Arial\"><p style=\"margin:1px;line-height:11.88px;font-size:12px\"><a href=\"tel:0402904334\" rel=\"nofollow noreferrer\" style=\"text-decoration:unset\" target=\"_blank\"><span style=\"line-height:14.4px;color:rgb(33,33,33)\">0402904334</span></a>&nbsp;|&nbsp;<a href=\"https://myadventuregroup.com.au/\" rel=\"nofollow noreferrer\" style=\"text-decoration:unset\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://myadventuregroup.com.au/&amp;source=gmail&amp;ust=1782270931946000&amp;usg=AOvVaw1mOStIVHiPL4YVI3Mpz3l1\"><span style=\"line-height:14.4px;color:rgb(33,33,33)\">myadventuregroup.<wbr>com.au</span></a></p></td></tr><tr><td nowrap=\"\" width=\"218\" height=\"0\" style=\"height:0px;padding-top:8px;width:218px;font-family:Arial\"><p style=\"margin:1px;line-height:11.88px;font-size:12px\"><a href=\"mailto:james@myadventuregroup.com.au\" rel=\"nofollow noreferrer\" style=\"text-decoration:unset\" target=\"_blank\"><span style=\"line-height:14.4px;color:rgb(33,33,33)\">james@myadventuregroup.com.au</span></a></p></td></tr><tr><td nowrap=\"\" width=\"300\" height=\"0\" style=\"height:0px;padding-top:8px;width:300px;font-family:Arial\"><p style=\"margin:1px;line-height:11.88px;font-size:12px\"><span style=\"color:rgb(33,33,33)\">49 Miowera Rd, North Turramurra NSW</span></p></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td height=\"0\" style=\"height:0px;line-height:0.01px;padding-top:16px;font-size:1px\"></td></tr><tr><td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:469px;padding-right:8px;font-size:12px;color:rgb(51,51,51);line-height:normal\"><tbody><tr><td height=\"0\" style=\"height:0px\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td height=\"0\" style=\"height:0px\"><p style=\"margin:1px\"><a href=\"https://www.myadventuregroup.com.au/free-consult/?utm_source=outbound+mail&amp;utm_medium=email&amp;utm_campaign=keynote\" rel=\"nofollow noreferrer\" style=\"display:block\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://www.myadventuregroup.com.au/free-consult/?utm_source%3Doutbound%2Bmail%26utm_medium%3Demail%26utm_campaign%3Dkeynote&amp;source=gmail&amp;ust=1782270931946000&amp;usg=AOvVaw2LqZ3y2VAK0bu9iOnMcYu9\"><img src=\"https://ci3.googleusercontent.com/meips/ADKq_NZbttvy3Obnf_Li_ZA41G2EqKFW5Mn9AP98BUC7Bke7GKC6BCzXM3i_VV0vxgS-iizLi2zlyTakCjWbRjdMpqTR1vV7lVDJ_-DTOBjjLFKx_-aS6JXI7aS_TcTE3ZVh0rvl8tkeW7wGuWq2xECNo6P_rJSLh8iLOA24cnZlGhbdsefwdb2fYRFRIyzaBHorOouujDSdkk_6SA3W_i8=s0-d-e1-ft#https://cdn.gifo.wisestamp.com/apps/app_button/full/BOOK%20A%20FREE%2020-MIN.%20CONSULTATION/ffffff/00AFDB/52/10/calendar2-50/left.png\" height=\"39\" alt=\"Meeting Button App\" class=\"CToWUd\" data-bit=\"iit\"></a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></div></div></div><div class=\"yj6qo ajU\"><div id=\":1ke\" class=\"ajR\" role=\"button\" tabindex=\"0\" data-tooltip=\"Show trimmed content\" aria-label=\"Show trimmed content\" aria-expanded=\"false\"><img class=\"ajT\" src=\"//ssl.gstatic.com/ui/v1/icons/mail/images/cleardot.gif\"></div></div><div class=\"adL\"><br></div></span></div> ",
-        "options": {
-          "threadId": "={{ $json.thread_id }}",
-          "sendTo": "={{ $json.email }}"
-        }
-      },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
-      "position": [
-        -32,
-        -2048
-      ],
-      "id": "25272ed7-a19b-4421-beeb-6e2fbceb4e74",
-      "name": "Create a draft4",
-      "webhookId": "114cb5eb-0813-44d6-8233-eee4084f5788",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "dkfeQrltUckqbpZg",
-          "name": "Gmail account"
-        }
-      },
-      "onError": "continueRegularOutput"
-    },
-    {
       "parameters": {},
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
@@ -2977,7 +2894,7 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        -4320,
+        -4496,
         -1472
       ],
       "id": "e83b04eb-3947-422c-8b5b-fbba06956e82",
@@ -3452,7 +3369,7 @@
               "leftValue": "={{ $json.id }}",
               "rightValue": "",
               "operator": {
-                "type": "number",
+                "type": "string",
                 "operation": "notExists",
                 "singleValue": true
               }
@@ -3794,8 +3711,8 @@
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
-        -432,
-        -3760
+        -464,
+        -3936
       ],
       "id": "9a328451-776a-43b2-a74a-cf4f3367199a",
       "name": "Limit9"
@@ -4196,6 +4113,216 @@
       ],
       "id": "f191529c-7534-450f-8639-dd510dc15a6d",
       "name": "Limit14"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "=<div dir=\"ltr\"><div><font face=\"arial, sans-serif\" color=\"#000000\">Hi {{ $json.poc_firstname }},<br><br>Hope <span class=\"il\">you</span> had a great weekend.<br><br><span id=\"m_-9064955734817335181m_8749859679772110819m_-8459792269622196594gmail-docs-internal-guid-43c9d015-7fff-866b-29c9-bc1e8ad30b8d\"><span style=\"background-color:transparent\"><span>\n<span class=\"il\">I</span> <span class=\"il\">flicked</span> <span class=\"il\">you</span> a <span class=\"il\">couple</span> of emails <span class=\"il\">last</span> <span class=\"il\">week</span> - rather than keep chasing, <span class=\"il\">I</span> thought <span class=\"il\">I</span>’d share something a bit more useful.<br></span><span>\n</span></span><span><br></span>Recently, <span class=\"il\">I</span> wrapped up a 6-month leadership program with Investa. It wasn’t just a keynote - it was a full capability build. The shift in how their leaders showed up under pressure was significant, and the tools continued to have an impact well beyond the sessions.</span></font></div><div><font face=\"arial, sans-serif\" color=\"#000000\"><span><br><span style=\"background-color:transparent\">\n<span>Here’s a short video overview of the program and how it played out:<br>&nbsp;&nbsp;</span></span></span><span style=\"background-color:transparent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap\">\n<img data-emoji=\"👉🏼\" class=\"an1\" alt=\"👉🏼\" aria-label=\"👉🏼\" draggable=\"false\" src=\"https://fonts.gstatic.com/s/e/notoemoji/17.0/1f449_1f3fc/72.png\" loading=\"lazy\" style=\"height: 22px; width: 22px; vertical-align: middle; margin-bottom: 2px;\"></span><span style=\"background-color:transparent;font-variant:small;vertical-align:baseline;white-space:pre-wrap\"> </span><a href=\"https://vimeo.com/1161268208/c738be91f1?share=copy&amp;fl=sv&amp;fe=ci\" style=\"text-decoration:none\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://vimeo.com/1161268208/c738be91f1?share%3Dcopy%26fl%3Dsv%26fe%3Dci&amp;source=gmail&amp;ust=1782270931946000&amp;usg=AOvVaw39P7Auoaky1KLLq8Jk3XZS\"><span style=\"background-color:transparent;font-variant:normal;text-decoration:underline;vertical-align:baseline;white-space:pre-wrap\">WATCH NOW</span></a><br><br>With many organisations focusing on leadership development and capability building this year, <span class=\"il\">I</span>'d be keen to connect with the right person in your team to explore whether something similar could be valuable.<br><span style=\"background-color:transparent\">\n<span><br></span></span></font></div><div><font face=\"arial, sans-serif\" color=\"#000000\"><span style=\"background-color:transparent\">If that’s not <span class=\"il\">you</span>, would <span class=\"il\">you</span> mind pointing me in the right direction?<br></span><span style=\"background-color:transparent\">\n<span><br></span></span></font></div><div><font face=\"arial, sans-serif\" color=\"#000000\"><span style=\"background-color:transparent\">Appreciate the help either way.<br></span><span style=\"background-color:transparent\">\n<span><br></span></span></font></div><span class=\"im\"><div><font face=\"arial, sans-serif\" color=\"#000000\"><span style=\"background-color:transparent\">Cheers<br></span><span style=\"background-color:transparent;white-space:pre-wrap\">James</span></font><br></div><div><div dir=\"ltr\" class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><table style=\"direction:ltr;border-collapse:collapse\"><tbody><tr><td style=\"font-size:0px;height:12px;line-height:0\"></td></tr><tr><td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\" style=\"width:455.788px\"><tbody><tr><td><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;line-height:1.15\"><tbody><tr><td style=\"height:1px;width:120px;vertical-align:top;padding:0.01px 1px\"><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td style=\"vertical-align:top;padding:0.01px 1px 0.01px 0.01px;width:120px;text-align:center\"><img border=\"0\" src=\"https://ci3.googleusercontent.com/meips/ADKq_NbrZbwtn0EKHn1lsyoxyTpwXnGZxKMdSc9gsVZqvXDT79fD_JXZktvQfoa99lywhNaTgrCQyEjdpl0kN0pfGx6AcDRBlAvLFNZb-sAts9FhChlcPgdSTuvbPTMv268dBYMjmWRIbex55ehFzKX5IjoVlqn3y1JEp7ZWy49y=s0-d-e1-ft#https://d36urhup7zbd7q.cloudfront.net/u/qpq93D3V16J/4e2cfd65-a50b-4e85-8cc5-45ceaf9e5bad__400x457__.png\" height=\"137\" width=\"120\" alt=\"photo\" style=\"width:120px;vertical-align:middle;border-radius:0px;height:137px;border:0px;display:block\" class=\"CToWUd\" data-bit=\"iit\"></td></tr></tbody></table></td><td valign=\"top\" style=\"padding:0.01px 0.01px 0.01px 14px;vertical-align:top\"><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td nowrap=\"\" style=\"line-height:1.2;padding:0.01px 0.01px 14px;border-bottom:2px solid rgb(189,189,189)\"><p style=\"margin:0.1px;line-height:19.2px;font-size:16px\"><span style=\"font-family:Arial;font-weight:bold;color:rgb(0,175,219);letter-spacing:0px\">James Castrission</span><br><span style=\"font-family:Arial;font-size:13px;font-weight:bold;color:rgb(100,100,100)\">International Keynote Speaker,&nbsp;</span><span style=\"font-family:Arial;font-size:13px;font-weight:bold;color:rgb(100,100,100)\">MyAdventure Group</span></p></td></tr><tr><td nowrap=\"\" width=\"272\" height=\"0\" style=\"height:0px;padding-top:14px;width:272px;font-family:Arial\"><p style=\"margin:1px;line-height:11.88px;font-size:12px\"><a href=\"tel:0402904334\" rel=\"nofollow noreferrer\" style=\"text-decoration:unset\" target=\"_blank\"><span style=\"line-height:14.4px;color:rgb(33,33,33)\">0402904334</span></a>&nbsp;|&nbsp;<a href=\"https://myadventuregroup.com.au/\" rel=\"nofollow noreferrer\" style=\"text-decoration:unset\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://myadventuregroup.com.au/&amp;source=gmail&amp;ust=1782270931946000&amp;usg=AOvVaw1mOStIVHiPL4YVI3Mpz3l1\"><span style=\"line-height:14.4px;color:rgb(33,33,33)\">myadventuregroup.<wbr>com.au</span></a></p></td></tr><tr><td nowrap=\"\" width=\"218\" height=\"0\" style=\"height:0px;padding-top:8px;width:218px;font-family:Arial\"><p style=\"margin:1px;line-height:11.88px;font-size:12px\"><a href=\"mailto:james@myadventuregroup.com.au\" rel=\"nofollow noreferrer\" style=\"text-decoration:unset\" target=\"_blank\"><span style=\"line-height:14.4px;color:rgb(33,33,33)\">james@myadventuregroup.com.au</span></a></p></td></tr><tr><td nowrap=\"\" width=\"300\" height=\"0\" style=\"height:0px;padding-top:8px;width:300px;font-family:Arial\"><p style=\"margin:1px;line-height:11.88px;font-size:12px\"><span style=\"color:rgb(33,33,33)\">49 Miowera Rd, North Turramurra NSW</span></p></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td height=\"0\" style=\"height:0px;line-height:0.01px;padding-top:16px;font-size:1px\"></td></tr><tr><td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:469px;padding-right:8px;font-size:12px;color:rgb(51,51,51);line-height:normal\"><tbody><tr><td height=\"0\" style=\"height:0px\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td height=\"0\" style=\"height:0px\"><p style=\"margin:1px\"><a href=\"https://www.myadventuregroup.com.au/free-consult/?utm_source=outbound+mail&amp;utm_medium=email&amp;utm_campaign=keynote\" rel=\"nofollow noreferrer\" style=\"display:block\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://www.myadventuregroup.com.au/free-consult/?utm_source%3Doutbound%2Bmail%26utm_medium%3Demail%26utm_campaign%3Dkeynote&amp;source=gmail&amp;ust=1782270931946000&amp;usg=AOvVaw2LqZ3y2VAK0bu9iOnMcYu9\"><img src=\"https://ci3.googleusercontent.com/meips/ADKq_NZbttvy3Obnf_Li_ZA41G2EqKFW5Mn9AP98BUC7Bke7GKC6BCzXM3i_VV0vxgS-iizLi2zlyTakCjWbRjdMpqTR1vV7lVDJ_-DTOBjjLFKx_-aS6JXI7aS_TcTE3ZVh0rvl8tkeW7wGuWq2xECNo6P_rJSLh8iLOA24cnZlGhbdsefwdb2fYRFRIyzaBHorOouujDSdkk_6SA3W_i8=s0-d-e1-ft#https://cdn.gifo.wisestamp.com/apps/app_button/full/BOOK%20A%20FREE%2020-MIN.%20CONSULTATION/ffffff/00AFDB/52/10/calendar2-50/left.png\" height=\"39\" alt=\"Meeting Button App\" class=\"CToWUd\" data-bit=\"iit\"></a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></div></div></div><div class=\"yj6qo ajU\"><div id=\":1ke\" class=\"ajR\" role=\"button\" tabindex=\"0\" data-tooltip=\"Show trimmed content\" aria-label=\"Show trimmed content\" aria-expanded=\"false\"><img class=\"ajT\" src=\"//ssl.gstatic.com/ui/v1/icons/mail/images/cleardot.gif\"></div></div><div class=\"adL\"><br></div></span></div> ",
+        "options": {
+          "threadId": "={{ $json.thread_id }}",
+          "sendTo": "={{ $json.email }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        112,
+        -2048
+      ],
+      "id": "7bc4a4b3-6631-479d-9cb1-84eac894420f",
+      "name": "Create a draft11",
+      "webhookId": "0c7d85f8-dc10-4236-b71a-99fd1a29c60b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dkfeQrltUckqbpZg",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -320,
+        -2208
+      ],
+      "id": "a3db048c-1dbd-4b0e-a0a9-f45ae4752bdb",
+      "name": "Loop Over Items15"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "follow_up_sequence_threads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "thread_id",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        -2048
+      ],
+      "id": "f0427271-aea3-4118-9880-637c8cb6415e",
+      "name": "Get a row6",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "follow_up_sequence_threads",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "thread_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.message.threadId }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "3A"
+            },
+            {
+              "fieldId": "draft_id",
+              "fieldValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        288,
+        -2048
+      ],
+      "id": "c04344b4-bd3b-4cc5-bd36-620a4488a2cf",
+      "name": "Update a row6",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "follow_up_sequence_threads",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "thread_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Loop Over Items10').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "3A"
+            },
+            {
+              "fieldId": "draft_id",
+              "fieldValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -4224,
+        608
+      ],
+      "id": "7797c664-9225-45cd-943c-fa6a94b78ab0",
+      "name": "Update a row2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -4688,
+        448
+      ],
+      "id": "9ae306b4-48e4-4cf3-848a-00533bba5f3c",
+      "name": "Loop Over Items10",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "=<div dir=\"ltr\"><div><font face=\"arial, sans-serif\" color=\"#000000\">Hi {{ $json.poc_firstname }},<br><br>Hope <span class=\"il\">you</span> had a great weekend.<br><br><span id=\"m_-9064955734817335181m_8749859679772110819m_-8459792269622196594gmail-docs-internal-guid-43c9d015-7fff-866b-29c9-bc1e8ad30b8d\"><span style=\"background-color:transparent\"><span>\n<span class=\"il\">I</span> <span class=\"il\">flicked</span> <span class=\"il\">you</span> a <span class=\"il\">couple</span> of emails <span class=\"il\">last</span> <span class=\"il\">week</span> - rather than keep chasing, <span class=\"il\">I</span> thought <span class=\"il\">I</span>’d share something a bit more useful.<br></span><span>\n</span></span><span><br></span>Recently, <span class=\"il\">I</span> wrapped up a 6-month leadership program with Investa. It wasn’t just a keynote - it was a full capability build. The shift in how their leaders showed up under pressure was significant, and the tools continued to have an impact well beyond the sessions.</span></font></div><div><font face=\"arial, sans-serif\" color=\"#000000\"><span><br><span style=\"background-color:transparent\">\n<span>Here’s a short video overview of the program and how it played out:<br>&nbsp;&nbsp;</span></span></span><span style=\"background-color:transparent;font-variant:normal;vertical-align:baseline;white-space:pre-wrap\">\n<img data-emoji=\"👉🏼\" class=\"an1\" alt=\"👉🏼\" aria-label=\"👉🏼\" draggable=\"false\" src=\"https://fonts.gstatic.com/s/e/notoemoji/17.0/1f449_1f3fc/72.png\" loading=\"lazy\" style=\"height: 22px; width: 22px; vertical-align: middle; margin-bottom: 2px;\"></span><span style=\"background-color:transparent;font-variant:small;vertical-align:baseline;white-space:pre-wrap\"> </span><a href=\"https://vimeo.com/1161268208/c738be91f1?share=copy&amp;fl=sv&amp;fe=ci\" style=\"text-decoration:none\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://vimeo.com/1161268208/c738be91f1?share%3Dcopy%26fl%3Dsv%26fe%3Dci&amp;source=gmail&amp;ust=1782270931946000&amp;usg=AOvVaw39P7Auoaky1KLLq8Jk3XZS\"><span style=\"background-color:transparent;font-variant:normal;text-decoration:underline;vertical-align:baseline;white-space:pre-wrap\">WATCH NOW</span></a><br><br>With many organisations focusing on leadership development and capability building this year, <span class=\"il\">I</span>'d be keen to connect with the right person in your team to explore whether something similar could be valuable.<br><span style=\"background-color:transparent\">\n<span><br></span></span></font></div><div><font face=\"arial, sans-serif\" color=\"#000000\"><span style=\"background-color:transparent\">If that’s not <span class=\"il\">you</span>, would <span class=\"il\">you</span> mind pointing me in the right direction?<br></span><span style=\"background-color:transparent\">\n<span><br></span></span></font></div><div><font face=\"arial, sans-serif\" color=\"#000000\"><span style=\"background-color:transparent\">Appreciate the help either way.<br></span><span style=\"background-color:transparent\">\n<span><br></span></span></font></div><span class=\"im\"><div><font face=\"arial, sans-serif\" color=\"#000000\"><span style=\"background-color:transparent\">Cheers<br></span><span style=\"background-color:transparent;white-space:pre-wrap\">James</span></font><br></div><div><div dir=\"ltr\" class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><table style=\"direction:ltr;border-collapse:collapse\"><tbody><tr><td style=\"font-size:0px;height:12px;line-height:0\"></td></tr><tr><td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\" style=\"width:455.788px\"><tbody><tr><td><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;line-height:1.15\"><tbody><tr><td style=\"height:1px;width:120px;vertical-align:top;padding:0.01px 1px\"><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td style=\"vertical-align:top;padding:0.01px 1px 0.01px 0.01px;width:120px;text-align:center\"><img border=\"0\" src=\"https://ci3.googleusercontent.com/meips/ADKq_NbrZbwtn0EKHn1lsyoxyTpwXnGZxKMdSc9gsVZqvXDT79fD_JXZktvQfoa99lywhNaTgrCQyEjdpl0kN0pfGx6AcDRBlAvLFNZb-sAts9FhChlcPgdSTuvbPTMv268dBYMjmWRIbex55ehFzKX5IjoVlqn3y1JEp7ZWy49y=s0-d-e1-ft#https://d36urhup7zbd7q.cloudfront.net/u/qpq93D3V16J/4e2cfd65-a50b-4e85-8cc5-45ceaf9e5bad__400x457__.png\" height=\"137\" width=\"120\" alt=\"photo\" style=\"width:120px;vertical-align:middle;border-radius:0px;height:137px;border:0px;display:block\" class=\"CToWUd\" data-bit=\"iit\"></td></tr></tbody></table></td><td valign=\"top\" style=\"padding:0.01px 0.01px 0.01px 14px;vertical-align:top\"><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td nowrap=\"\" style=\"line-height:1.2;padding:0.01px 0.01px 14px;border-bottom:2px solid rgb(189,189,189)\"><p style=\"margin:0.1px;line-height:19.2px;font-size:16px\"><span style=\"font-family:Arial;font-weight:bold;color:rgb(0,175,219);letter-spacing:0px\">James Castrission</span><br><span style=\"font-family:Arial;font-size:13px;font-weight:bold;color:rgb(100,100,100)\">International Keynote Speaker,&nbsp;</span><span style=\"font-family:Arial;font-size:13px;font-weight:bold;color:rgb(100,100,100)\">MyAdventure Group</span></p></td></tr><tr><td nowrap=\"\" width=\"272\" height=\"0\" style=\"height:0px;padding-top:14px;width:272px;font-family:Arial\"><p style=\"margin:1px;line-height:11.88px;font-size:12px\"><a href=\"tel:0402904334\" rel=\"nofollow noreferrer\" style=\"text-decoration:unset\" target=\"_blank\"><span style=\"line-height:14.4px;color:rgb(33,33,33)\">0402904334</span></a>&nbsp;|&nbsp;<a href=\"https://myadventuregroup.com.au/\" rel=\"nofollow noreferrer\" style=\"text-decoration:unset\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://myadventuregroup.com.au/&amp;source=gmail&amp;ust=1782270931946000&amp;usg=AOvVaw1mOStIVHiPL4YVI3Mpz3l1\"><span style=\"line-height:14.4px;color:rgb(33,33,33)\">myadventuregroup.<wbr>com.au</span></a></p></td></tr><tr><td nowrap=\"\" width=\"218\" height=\"0\" style=\"height:0px;padding-top:8px;width:218px;font-family:Arial\"><p style=\"margin:1px;line-height:11.88px;font-size:12px\"><a href=\"mailto:james@myadventuregroup.com.au\" rel=\"nofollow noreferrer\" style=\"text-decoration:unset\" target=\"_blank\"><span style=\"line-height:14.4px;color:rgb(33,33,33)\">james@myadventuregroup.com.au</span></a></p></td></tr><tr><td nowrap=\"\" width=\"300\" height=\"0\" style=\"height:0px;padding-top:8px;width:300px;font-family:Arial\"><p style=\"margin:1px;line-height:11.88px;font-size:12px\"><span style=\"color:rgb(33,33,33)\">49 Miowera Rd, North Turramurra NSW</span></p></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td height=\"0\" style=\"height:0px;line-height:0.01px;padding-top:16px;font-size:1px\"></td></tr><tr><td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;max-width:469px;padding-right:8px;font-size:12px;color:rgb(51,51,51);line-height:normal\"><tbody><tr><td height=\"0\" style=\"height:0px\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse\"><tbody><tr><td height=\"0\" style=\"height:0px\"><p style=\"margin:1px\"><a href=\"https://www.myadventuregroup.com.au/free-consult/?utm_source=outbound+mail&amp;utm_medium=email&amp;utm_campaign=keynote\" rel=\"nofollow noreferrer\" style=\"display:block\" target=\"_blank\" data-saferedirecturl=\"https://www.google.com/url?q=https://www.myadventuregroup.com.au/free-consult/?utm_source%3Doutbound%2Bmail%26utm_medium%3Demail%26utm_campaign%3Dkeynote&amp;source=gmail&amp;ust=1782270931946000&amp;usg=AOvVaw2LqZ3y2VAK0bu9iOnMcYu9\"><img src=\"https://ci3.googleusercontent.com/meips/ADKq_NZbttvy3Obnf_Li_ZA41G2EqKFW5Mn9AP98BUC7Bke7GKC6BCzXM3i_VV0vxgS-iizLi2zlyTakCjWbRjdMpqTR1vV7lVDJ_-DTOBjjLFKx_-aS6JXI7aS_TcTE3ZVh0rvl8tkeW7wGuWq2xECNo6P_rJSLh8iLOA24cnZlGhbdsefwdb2fYRFRIyzaBHorOouujDSdkk_6SA3W_i8=s0-d-e1-ft#https://cdn.gifo.wisestamp.com/apps/app_button/full/BOOK%20A%20FREE%2020-MIN.%20CONSULTATION/ffffff/00AFDB/52/10/calendar2-50/left.png\" height=\"39\" alt=\"Meeting Button App\" class=\"CToWUd\" data-bit=\"iit\"></a></p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></div></div></div><div class=\"yj6qo ajU\"><div id=\":1ke\" class=\"ajR\" role=\"button\" tabindex=\"0\" data-tooltip=\"Show trimmed content\" aria-label=\"Show trimmed content\" aria-expanded=\"false\"><img class=\"ajT\" src=\"//ssl.gstatic.com/ui/v1/icons/mail/images/cleardot.gif\"></div></div><div class=\"adL\"><br></div></span></div> ",
+        "options": {
+          "threadId": "={{ $json.thread_id }}",
+          "sendTo": "={{ $json.email }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -4432,
+        608
+      ],
+      "id": "1c6b9f4d-bbeb-4b18-9c7f-a6ad168ba71f",
+      "name": "Create a draft4",
+      "webhookId": "114cb5eb-0813-44d6-8233-eee4084f5788",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dkfeQrltUckqbpZg",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "##Add new therads to "
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -944,
+        -1584
+      ],
+      "id": "00c9c162-b562-46b2-9667-0e8729307d06",
+      "name": "Sticky Note"
     }
   ],
   "pinData": {},
@@ -4788,7 +4915,7 @@
       "main": [
         [
           {
-            "node": "Execute a SQL query13",
+            "node": "Limit9",
             "type": "main",
             "index": 0
           }
@@ -5026,46 +5153,6 @@
         ]
       ]
     },
-    "Update a row2": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items10",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Loop Over Items10": {
-      "main": [
-        [
-          {
-            "node": "Limit4",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Create a draft4",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Create a draft4": {
-      "main": [
-        [
-          {
-            "node": "Update a row2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Limit4": {
       "main": [
         [
@@ -5101,7 +5188,13 @@
     },
     "Get a draft1": {
       "main": [
-        []
+        [
+          {
+            "node": "Reply to a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Reply to a message1": {
@@ -5310,7 +5403,13 @@
     },
     "Get a draft2": {
       "main": [
-        []
+        [
+          {
+            "node": "Reply to a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Reply to a message2": {
@@ -5732,7 +5831,7 @@
         ],
         [
           {
-            "node": "Loop Over Items10",
+            "node": "Loop Over Items15",
             "type": "main",
             "index": 0
           }
@@ -6001,6 +6100,91 @@
           }
         ]
       ]
+    },
+    "Loop Over Items15": {
+      "main": [
+        [
+          {
+            "node": "Limit4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a row6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row6": {
+      "main": [
+        [
+          {
+            "node": "Create a draft11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a draft11": {
+      "main": [
+        [
+          {
+            "node": "Update a row6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items10": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Create a draft4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a draft4": {
+      "main": [
+        [
+          {
+            "node": "Update a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -6009,7 +6193,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "c38bfbdb-40d5-4647-a89e-ae03b6a1c65e",
+  "versionId": "f710aa01-426e-4bb6-990b-1b9ed1ba736f",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
