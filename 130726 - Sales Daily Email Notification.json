@@ -1,0 +1,285 @@
+{
+  "name": "130726 - Sales Daily Email Notification",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        176,
+        384
+      ],
+      "id": "66863dd4-ae59-4d54-aa5b-9717cba56fb0",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  daily_logs.daily_scraping_logs_count::int,\n  sequence_logs.follow_up_sequence_logs_count::int,\n  email_logs.sales_daily_email_count::int\nFROM (\n  SELECT count(*) as daily_scraping_logs_count \n  FROM daily_scraping_logs\n  WHERE created_at >= now() - interval '24 hours'\n) as daily_logs\nCROSS JOIN (\n  SELECT count(*) as follow_up_sequence_logs_count \n  FROM follow_up_sequence_logs\n  WHERE created_at >= now() - interval '24 hours'\n) as sequence_logs\nCROSS JOIN (\n  SELECT count(*) as sales_daily_email_count\n  FROM sales_daily_email_notification_logs\n  WHERE created_at >= now() - interval '24 hours'\n) as email_logs;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        384,
+        384
+      ],
+      "id": "d31e13c5-eb67-484f-bfc0-9c96fb2e5b41",
+      "name": "Execute a SQL query2",
+      "credentials": {
+        "postgres": {
+          "id": "kthnW5Kr1bhfcVQC",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0346c4b9-a32b-4ac5-9558-60ad52c0d24d",
+              "leftValue": "={{ $json.daily_scraping_logs_count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "ebdbf75e-3f6c-4c1b-aac7-541863459c61",
+              "leftValue": "={{ $json.follow_up_sequence_logs_count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "fcc0f5af-5bd7-456b-ba8f-f3967f62842a",
+              "leftValue": "={{ $json.sales_daily_email_count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        592,
+        384
+      ],
+      "id": "d6dd7be5-e041-44ed-b08a-84f50dbea4e1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    -- LinkedIn Scraper Metrics\n    COUNT(lp.id) AS scraped_posts,\n    COUNT(lp.id) FILTER (WHERE lp.is_speaking_engagement = true) AS is_verified_lead,\n    (SELECT COUNT(DISTINCT proper_name) FROM speakers WHERE status IS NULL) AS profiles_scraped,\n    COUNT(DISTINCT lp.proper_name) AS profiles_with_posts,\n\n    -- Optimized Outreach Follow-up Metrics (Scans the table only ONCE)\n    fust.email_2nd_sent,\n    fust.email_3rd_sent,\n    fust.email_4th_sent\n\nFROM linkedin_posts lp\nCROSS JOIN (\n    SELECT \n        COUNT(email_2nd_date_sent) FILTER (WHERE email_2nd_date_sent >= NOW() - INTERVAL '20 hours') AS email_2nd_sent,\n        COUNT(email_3rd_date_sent) FILTER (WHERE email_3rd_date_sent >= NOW() - INTERVAL '20 hours') AS email_3rd_sent,\n        COUNT(email_4th_date_sent) FILTER (WHERE email_4th_date_sent >= NOW() - INTERVAL '20 hours') AS email_4th_sent\n    FROM follow_up_sequence_threads\n) fust\nWHERE lp.datetime_logged >= NOW() - INTERVAL '30 hours'\nGROUP BY fust.email_2nd_sent, fust.email_3rd_sent, fust.email_4th_sent;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        896,
+        224
+      ],
+      "id": "f2d4137b-fe10-45fc-8d00-defce597231d",
+      "name": "Execute a SQL query3",
+      "credentials": {
+        "postgres": {
+          "id": "kthnW5Kr1bhfcVQC",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Sales Automations Daily Updates",
+        "message": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Lead Outreach & Scraper Automation Summary</title>\n    <style>\n        /* Base Reset */\n        body, table, td, p, a {\n            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;\n            margin: 0;\n            padding: 0;\n            -webkit-text-size-adjust: 100%;\n            -ms-text-size-adjust: 100%;\n        }\n        table, td {\n            mso-table-lspace: 0pt;\n            mso-table-rspace: 0pt;\n        }\n        body {\n            background-color: #000000;\n            color: #FFFFFF;\n            width: 100% !important;\n            height: 100% !important;\n        }\n    </style>\n</head>\n<body style=\"background-color: #000000; color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0;\">\n\n    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"background-color: #000000; table-layout: fixed;\">\n        <tr>\n            <td align=\"center\" valign=\"top\">\n                \n                <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width: 600px; padding: 40px 20px;\">\n                    \n                    <tr>\n                        <td align=\"left\" valign=\"top\" style=\"padding-bottom: 40px; border-bottom: 1px solid #222222;\">\n                            <div style=\"height: 3px; width: 40px; background-color: #0088FF; margin-bottom: 20px;\"></div>\n                            \n                            <p style=\"font-size: 11px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; color: #FFFFFF; margin: 0;\">\n                                MY ADVENTURE GROUP\n                            </p>\n                        </td>\n                    </tr>\n\n                    <tr>\n                        <td align=\"left\" valign=\"top\" style=\"padding-top: 30px; font-size: 18px; color: #FFFFFF; letter-spacing: 0.5px;\">\n                            Hi <span style=\"font-size: 20px; font-weight: 800; color: #0088FF;\">{{ $json.first_name }}</span>,\n                        </td>\n                    </tr>\n\n                    <tr>\n                        <td align=\"left\" valign=\"top\" style=\"padding-top: 20px; padding-bottom: 24px;\">\n                            <p style=\"font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #0088FF; margin: 0 0 12px 0;\">\n                            </p>\n                            <h2 style=\"font-size: 24px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; color: #FFFFFF; margin: 0 0 16px 0; line-height: 1.2;\">\n                                LEAD OUTREACH SEQUENCE\n                            </h2>\n                            <p style=\"font-size: 14px; line-height: 1.35; color: #A0A0A0; margin: 0;\">\n                                Your automated follow-up sequence metric log for the past 24 hours:\n                            </p>\n                        </td>\n                    </tr>\n                    \n                    <tr>\n                        <td align=\"left\" valign=\"top\" style=\"padding-bottom: 48px;\">\n                            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"border-collapse: collapse; background-color: #111111; border: 1px solid #222222;\">\n                                <thead>\n                                    <tr style=\"border-bottom: 2px solid #222222; background-color: #080808;\">\n                                        <th align=\"left\" style=\"padding: 16px; font-size: 11px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; color: #FFFFFF;\">\n                                            Sequence Step\n                                        </th>\n                                        <th align=\"right\" style=\"padding: 16px; font-size: 11px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; color: #FFFFFF;\">\n                                            Sent (Last 24h)\n                                        </th>\n                                    </tr>\n                                </thead>\n                                <tbody>\n                                    <tr style=\"border-bottom: 1px solid #222222;\">\n                                        <td align=\"left\" style=\"padding: 16px; font-size: 14px; color: #FFFFFF; line-height: 1.25;\">\n                                            First Follow-up <span style=\"color: #666666; font-size: 12px; font-weight: normal; margin-left: 4px;\">(Email 2)</span>\n                                        </td>\n                                        <td align=\"right\" style=\"padding: 16px; font-size: 15px; font-weight: bold; color: #FFFFFF;\">\n                                            {{ $('Limit1').item.json.email_2nd_sent }}\n                                        </td>\n                                    </tr>\n                                    <tr style=\"border-bottom: 1px solid #222222;\">\n                                        <td align=\"left\" style=\"padding: 16px; font-size: 14px; color: #FFFFFF; line-height: 1.25;\">\n                                            Second Follow-up <span style=\"color: #666666; font-size: 12px; font-weight: normal; margin-left: 4px;\">(Email 3)</span>\n                                        </td>\n                                        <td align=\"right\" style=\"padding: 16px; font-size: 15px; font-weight: bold; color: #FFFFFF;\">\n                                            {{ $('Limit1').item.json.email_3rd_sent }}\n                                        </td>\n                                    </tr>\n                                    <tr>\n                                        <td align=\"left\" style=\"padding: 16px; font-size: 14px; color: #FFFFFF; line-height: 1.25;\">\n                                            Final Follow-up <span style=\"color: #666666; font-size: 12px; font-weight: normal; margin-left: 4px;\">(Email 4)</span>\n                                        </td>\n                                        <td align=\"right\" style=\"padding: 16px; font-size: 15px; font-weight: bold; color: #FFFFFF;\">\n                                            {{ $('Limit1').item.json.email_4th_sent }}\n                                        </td>\n                                    </tr>\n                                </tbody>\n                            </table>\n                        </td>\n                    </tr>\n\n                    <tr>\n                        <td align=\"left\" valign=\"top\" style=\"padding-bottom: 24px; border-top: 1px solid #222222; padding-top: 40px;\">\n                            <p style=\"font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #0088FF; margin: 0 0 12px 0;\">\n                            </p>\n                            <h2 style=\"font-size: 24px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; color: #FFFFFF; margin: 0 0 16px 0; line-height: 1.2;\">\n                                LINKEDIN SCRAPER\n                            </h2>\n                            <p style=\"font-size: 14px; line-height: 1.35; color: #A0A0A0; margin: 0;\">\n                                Automation data overview capturing recent social platform ingestion pipelines:\n                            </p>\n                        </td>\n                    </tr>\n\n                    <tr>\n                        <td align=\"left\" valign=\"top\" style=\"padding-bottom: 40px;\">\n                            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"border-collapse: collapse; background-color: #111111; border: 1px solid #222222;\">\n                                <thead>\n                                    <tr style=\"border-bottom: 2px solid #222222; background-color: #080808;\">\n                                        <th align=\"left\" style=\"padding: 16px; font-size: 11px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; color: #FFFFFF;\">\n                                            Pipeline Metric\n                                        </th>\n                                        <th align=\"right\" style=\"padding: 16px; font-size: 11px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; color: #FFFFFF;\">\n                                            Count Log\n                                        </th>\n                                    </tr>\n                                </thead>\n                                <tbody>\n                                    <tr style=\"border-bottom: 1px solid #222222;\">\n                                        <td align=\"left\" style=\"padding: 16px; font-size: 14px; color: #FFFFFF; line-height: 1.25;\">\n                                            Competitor Speakers Evaluated\n                                        </td>\n                                        <td align=\"right\" style=\"padding: 16px; font-size: 15px; font-weight: bold; color: #FFFFFF;\">\n                                            {{ $('Limit1').item.json.profiles_scraped }}\n                                        </td>\n                                    </tr>\n                                    <tr style=\"border-bottom: 1px solid #222222;\">\n                                        <td align=\"left\" style=\"padding: 16px; font-size: 14px; color: #FFFFFF; line-height: 1.25;\">\n                                            Speaker Profiles with Active Posts\n                                        </td>\n                                        <td align=\"right\" style=\"padding: 16px; font-size: 15px; font-weight: bold; color: #FFFFFF;\">\n                                            {{ $('Limit1').item.json.profiles_with_posts }}\n                                        </td>\n                                    </tr>\n                                    <tr style=\"border-bottom: 1px solid #222222;\">\n                                        <td align=\"left\" style=\"padding: 16px; font-size: 14px; color: #FFFFFF; line-height: 1.25;\">\n                                            Total Target Posts Extracted\n                                        </td>\n                                        <td align=\"right\" style=\"padding: 16px; font-size: 15px; font-weight: bold; color: #FFFFFF;\">\n                                            {{ $('Limit1').item.json.scraped_posts }}\n                                        </td>\n                                    </tr>\n                                    <tr>\n                                        <td align=\"left\" style=\"padding: 16px; font-size: 14px; color: #FFFFFF; line-height: 1.25; font-weight: bold;\">\n                                            Verified Speaking Leads Identified\n                                        </td>\n                                        <td align=\"right\" style=\"padding: 16px; font-size: 15px; font-weight: bold; color: #0088FF;\">\n                                            {{ $('Limit1').item.json.is_verified_lead }}\n                                        </td>\n                                    </tr>\n                                </tbody>\n                            </table>\n                        </td>\n                    </tr>\n                    \n                    <tr>\n                        <td align=\"left\" valign=\"top\" style=\"padding-top: 20px; border-top: 1px solid #222222;\">\n                            <p style=\"font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #444444; margin: 0;\">\n                                // END SUMMARY RUN — AUTOMATION SECURE\n                            </p>\n                        </td>\n                    </tr>\n\n                </table>\n                </td>\n        </tr>\n    </table>\n    </body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        224
+      ],
+      "id": "32d10fe3-03b5-4d2c-911b-b80b1fb186a0",
+      "name": "Send a message",
+      "webhookId": "54a84a97-7fd6-437b-a40e-d37b8efab1ab",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SwjlZakMLClOxHff",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        224
+      ],
+      "id": "baf10c0f-9933-4684-81b6-eb879ddb6c5c",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select * from organization_users\nwhere email in (\n  'jaycel@myadventuregroup.com.au',\n  'julienne@myadventuregroup.com.au',\n  'liv@myadventuregroup.com.au',\n  'james@myadventuregroup.com.au'\n)",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1312,
+        224
+      ],
+      "id": "9bd417b8-cccf-48fc-a44c-5abb0212d61b",
+      "name": "Execute a SQL query4",
+      "credentials": {
+        "postgres": {
+          "id": "kthnW5Kr1bhfcVQC",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sales_daily_email_notification_logs DEFAULT VALUES;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1680,
+        224
+      ],
+      "id": "9dc8a5d8-fc23-4500-8140-905ec144cd87",
+      "name": "Execute a SQL query5",
+      "credentials": {
+        "postgres": {
+          "id": "kthnW5Kr1bhfcVQC",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query3": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query4": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6d95c32c-8adb-4215-a5f6-239f6ea7bd6b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
+  },
+  "id": "lPgAcjCPUytZ4pph",
+  "tags": []
+}
