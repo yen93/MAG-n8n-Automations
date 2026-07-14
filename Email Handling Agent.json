@@ -1,5 +1,5 @@
 {
-  "name": "130726 - Email Handling Agent",
+  "name": "140726 - Email Handling Agent",
   "nodes": [
     {
       "parameters": {
@@ -206,7 +206,7 @@
         "operation": "getAll",
         "limit": 1,
         "filters": {
-          "q": "has:attachment is:important  after:2026/05/01  -filename:ics  -unsubscribe  -\"Google Alert\"  -\"Automatic reply\"  -from:(myadventuregroup.com.au OR fathom.com OR monday.com OR calendar-notification@google.com OR notifications@calendly.com OR calendly.com OR noreply OR no-reply OR notifications OR alerts OR support OR info OR update OR service OR donotreply OR mailer OR vimeo OR yourbooking.qantas.com.au OR payments OR .ai)  -subject:Concert \n-label:\"FOLLOW UP SEQUENCE-SOC MED\"",
+          "q": "has:attachment is:important  after:2026/05/01  -filename:ics  -unsubscribe  -\"Google Alert\"  -\"Automatic reply\"  -from:(myadventuregroup.com.au OR fathom.com OR monday.com OR calendar-notification@google.com OR notifications@calendly.com OR calendly.com OR noreply OR no-reply OR notifications OR alerts OR support OR info OR update OR service OR donotreply OR mailer OR vimeo OR yourbooking.qantas.com.au OR payments OR .ai)  -subject:Concert \n-label:\"FOLLOW UP SEQUENCE-SOC MED\"\n-label:\"FOLLOW UP SEQUENCE-COLD LEADS\"\n-label:\"FOLLOW UP SEQUENCE-PRIOR LEADS\"",
           "readStatus": "unread"
         }
       },
@@ -340,7 +340,7 @@
         "limit": 1,
         "simple": false,
         "filters": {
-          "q": "-has:attachment\nis:important \nafter:2026/05/01 \n-filename:ics \n-unsubscribe \n-\"Google Alert\" \n-\"Automatic reply\" \n-from:(myadventuregroup.com.au OR fathom.com OR monday.com OR calendar-notification@google.com OR notifications@calendly.com OR calendly.com OR noreply OR no-reply OR notifications OR alerts OR support OR info OR update OR service OR donotreply OR mailer OR vimeo OR yourbooking.qantas.com.au OR payments OR .ai) \n-subject:Concert\n-label:\"FOLLOW UP SEQUENCE-SOC MED\"",
+          "q": "-has:attachment\nis:important \nafter:2026/05/01 \n-filename:ics \n-unsubscribe \n-\"Google Alert\" \n-\"Automatic reply\" \n-from:(myadventuregroup.com.au OR fathom.com OR monday.com OR calendar-notification@google.com OR notifications@calendly.com OR calendly.com OR noreply OR no-reply OR notifications OR alerts OR support OR info OR update OR service OR donotreply OR mailer OR vimeo OR yourbooking.qantas.com.au OR payments OR .ai) \n-subject:Concert\n-label:\"FOLLOW UP SEQUENCE-SOC MED\"\n-label:\"FOLLOW UP SEQUENCE-COLD LEADS\"\n-label:\"FOLLOW UP SEQUENCE-PRIOR LEADS\"",
           "readStatus": "unread"
         },
         "options": {}
@@ -440,6 +440,9 @@
       ],
       "id": "cbb27101-e26a-40c2-b918-eea3f3b98426",
       "name": "Message a model1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 5,
       "credentials": {
         "googlePalmApi": {
           "id": "XG2PrK6c7CxaKFQR",
@@ -820,13 +823,13 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "d814353b-1560-4ab6-97f5-20110d2dceed",
+  "versionId": "7ba7c5df-6dcc-4143-b769-edc07bec544d",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
