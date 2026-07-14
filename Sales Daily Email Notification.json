@@ -23,7 +23,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT \n  daily_logs.daily_scraping_logs_count::int,\n  sequence_logs.follow_up_sequence_logs_count::int,\n  email_logs.sales_daily_email_count::int\nFROM (\n  SELECT count(*) as daily_scraping_logs_count \n  FROM daily_scraping_logs\n  WHERE created_at >= now() - interval '12 hours'\n) as daily_logs\nCROSS JOIN (\n  SELECT count(*) as follow_up_sequence_logs_count \n  FROM follow_up_sequence_logs\n  WHERE created_at >= now() - interval '12 hours'\n) as sequence_logs\nCROSS JOIN (\n  SELECT count(*) as sales_daily_email_count\n  FROM sales_daily_email_notification_logs\n  WHERE created_at >= now() - interval '12 hours'\n) as email_logs;",
+        "query": "SELECT \n  daily_logs.daily_scraping_logs_count::int,\n  soc_med_sequence_logs.soc_med_follow_up_sequence_logs_count::int,\n  cold_leads_sequence_logs.cold_leads_follow_up_sequence_logs_count::int,\n  email_logs.sales_daily_email_count::int\nFROM (\n  SELECT count(*) as daily_scraping_logs_count \n  FROM daily_scraping_logs\n  WHERE created_at >= now() - interval '8 hours'\n) as daily_logs\nCROSS JOIN (\n  SELECT count(*) as soc_med_follow_up_sequence_logs_count \n  FROM follow_up_sequence_logs\n  WHERE created_at >= now() - interval '8 hours'\n  and lead_type = 'social media'\n) as soc_med_sequence_logs\nCROSS JOIN (\n  SELECT count(*) as cold_leads_follow_up_sequence_logs_count \n  FROM follow_up_sequence_logs\n  WHERE created_at >= now() - interval '8 hours'\n  and lead_type = 'cold leads'\n) as cold_leads_sequence_logs\nCROSS JOIN (\n  SELECT count(*) as sales_daily_email_count\n  FROM sales_daily_email_notification_logs\n  WHERE created_at >= now() - interval '8 hours'\n) as email_logs;",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
@@ -62,7 +62,16 @@
             },
             {
               "id": "ebdbf75e-3f6c-4c1b-aac7-541863459c61",
-              "leftValue": "={{ $json.follow_up_sequence_logs_count }}",
+              "leftValue": "={{ $json.soc_med_follow_up_sequence_logs_count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "ba03a2e4-a493-450f-8a34-30a54257b891",
+              "leftValue": "={{ $json.cold_leads_follow_up_sequence_logs_count }}",
               "rightValue": 0,
               "operator": {
                 "type": "number",
@@ -306,7 +315,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "a3fd9b9c-7916-4e82-830b-1528f00c505a",
+  "versionId": "4a301dc9-d1f6-4980-b818-ed73625bd855",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
