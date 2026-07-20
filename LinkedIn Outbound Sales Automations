@@ -1,5 +1,5 @@
 {
-  "name": "130726 - LinkedIn Outbound Sales Automations",
+  "name": "150726 - LinkedIn Outbound Sales Automations",
   "nodes": [
     {
       "parameters": {
@@ -12,7 +12,8 @@
           "cachedResultName": "LinkedIn Profile Posts Scraper (No Cookies) (harvestapi/linkedin-profile-posts)",
           "cachedResultUrl": "https://console.apify.com/actors/A3cAPGpwBEG8RJwse/input"
         },
-        "customBody": "={\n  \"targetUrls\": [\n    \"{{ $json.linkedin_profile_link }}\"\n  ],\n  \"maxPosts\": 30,\n  \"postedLimitDate\": \"{{ DateTime.fromISO($('Execute a SQL query12').item.json.created_at).toFormat('yyyy-MM-dd') }}\",\n  \"includeQuotePosts\": false,\n  \"includeReposts\": false\n}"
+        "customBody": "={\n  \"targetUrls\": [\n    \"{{ $json.linkedin_profile_link }}\"\n  ],\n  \"maxPosts\": 30,\n  \"postedLimitDate\": \"{{ DateTime.fromISO($('Execute a SQL query12').item.json.created_at).toFormat('yyyy-MM-dd') }}\",\n  \"includeQuotePosts\": false,\n  \"includeReposts\": false\n}",
+        "timeout": {}
       },
       "type": "@apify/n8n-nodes-apify.apify",
       "typeVersion": 1,
@@ -20,7 +21,7 @@
         1264,
         -608
       ],
-      "id": "7b612718-d2a1-4e26-8ede-22ccfa2c2c37",
+      "id": "2af04ed7-b6de-4b16-b45f-856c09dba7ab",
       "name": "Run an Actor and get dataset",
       "alwaysOutputData": true,
       "credentials": {
@@ -40,7 +41,7 @@
         2032,
         -752
       ],
-      "id": "b9a3e21a-883f-43e4-9ba9-ba19a8e41a3c",
+      "id": "b491a2b4-afc4-4127-8676-94f764e8a3fe",
       "name": "Code in JavaScript"
     },
     {
@@ -53,7 +54,7 @@
         2576,
         -928
       ],
-      "id": "89d1df94-bc3b-4873-8679-d3bfd69b9683",
+      "id": "0e6066a6-1efe-4df8-86e0-d718d417f6f5",
       "name": "Code in JavaScript2"
     },
     {
@@ -67,7 +68,7 @@
         -3776,
         4304
       ],
-      "id": "aaa2cd8d-35cb-406f-9ec1-c6789be9ab69",
+      "id": "31dd3652-424b-4761-9f3d-0424d42181d8",
       "name": "Code in JavaScript3",
       "disabled": true
     },
@@ -82,7 +83,7 @@
         -4464,
         4288
       ],
-      "id": "4a55a92a-74e5-4f11-8757-ff6cac7b89db",
+      "id": "03cf4d58-5090-4915-9a75-a6374de68b3a",
       "name": "Loop Over Items",
       "disabled": true
     },
@@ -110,7 +111,7 @@
         -4112,
         4304
       ],
-      "id": "d1b6ea9f-d4ef-4782-800f-668f52ec2523",
+      "id": "d0d065d7-72e6-49c3-8b02-548e4e83eecd",
       "name": "Message a model2",
       "credentials": {
         "googlePalmApi": {
@@ -139,7 +140,7 @@
         2208,
         -752
       ],
-      "id": "47f61b5d-7850-43b2-aec6-7cc1fa9004fa",
+      "id": "49081f65-b2fa-4b7c-8765-285cf2498d46",
       "name": "Update a document1",
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -160,7 +161,7 @@
         592,
         -608
       ],
-      "id": "cd1a77a2-2c80-4d6f-9041-8f7c1b0c99cb",
+      "id": "c01195ef-fad9-4cec-97b5-dc53b30b6873",
       "name": "Create a document",
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -177,7 +178,7 @@
         -4160,
         4112
       ],
-      "id": "789305a7-c62b-442b-bd95-9eff40aaff52",
+      "id": "077aa107-e327-46e4-a506-c4490f7a65aa",
       "name": "Limit",
       "disabled": true
     },
@@ -203,7 +204,7 @@
         -3216,
         7424
       ],
-      "id": "f9d9e3fe-715a-432b-83a8-83d503c67de2",
+      "id": "9394a9fd-79a5-4e1d-a726-524edf9fca73",
       "name": "Get row(s) in sheet1",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -352,7 +353,7 @@
         -2064,
         7408
       ],
-      "id": "f6a5de1f-e18c-4047-ba7b-9cccf298935e",
+      "id": "2b07b5aa-ab2c-400d-8f26-d4d732163822",
       "name": "Update row in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -403,7 +404,7 @@
         -3056,
         7424
       ],
-      "id": "ec40d877-d14f-422e-86cf-debdbec9884a",
+      "id": "6df138ac-b22a-46d1-b411-2dea24679b49",
       "name": "If1",
       "disabled": true
     },
@@ -417,7 +418,7 @@
         -2608,
         7232
       ],
-      "id": "2e513b85-cd6b-4d8b-a5db-85ac0e29ef85",
+      "id": "2e956d83-cc6c-4721-8315-662274197319",
       "name": "Loop Over Items2",
       "disabled": true
     },
@@ -445,7 +446,7 @@
         -2416,
         7408
       ],
-      "id": "00588d12-57db-41c4-b32c-fb019bcb98a3",
+      "id": "a5402ebc-d5e8-4e07-b4cf-c39ae9d26196",
       "name": "Message a model",
       "credentials": {
         "googlePalmApi": {
@@ -469,7 +470,7 @@
         -3424,
         7680
       ],
-      "id": "8592b631-2347-4e72-a032-b30f3f3ee2ba",
+      "id": "e76e157e-95e9-473a-b0eb-c7a7eb97f430",
       "name": "Schedule Trigger1",
       "disabled": true
     },
@@ -495,7 +496,7 @@
         -3216,
         7680
       ],
-      "id": "fc6399e3-1558-4cb4-a186-8ce0330f4d96",
+      "id": "e1bcae23-688c-41cd-87a8-70c2936e53bb",
       "name": "Get row(s) in sheet2",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -644,7 +645,7 @@
         -2272,
         7664
       ],
-      "id": "cf87e182-4595-4e97-99b3-c2567ddf461f",
+      "id": "6226085c-8a00-4459-aadb-bc616df9097d",
       "name": "Update row in sheet1",
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -685,7 +686,7 @@
         -3056,
         7680
       ],
-      "id": "5615c814-3eac-4dd3-8be0-03a25d4f818f",
+      "id": "111d5422-8d2c-4ecd-8b69-1b04b9bb3a1f",
       "name": "If",
       "disabled": true
     },
@@ -703,7 +704,7 @@
         -3408,
         7424
       ],
-      "id": "e093b202-076c-42c7-83aa-2e1168b9a73b",
+      "id": "212da91e-579a-40a1-9e9c-94ec5335f297",
       "name": "Schedule Trigger2",
       "disabled": true
     },
@@ -718,7 +719,7 @@
         2400,
         -752
       ],
-      "id": "3c554abd-43d0-4f61-9818-b74694b32350",
+      "id": "f84dda05-61c8-436d-ba24-3a5d61626bd1",
       "name": "Get a document1",
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -814,7 +815,7 @@
         -2304,
         3280
       ],
-      "id": "56da87e2-e59e-4d1a-b378-9e2c53acd2bd",
+      "id": "1c94a00a-a633-4863-ba06-76f12745c87b",
       "name": "Update row in sheet3",
       "retryOnFail": true,
       "waitBetweenTries": 5000,
@@ -836,7 +837,7 @@
         -1200,
         -928
       ],
-      "id": "f0fbe152-7708-44f6-a81c-7b78c8e5a288",
+      "id": "7f5beb66-ad95-407c-a1d6-ee6ca3eea3c4",
       "name": "Loop Over Items1"
     },
     {
@@ -870,7 +871,7 @@
         1808,
         -608
       ],
-      "id": "a824dda8-5f7d-4d72-91c6-09473dacaf2d",
+      "id": "aff84913-ac0a-41aa-9cc6-e7b021667014",
       "name": "If3",
       "alwaysOutputData": true
     },
@@ -882,12 +883,12 @@
         1664,
         -2912
       ],
-      "id": "8b7705ef-a5b1-4522-8bb9-051243348f09",
+      "id": "2be6dbed-89fa-4716-b736-731a5414de4c",
       "name": "Limit3"
     },
     {
       "parameters": {
-        "jsCode": "// 1. Get the incoming items\nlet items = $input.all();\n\n// 2. Check if the incoming payload is just an empty array structure: [{}]\nconst isEmptyObjectArray = \n  items.length === 1 && \n  typeof items[0].json === 'object' && \n  items[0].json !== null && \n  Object.keys(items[0].json).length === 0;\n\n// 3. If it is empty, fallback to the \"Get many rows\" node output instead\nif (isEmptyObjectArray) {\n  items = $(\"Get many rows\").all();\n}\n\n// 4. Filter down to only items where \"is_speaking_engagement\" is strictly null\nconst filteredItems = items.filter(item => {\n  // Checks for strict null values (unassigned state)\n  return item.json[\"is_speaking_engagement\"] === null;\n});\n\n// Return the filtered list to the next node\nreturn filteredItems;"
+        "jsCode": "// 1. Get the incoming items\nlet items = $input.all();\n\n// 2. Check if the incoming payload is just an empty array structure: [{}]\nconst isEmptyObjectArray = \n  items.length === 1 && \n  typeof items[0].json === 'object' && \n  items[0].json !== null && \n  Object.keys(items[0].json).length === 0;\n\n// 3. If it is empty, fallback to the \"Get many rows\" node output instead\nif (isEmptyObjectArray) {\n  items = $(\"Get a row1\").all();\n}\n\n// 4. Filter down to only items where \"is_speaking_engagement\" is strictly null\nconst filteredItems = items.filter(item => {\n  // Checks for strict null values (unassigned state)\n  return item.json[\"is_speaking_engagement\"] === null;\n});\n\n// Return the filtered list to the next node\nreturn filteredItems;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -895,7 +896,7 @@
         -4944,
         4160
       ],
-      "id": "06d91009-cd3c-4e24-bda9-b6b312cbf534",
+      "id": "7b2cdcd3-1860-46cf-8f39-11b2a0b55c21",
       "name": "Code in JavaScript6",
       "alwaysOutputData": true,
       "disabled": true
@@ -911,7 +912,7 @@
         -2592,
         3696
       ],
-      "id": "f4ac6de0-3328-46aa-8138-db880f305334",
+      "id": "b1799211-9a5c-4c4f-b1d6-dd21d80048de",
       "name": "Code in JavaScript7",
       "disabled": true
     },
@@ -939,7 +940,7 @@
         -2928,
         3696
       ],
-      "id": "9bf1f6e0-8691-4c04-9da7-bc7a5b50e967",
+      "id": "ea3adbac-caf8-43a4-b51f-2fe6dd10e5a7",
       "name": "Message a model3",
       "credentials": {
         "googlePalmApi": {
@@ -960,7 +961,7 @@
         -3216,
         3600
       ],
-      "id": "37acbeeb-c219-4983-a344-1dfe6deb27a3",
+      "id": "b68cc360-db5e-4556-bbcd-e4167797a65d",
       "name": "Loop Over Items3",
       "disabled": true
     },
@@ -992,7 +993,7 @@
         -3568,
         4304
       ],
-      "id": "19f10ce0-96f7-45ad-9051-74496ac13dc9",
+      "id": "fd9ae83e-29cf-4d64-8be4-ed3d5992c380",
       "name": "Update a row",
       "credentials": {
         "supabaseApi": {
@@ -1030,7 +1031,7 @@
         -3776,
         3904
       ],
-      "id": "6aa62b04-3b77-4a2e-a6c6-58055b882710",
+      "id": "b34aa9ec-0cbb-4066-b8a7-0b1a365719af",
       "name": "Get many rows2",
       "executeOnce": true,
       "alwaysOutputData": true,
@@ -1058,7 +1059,7 @@
         -4816,
         3680
       ],
-      "id": "44ac3f1b-580d-4332-9016-feeb2aee42c7",
+      "id": "e2ba8178-3901-419d-82a4-99f604bb90d2",
       "name": "Schedule Trigger7",
       "disabled": true
     },
@@ -1106,7 +1107,7 @@
         -2384,
         3696
       ],
-      "id": "ad6d5fc3-8f27-4bc6-8a77-2c1959aa374b",
+      "id": "2965d651-6b87-43e7-9406-223db11d7730",
       "name": "Update a row1",
       "credentials": {
         "supabaseApi": {
@@ -1147,7 +1148,7 @@
         -4752,
         4160
       ],
-      "id": "80fc7009-6cd0-4e4b-8d29-2adfeeb3905f",
+      "id": "0beb9e09-87d2-4004-b453-4fc7172dd331",
       "name": "If5",
       "disabled": true
     },
@@ -1175,7 +1176,7 @@
         1696,
         -2160
       ],
-      "id": "8131e356-fc55-4390-8a88-f4f21007ed57",
+      "id": "7ad5221e-4ab6-4a04-b37f-3d01d97fc240",
       "name": "Message a model1",
       "retryOnFail": true,
       "credentials": {
@@ -1195,7 +1196,7 @@
         2016,
         -2160
       ],
-      "id": "f1e740d4-8226-4f66-94f1-08fcdd850a4d",
+      "id": "ab9206a2-c11c-47a7-9b14-57f70ab386be",
       "name": "Code in JavaScript4"
     },
     {
@@ -1208,7 +1209,7 @@
         1184,
         -2464
       ],
-      "id": "a63b5443-27f5-4238-ad07-0a7f1a2bac58",
+      "id": "525a87f7-54dc-4393-8bbb-6e54a95ce15d",
       "name": "Loop Over Items4"
     },
     {
@@ -1224,10 +1225,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
       "position": [
-        544,
+        320,
         -2464
       ],
-      "id": "5c90d4d6-2dd1-46ca-bf8b-d50bcf8278ec",
+      "id": "58d9c54c-30d8-4902-be9c-902b051c2559",
       "name": "Schedule Trigger5",
       "disabled": true
     },
@@ -1275,7 +1276,7 @@
         2192,
         -2160
       ],
-      "id": "cf1b4a4f-5ed2-4f5e-97cb-f6d798d28489",
+      "id": "da261f0f-8f88-4a87-8641-a034e92b8468",
       "name": "Update a row2",
       "credentials": {
         "supabaseApi": {
@@ -1300,9 +1301,9 @@
         -3824,
         3056
       ],
-      "id": "5feadf32-20ce-4127-bc53-7d34c0afdde8",
+      "id": "b497c453-1c9d-4b97-b5ca-7dc2d70504f1",
       "name": "Create a draft",
-      "webhookId": "c46d889f-d66d-4088-8a07-f81b5a39cc2e",
+      "webhookId": "6e3f7f37-ca65-4bfb-8232-065ccc3102e0",
       "credentials": {
         "gmailOAuth2": {
           "id": "dkfeQrltUckqbpZg",
@@ -1325,9 +1326,9 @@
         -3648,
         3056
       ],
-      "id": "433852e5-f719-4ccc-bb6c-0d15d39783c0",
+      "id": "5f74ae97-6c39-4899-831a-69380f5d8b7c",
       "name": "Add label to message",
-      "webhookId": "156c2cf4-df0f-432c-ba8e-3b29d05042a9",
+      "webhookId": "b2024ed1-5848-4bd8-962d-47cbd23be76a",
       "credentials": {
         "gmailOAuth2": {
           "id": "dkfeQrltUckqbpZg",
@@ -1593,7 +1594,7 @@
         -3408,
         3056
       ],
-      "id": "5bb89e61-7ddb-4270-8905-068a9325b530",
+      "id": "2d557847-dca6-4b95-b2c7-d1dc9ba8a5db",
       "name": "Update row in sheet2",
       "alwaysOutputData": true,
       "credentials": {
@@ -1612,7 +1613,7 @@
         -3936,
         2544
       ],
-      "id": "4e9a3900-9b4c-4267-93fd-008cdcf47a69",
+      "id": "f0bda755-7c53-424f-a412-d9c5e03315ae",
       "name": "Limit1",
       "disabled": true
     },
@@ -1626,7 +1627,7 @@
         -4224,
         2768
       ],
-      "id": "469e88b3-b9f0-443d-a5a9-f3c1a343ffda",
+      "id": "824d745f-abce-48a0-8c7b-12db8c817d6d",
       "name": "Loop Over Items5",
       "disabled": true
     },
@@ -1646,7 +1647,7 @@
         1232,
         -2912
       ],
-      "id": "158f359c-3702-4b24-8fd2-03ccc0a40433",
+      "id": "44916623-7d1d-4663-ae89-11546e17ce19",
       "name": "Schedule Trigger6",
       "disabled": true
     },
@@ -1688,7 +1689,7 @@
         -4528,
         2768
       ],
-      "id": "5f7024c7-278f-410d-b5c0-e26912b58642",
+      "id": "8a14f6a1-148c-4ae3-8067-ffcb188550cb",
       "name": "Get many rows3",
       "executeOnce": true,
       "credentials": {
@@ -1712,7 +1713,7 @@
         1872,
         -2912
       ],
-      "id": "7c2a9deb-f97e-4bb9-be5b-de127b3fde01",
+      "id": "f2d4ce24-1a45-412b-9a0b-e01eb3569944",
       "name": "Get many rows4",
       "executeOnce": true,
       "credentials": {
@@ -1765,7 +1766,7 @@
         2080,
         -2912
       ],
-      "id": "0796c593-84ea-419e-a2af-5e72f2d5fd28",
+      "id": "22a034e0-df13-4fb7-adb3-e9cef68b65ed",
       "name": "Update a row4",
       "alwaysOutputData": true,
       "credentials": {
@@ -1804,7 +1805,7 @@
         -4016,
         3056
       ],
-      "id": "e265808e-698d-437f-95ee-c3f35a2d3e2a",
+      "id": "85b26110-919d-4039-8569-1991b8e389b0",
       "name": "Update a row5",
       "credentials": {
         "supabaseApi": {
@@ -1830,7 +1831,7 @@
         -4160,
         2336
       ],
-      "id": "f7bb1f8e-af44-453e-976e-3dd37def489b",
+      "id": "fbaadcb3-2950-454f-a1a3-699e539f2f70",
       "name": "Schedule Trigger8",
       "disabled": true
     },
@@ -1846,7 +1847,7 @@
         -96,
         -2208
       ],
-      "id": "d394f565-3572-4600-b7bb-00d2b3e37dc5",
+      "id": "1a838b31-7bb9-4825-a2ee-304ba99f8a3b",
       "name": "Sticky Note"
     },
     {
@@ -1862,7 +1863,7 @@
         1232,
         -400
       ],
-      "id": "ebe7793d-924b-4259-a6b5-ef5ab4070046",
+      "id": "ab573c47-32a7-4729-aeed-6096e74cce5e",
       "name": "Sticky Note1"
     },
     {
@@ -1877,7 +1878,7 @@
         -4528,
         2656
       ],
-      "id": "5343587c-e20e-4e65-8cc8-503f0833f5d3",
+      "id": "cfd0f9d7-7c41-4238-8ca4-5db61e69597c",
       "name": "Sticky Note2",
       "disabled": true
     },
@@ -1905,10 +1906,10 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        960,
+        736,
         -2464
       ],
-      "id": "ecd08e52-08c4-43ae-8081-92787fae6782",
+      "id": "66e98a00-c3c0-4bf3-86f5-df1de56927b9",
       "name": "Get many rows6",
       "executeOnce": true,
       "credentials": {
@@ -1916,7 +1917,8 @@
           "id": "kHRif9Z1yFEMSg4S",
           "name": "Supabase account"
         }
-      }
+      },
+      "disabled": true
     },
     {
       "parameters": {
@@ -1929,7 +1931,7 @@
         1664,
         -3024
       ],
-      "id": "45db4a80-fb2e-4cca-87db-7116cb2d47ac",
+      "id": "265ae33a-ab99-4180-8fb9-03c1329bc386",
       "name": "Sticky Note3"
     },
     {
@@ -1948,7 +1950,7 @@
         -5072,
         2768
       ],
-      "id": "8f98f5db-f7f6-4cd6-852e-7b7da0123b43",
+      "id": "c0a6cb26-4808-4dd2-a0fe-36d0b5ced70a",
       "name": "Schedule Trigger9",
       "disabled": true
     },
@@ -1964,7 +1966,7 @@
         -5568,
         -912
       ],
-      "id": "fc452cac-ce08-4eed-966a-5d816a63e295",
+      "id": "8b8a3b37-cedc-4740-ae88-ebea49ce886f",
       "name": "Execute a SQL query",
       "credentials": {
         "postgres": {
@@ -1984,7 +1986,7 @@
         -5360,
         -912
       ],
-      "id": "3b95fcca-3ee0-40a0-a051-c96b0e45a093",
+      "id": "f4458923-c886-4aa9-b299-fdbeec725fe3",
       "name": "Aggregate"
     },
     {
@@ -1997,7 +1999,7 @@
         -4592,
         -912
       ],
-      "id": "6ffe19f2-1edc-447a-8353-c5f81cde5dd7",
+      "id": "54f57729-ed19-441e-af2e-3766d0e68db6",
       "name": "Code in JavaScript1"
     },
     {
@@ -2012,7 +2014,7 @@
         -4176,
         -912
       ],
-      "id": "e120d936-a60d-47e3-84bb-c4ab0df57b38",
+      "id": "df04c5fd-2122-46a1-83e7-e2821b552d43",
       "name": "Execute a SQL query1",
       "executeOnce": true,
       "credentials": {
@@ -2046,7 +2048,7 @@
         -4944,
         -912
       ],
-      "id": "767f2712-8093-4980-8c1b-3c9777e40538",
+      "id": "fa9fc948-6f92-4b49-b15b-5394bffd914f",
       "name": "Message a model4",
       "credentials": {
         "googlePalmApi": {
@@ -2065,7 +2067,7 @@
         -5152,
         -912
       ],
-      "id": "0757f6ab-c13e-457d-8a35-32233a7cb6d1",
+      "id": "db3f228b-4632-427a-b611-630fa5414d5e",
       "name": "Code in JavaScript5"
     },
     {
@@ -2098,7 +2100,7 @@
         -4384,
         -912
       ],
-      "id": "0e5b44c6-3ba0-4e85-bbef-577f039389c6",
+      "id": "62e1fc29-44b1-444a-9ebe-6f444e4ce243",
       "name": "Create a row1",
       "executeOnce": true,
       "credentials": {
@@ -2171,7 +2173,7 @@
         -4000,
         -912
       ],
-      "id": "cbe0bbb3-75e0-4b58-8023-877eaf7b663c",
+      "id": "297cfd75-3c55-443e-a9e2-aba4cff604d6",
       "name": "Append row in sheet1",
       "executeOnce": false,
       "credentials": {
@@ -2195,7 +2197,7 @@
         -4400,
         -1200
       ],
-      "id": "ebb67af6-283c-411f-b4e1-122b136f626a",
+      "id": "a8e74a08-8264-41fd-8573-1e3768d4987b",
       "name": "Schedule Trigger10",
       "disabled": true
     },
@@ -2216,7 +2218,7 @@
         -5824,
         -912
       ],
-      "id": "aa31ee8c-b57e-4294-a776-67d7f87a60ca",
+      "id": "086f2a0e-da6a-4540-bed7-fda037de8cbd",
       "name": "Schedule Trigger",
       "disabled": true
     },
@@ -2233,7 +2235,7 @@
         -4944,
         -1072
       ],
-      "id": "76cae772-fa69-4d28-8cfb-6bcaf00fc39d",
+      "id": "cc396b6e-e09f-4a9f-8cff-6517f763a054",
       "name": "Sticky Note4"
     },
     {
@@ -2265,7 +2267,7 @@
         -3024,
         3488
       ],
-      "id": "ac7af258-cde1-4632-a2cd-247dbe0669cc",
+      "id": "9d7511ac-c915-483c-aa39-7a15b7d45c02",
       "name": "Get row(s) in sheet4",
       "executeOnce": true,
       "credentials": {
@@ -2290,7 +2292,7 @@
         -3424,
         3296
       ],
-      "id": "fb5d5e13-1238-4223-85fb-0afa8fdff1a0",
+      "id": "7af1739a-5ebb-4f5c-a0e0-7a6856019b10",
       "name": "Schedule Trigger11",
       "disabled": true
     },
@@ -2314,7 +2316,7 @@
         -2816,
         3488
       ],
-      "id": "1978d8a3-eea9-4d78-85dc-ca5b86f5447a",
+      "id": "f14e80f0-4e1c-4592-a18b-49d35c150b28",
       "name": "Edit Fields1",
       "disabled": true
     },
@@ -2326,7 +2328,7 @@
         -2608,
         3488
       ],
-      "id": "870591be-108e-4257-8f66-ab8e6bc8e59c",
+      "id": "ff90b8e5-ecdd-460d-98c3-9783f3a48bed",
       "name": "Limit4",
       "disabled": true
     },
@@ -2347,7 +2349,7 @@
         -5744,
         -608
       ],
-      "id": "4f397c31-8de4-4b9e-96f8-15206b613d57",
+      "id": "37695731-8a85-4617-9d95-4b0f2a910f1e",
       "name": "Schedule Trigger12",
       "disabled": true
     },
@@ -2363,7 +2365,7 @@
         -5536,
         -608
       ],
-      "id": "23b31909-cad7-4fca-a476-67f038ffdede",
+      "id": "625efbb4-77aa-4c3c-9848-e6fa7e4ebd50",
       "name": "Execute a SQL query2",
       "credentials": {
         "postgres": {
@@ -2380,7 +2382,7 @@
         -5328,
         -608
       ],
-      "id": "ad878fa4-4312-48b8-8eb4-3d6b715bfcde",
+      "id": "7dc83fbd-5275-40e8-ae42-751fef3d343a",
       "name": "Limit5"
     },
     {
@@ -2400,8 +2402,9 @@
         -1952,
         -960
       ],
-      "id": "5311a016-e74b-4840-95ce-c02365615f92",
-      "name": "Schedule Trigger13"
+      "id": "cb608832-986d-40a3-a5b7-a19ebac2fbcb",
+      "name": "Schedule Trigger13",
+      "disabled": true
     },
     {
       "parameters": {
@@ -2434,7 +2437,7 @@
         -3568,
         3904
       ],
-      "id": "03920457-bca3-4edc-a43e-9f00f874e97f",
+      "id": "345832fa-1c57-4c88-bbce-dd9d3406ed43",
       "name": "If6",
       "disabled": true
     },
@@ -2450,7 +2453,7 @@
         -3728,
         2544
       ],
-      "id": "4bda6567-6449-47a6-80d9-2333b09a1e26",
+      "id": "53abb636-e580-48c7-82c2-70476433e85b",
       "name": "Execute a SQL query3",
       "credentials": {
         "postgres": {
@@ -2470,7 +2473,7 @@
         -3312,
         2544
       ],
-      "id": "95082607-56e8-44a2-9e16-f800509d3cd2",
+      "id": "421b5271-ef98-4c34-9f60-e7ec7fa694ab",
       "name": "Loop Over Items6",
       "disabled": true
     },
@@ -2498,7 +2501,7 @@
         -3104,
         2640
       ],
-      "id": "0e695839-c584-4676-b71c-9405fc472cc6",
+      "id": "48fee8c7-2a80-45e9-8101-a34cd75c9b72",
       "name": "Message a model5",
       "credentials": {
         "googlePalmApi": {
@@ -2520,7 +2523,7 @@
         -2752,
         2640
       ],
-      "id": "5f1e8e05-e006-4e94-827b-ee6f3f8cb467",
+      "id": "fba5bbc1-7670-497c-88dd-f6b0ff0e36bc",
       "name": "Execute a SQL query4",
       "credentials": {
         "postgres": {
@@ -2540,7 +2543,7 @@
         2784,
         -928
       ],
-      "id": "c9a7943b-a598-422a-81d9-e8d078f9f974",
+      "id": "06c3d702-3f46-401b-a136-c3d45ebd52cf",
       "name": "Loop Over Items7"
     },
     {
@@ -2562,7 +2565,7 @@
         2992,
         -832
       ],
-      "id": "67a759c5-d35e-4fd1-8e68-8bee6707e4dd",
+      "id": "5f74b9df-6780-41bd-8c43-7a0ebe709280",
       "name": "Get a row",
       "alwaysOutputData": true,
       "credentials": {
@@ -2603,7 +2606,7 @@
         3200,
         -832
       ],
-      "id": "344704e0-7ce2-483b-8cab-54ac371018fa",
+      "id": "63e1d606-e2cc-447b-b38d-0110e83fe2a1",
       "name": "If7"
     },
     {
@@ -2708,7 +2711,7 @@
         3392,
         -720
       ],
-      "id": "bd90aded-4d2c-4e0d-8aa1-7d6733c0d94a",
+      "id": "6e79b32b-b9da-47d6-932a-d8fdf344c987",
       "name": "Create a row2",
       "credentials": {
         "supabaseApi": {
@@ -2729,7 +2732,7 @@
         1824,
         -1216
       ],
-      "id": "b5bb182d-94d8-4524-a67d-5f11acb8dbf3",
+      "id": "e7cd57fc-db55-4627-9e48-46f03720f885",
       "name": "Get a document3",
       "credentials": {
         "googleDocsOAuth2Api": {
@@ -2755,7 +2758,7 @@
         1632,
         -1216
       ],
-      "id": "d96dcf74-20b1-4d66-8912-b21f132b81a1",
+      "id": "d024341c-c6fe-4c4c-9a08-7c88d4d2f8ca",
       "name": "Schedule Trigger14",
       "disabled": true
     },
@@ -2773,7 +2776,7 @@
         2896,
         -1152
       ],
-      "id": "052d1237-7400-4060-87c8-7345c9be60a1",
+      "id": "ec0c3fef-db9b-4fed-838e-3f8dc48b5234",
       "name": "Schedule Trigger15",
       "disabled": true
     },
@@ -2785,7 +2788,7 @@
         3280,
         -1152
       ],
-      "id": "a428cfa7-96a5-42a6-a2b4-7db22e0d9bd4",
+      "id": "e1034326-bb27-4303-80d7-e55638d05c8f",
       "name": "Limit8"
     },
     {
@@ -2800,41 +2803,8 @@
         3472,
         -1264
       ],
-      "id": "01b74e26-db76-4181-9c28-d1b0bd48c0fd",
+      "id": "57e8d9ed-e9ea-4deb-9388-6b4026e499ed",
       "name": "Sticky Note8"
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "insert into daily_scraping_logs (source)\nvalues ('linkedin')",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        2448,
-        -2912
-      ],
-      "id": "2e13bcb5-5d33-4514-a240-acd261919554",
-      "name": "Execute a SQL query9",
-      "executeOnce": true,
-      "credentials": {
-        "postgres": {
-          "id": "kthnW5Kr1bhfcVQC",
-          "name": "Postgres account"
-        }
-      }
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.limit",
-      "typeVersion": 1,
-      "position": [
-        2288,
-        -2912
-      ],
-      "id": "5b47b912-8495-4d97-8d02-d6c67ce80182",
-      "name": "Limit9"
     },
     {
       "parameters": {
@@ -2847,23 +2817,8 @@
         2768,
         -3056
       ],
-      "id": "59d085ca-a9dc-4c29-a112-458dc67c94ab",
+      "id": "dec2af8d-eb35-4473-a116-30bd48aa29a0",
       "name": "Sticky Note7"
-    },
-    {
-      "parameters": {
-        "content": "## update daily_scraping_logs",
-        "height": 112,
-        "width": 256
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        2304,
-        -3056
-      ],
-      "id": "54f014f4-2d35-4840-ba51-4bb61e3bd49e",
-      "name": "Sticky Note9"
     },
     {
       "parameters": {
@@ -2877,7 +2832,7 @@
         -832,
         -1984
       ],
-      "id": "4fd7c8a3-ca6e-4415-a9e0-c7ee4766628d",
+      "id": "e0dd8b1a-ba80-461b-86f2-b9b31e028394",
       "name": "Execute a SQL query6",
       "executeOnce": true,
       "alwaysOutputData": true,
@@ -2905,7 +2860,7 @@
         -1328,
         -1984
       ],
-      "id": "69035e2a-4524-4d92-9055-3fa8661a19bd",
+      "id": "9c3fcf9c-a85b-49a0-9a63-e48bbdcaf004",
       "name": "Schedule Trigger4",
       "disabled": true
     },
@@ -2920,7 +2875,7 @@
         336,
         -1696
       ],
-      "id": "9026860c-b328-461f-b5e0-3f5b6dce8a35",
+      "id": "b4cfe7b5-25e6-496f-bb92-705186fa6ce7",
       "name": "Code in JavaScript8"
     },
     {
@@ -2947,7 +2902,7 @@
         0,
         -1696
       ],
-      "id": "1d213f5a-98a6-4d38-8eff-04ec552c51d1",
+      "id": "7c3ba67d-b01b-4174-a15c-120488c30cdf",
       "name": "Message a model6",
       "credentials": {
         "googlePalmApi": {
@@ -2984,7 +2939,7 @@
         544,
         -1696
       ],
-      "id": "9dd33042-7203-485e-bcf7-034d6ae49df9",
+      "id": "c6352b69-5976-4478-9155-36e996fe821b",
       "name": "Update a row6",
       "credentials": {
         "supabaseApi": {
@@ -3003,7 +2958,7 @@
         -272,
         -1904
       ],
-      "id": "ee6c3039-b5a0-4623-bb1b-ec997fdecc93",
+      "id": "b3e2b877-d16a-4a00-aa73-e6fe3e0219c1",
       "name": "Loop Over Items8"
     },
     {
@@ -3017,7 +2972,7 @@
         0,
         -1504
       ],
-      "id": "27cff1f0-a497-4c9f-8562-c4831182ed8e",
+      "id": "b7d80f7a-4a8e-4804-886a-f1f5ca16e411",
       "name": "Sticky Note5"
     },
     {
@@ -3025,27 +2980,28 @@
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
-        112,
+        -16,
         -2048
       ],
-      "id": "3b941daa-c896-40fa-9291-345a2b86228e",
+      "id": "0f7f9228-625e-4ff0-ae43-5e1a9edbdcc0",
       "name": "Limit6"
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "select * from linkedin_posts\nwhere is_speaking_engagement = true\nand poc_email is null",
+        "query": "select * from linkedin_posts\nwhere is_speaking_engagement = true\nand (poc_email is null\nor org is null)",
         "options": {}
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        272,
+        144,
         -2048
       ],
-      "id": "1f93d230-8fe1-4add-af8c-2626545ae595",
+      "id": "c803c370-808d-404f-b269-1aa89e9a3a64",
       "name": "Execute a SQL query7",
       "executeOnce": true,
+      "alwaysOutputData": true,
       "credentials": {
         "postgres": {
           "id": "kthnW5Kr1bhfcVQC",
@@ -3064,7 +3020,7 @@
         1072,
         -1904
       ],
-      "id": "2d98e8bf-afd1-4d15-9ebb-f2f553dab019",
+      "id": "6d947306-b426-45e2-915a-bbfe7f8f737d",
       "name": "Code in JavaScript10"
     },
     {
@@ -3078,7 +3034,7 @@
         "messages": {
           "values": [
             {
-              "content": "=# Role & Objective\nYou are an expert data extraction assistant specializing in corporate competitive intelligence. Analyze raw text scraped from a competitor's LinkedIn profile and extract structured data about their speaking engagements. Return only a single valid JSON object—no prose, no markdown.\n\n# Input Data\n- **content**: {{ $json.content }}\n- **id**: {{ $json.id }}\n- **author_name**: {{ $json.author_name }}\n\n# Processing Steps\n1. **Relevance Check**: Determine whether the text explicitly discusses, promotes, or recaps a corporate speaking engagement, keynote, workshop, or booked event featuring the competitor. Mentions of others' events, general commentary, or reshared content without the competitor speaking do NOT count.\n\n2. **If RELEVANT** (`is_speaking_engagement` = true):\n   - **org**: Extract the company/organization that booked the competitor. Never invent; use null if not explicitly stated.\n   - **POC**: Extract the named organizer or booker. Never invent; use null if not stated.\n   - **eventName**: Extract the official event name. If none is explicitly stated, infer a concise, contextually accurate name (e.g., \"Snap Fitness Annual Conference\"). MUST NOT be null or empty.\n   - **engagement_date**: Extract or infer the event date, normalized to DD/MM/YYYY. Use null only if no date context exists at all. When inferring the year, use the most contextually likely year; do not default to the current year without support.\n   - **Description**: 1–2 sentence summary of the engagement.\n\n3. **If NOT RELEVANT** (`is_speaking_engagement` = false):\n   - Set org, POC, engagement_date to null.\n   - Set eventName to \"not found\".\n   - **Description**: 1–2 sentence summary of the post's actual content.\n\n# Output Schema\nReturn exactly this JSON object with no surrounding text:\n\n```json\n{\n  \"ID\": \"string — pass through the exact value of id\",\n  \"is_speaking_engagement\": \"boolean\",\n  \"Description\": \"string — concise 1–2 sentence summary. Never null.\",\n  \"org\": \"string or null\",\n  \"POC\": \"string or null\",\n  \"eventName\": \"string — event name if is_speaking_engagement is true; otherwise 'not found'. Never null.\",\n  \"engagement_date\": \"string (DD/MM/YYYY) or null\"\n}\n```\n"
+              "content": "=# Role & Objective\nYou are an expert data extraction assistant specializing in corporate competitive intelligence. Analyze raw text scraped from a competitor's LinkedIn profile and extract structured data about their speaking engagements. Return only a single valid JSON object—no prose, no markdown.\n\n# Input Data\n- **content**: {{ $json.content }}\n- **id**: {{ $json.id }}\n- **author_name**: {{ $json.author_name }}\n\n# Processing Steps\n1. **Relevance Check**: Determine whether the text explicitly discusses, promotes, or recaps a corporate speaking engagement, keynote, workshop, or booked event featuring the competitor. Mentions of others' events, general commentary, or reshared content without the competitor speaking do NOT count.\n\n2. **If RELEVANT** (`is_speaking_engagement` = true):\n   - **org**: Extract the company/organization that booked the competitor. Never invent; search the web if not explicitly stated.\n   - **POC**: Extract the named organizer or booker. Never invent; use null if not stated.\n   - **eventName**: Extract the official event name. If none is explicitly stated, infer a concise, contextually accurate name (e.g., \"Snap Fitness Annual Conference\"). MUST NOT be null or empty.\n   - **engagement_date**: Extract or infer the event date, normalized to DD/MM/YYYY. Use null only if no date context exists at all. When inferring the year, use the most contextually likely year; do not default to the current year without support.\n   - **Description**: 1–2 sentence summary of the engagement.\n\n3. **If NOT RELEVANT** (`is_speaking_engagement` = false):\n   - Set org, POC, engagement_date to null.\n   - Set eventName to \"not found\".\n   - **Description**: 1–2 sentence summary of the post's actual content.\n\n# Output Schema\nReturn exactly this JSON object with no surrounding text:\n\n```json\n{\n  \"ID\": \"string — pass through the exact value of id\",\n  \"is_speaking_engagement\": \"boolean\",\n  \"Description\": \"string — concise 1–2 sentence summary. Never null.\",\n  \"org\": \"string or null\",\n  \"POC\": \"string or null\",\n  \"eventName\": \"string — event name if is_speaking_engagement is true; otherwise 'not found'. Never null.\",\n  \"engagement_date\": \"string (DD/MM/YYYY) or null\"\n}\n```\n"
             }
           ]
         },
@@ -3091,7 +3047,7 @@
         736,
         -1904
       ],
-      "id": "f0ddd0ad-9028-49a7-bc06-9350fa71a605",
+      "id": "24d6b406-badc-4091-ad56-42244bec99b1",
       "name": "Message a model7",
       "credentials": {
         "googlePalmApi": {
@@ -3107,10 +3063,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        432,
-        -2048
+        528,
+        -2016
       ],
-      "id": "9aa6c2cb-bba0-4649-8426-e752aef2c582",
+      "id": "b9d6d7bc-cd81-4368-b3d5-5619d893a2bd",
       "name": "Loop Over Items9"
     },
     {
@@ -3157,7 +3113,7 @@
         1296,
         -1904
       ],
-      "id": "75f52c49-1d2f-4134-a8db-4569d31ece7f",
+      "id": "c4a8ae1e-5750-4f67-a857-0f7ffe6ec5b5",
       "name": "Update a row7",
       "credentials": {
         "supabaseApi": {
@@ -3183,7 +3139,7 @@
         -160,
         -2048
       ],
-      "id": "ca51770a-e36d-41dc-a8f7-b1e7fbe36dd2",
+      "id": "bd692e07-7528-4021-adfb-0a651d48fe2a",
       "name": "Schedule Trigger16",
       "disabled": true
     },
@@ -3199,7 +3155,7 @@
         736,
         -1712
       ],
-      "id": "2e943f2e-8a3c-4e7d-b92d-f50e880b7080",
+      "id": "f4a582e4-5f4b-475c-a5f3-0c7fe4ccb6ab",
       "name": "Sticky Note6"
     },
     {
@@ -3210,7 +3166,7 @@
         -1008,
         -1984
       ],
-      "id": "3116ce05-43d4-46d7-916a-687b092cd936",
+      "id": "3d4a48e7-8fba-470b-93dc-2cc64c10b1b4",
       "name": "Limit10"
     },
     {
@@ -3218,10 +3174,10 @@
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
-        768,
+        544,
         -2464
       ],
-      "id": "4f106178-f871-42fd-878e-b116b0972f65",
+      "id": "28bf91e8-9931-4941-ab7e-f8a802972266",
       "name": "Limit11"
     },
     {
@@ -3236,7 +3192,7 @@
         1824,
         -1360
       ],
-      "id": "513a70e8-3d0d-4e19-bf4e-99020b6fe8c2",
+      "id": "23b660de-f966-4d19-8679-7006556c10f7",
       "name": "Sticky Note10"
     },
     {
@@ -3251,7 +3207,7 @@
         -1744,
         -960
       ],
-      "id": "7ecb5246-3a7b-47bb-bf30-c89d9463db18",
+      "id": "7cf37dfd-3350-444a-803f-9c79096584af",
       "name": "Execute a SQL query10",
       "executeOnce": true,
       "credentials": {
@@ -3273,7 +3229,7 @@
         3488,
         -1152
       ],
-      "id": "4ba2007b-291c-405b-b441-64909a5c440b",
+      "id": "11b50b3a-0315-48ad-8c1d-2c13fb42dad0",
       "name": "Execute a SQL query11",
       "credentials": {
         "postgres": {
@@ -3294,7 +3250,7 @@
         1056,
         -608
       ],
-      "id": "842e22f2-f10c-4647-8e08-f084c17777b8",
+      "id": "a94c3a41-d554-41f3-b0bc-ff00c9ee5ad1",
       "name": "Execute a SQL query5",
       "executeOnce": true,
       "credentials": {
@@ -3316,7 +3272,7 @@
         848,
         -608
       ],
-      "id": "29c9a86f-3ced-4020-bae2-0de687312cc1",
+      "id": "8bc16008-556e-48cc-bb31-8ceaabff9ccd",
       "name": "Execute a SQL query12",
       "executeOnce": true,
       "credentials": {
@@ -3357,7 +3313,7 @@
         -1536,
         -960
       ],
-      "id": "b66bccec-31cb-4295-bc9a-c575a36f1aa9",
+      "id": "6ec31140-c842-4fc3-9d56-41cb70855e89",
       "name": "If2"
     },
     {
@@ -3391,7 +3347,7 @@
         -688,
         -1984
       ],
-      "id": "0c8fd479-e37d-43d0-a724-dadb93f3a08f",
+      "id": "b1ce2ff7-39c6-47cc-a84c-4a09d01777b0",
       "name": "If4"
     },
     {
@@ -3406,7 +3362,7 @@
         1696,
         -1936
       ],
-      "id": "08a3ec6e-6b4e-4a59-845f-966fc6214b6d",
+      "id": "dd2bf050-4857-432c-9e26-1da95ca34473",
       "name": "Sticky Note11"
     },
     {
@@ -3428,10 +3384,10 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        2768,
+        2832,
         -2912
       ],
-      "id": "c2f636bb-869c-4a19-a925-225604bb44d1",
+      "id": "bae21225-963d-4876-b4a8-22490e442b39",
       "name": "Get row(s) in sheet",
       "executeOnce": true,
       "credentials": {
@@ -3453,7 +3409,7 @@
         3392,
         -2912
       ],
-      "id": "004b1a1b-f41f-416a-9c76-78809b6ae87e",
+      "id": "15891253-7f45-459f-b820-3d0ba5f5f157",
       "name": "Execute a SQL query13",
       "executeOnce": true,
       "credentials": {
@@ -3474,12 +3430,12 @@
         2976,
         -2912
       ],
-      "id": "d77dfcca-b76e-4048-b10d-e6b38fb09d71",
+      "id": "4ed3ff8c-2a99-4bdf-868c-bf550dc82b65",
       "name": "Aggregate1"
     },
     {
       "parameters": {
-        "jsCode": "// 1. Extract the IDs from the incoming item and wrap each in single quotes\nconst incomingItem = $input.first();\nconst quotedIdList = incomingItem.json.data.map(row => `'${row.id}'`).join(',');\n\n// 2. Construct the SQL query string with the properly quoted text IDs\nconst sqlQuery = `SELECT * FROM linkedin_posts\nWHERE id NOT IN (${quotedIdList})\nAND is_speaking_engagement = true\nAND org IS NOT NULL\nAND (status != '5A' OR status IS NOT NULL)`;\n\n// 3. Output the query for your database node\nreturn [\n  {\n    json: {\n      query: sqlQuery\n    }\n  }\n];"
+        "jsCode": "// 1. Extract the IDs from the incoming item and wrap each in single quotes\nconst incomingItem = $input.first();\nconst quotedIdList = incomingItem.json.data.map(row => `'${row.id}'`).join(',');\n\n// 2. Construct the SQL query string with the properly quoted text IDs\nconst sqlQuery = `SELECT * FROM linkedin_posts\nWHERE id NOT IN (${quotedIdList})\nAND is_speaking_engagement = true\n--AND org IS NOT NULL\nAND (status != '5A' OR status IS  NULL)`;\n\n// 3. Output the query for your database node\nreturn [\n  {\n    json: {\n      query: sqlQuery\n    }\n  }\n];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -3487,7 +3443,7 @@
         3184,
         -2912
       ],
-      "id": "95da79d7-81b1-48a3-9bdf-ec9087efb984",
+      "id": "63ae99e0-6ac7-4ba6-b1e3-eac1fef01229",
       "name": "Code in JavaScript9"
     },
     {
@@ -3602,15 +3558,6 @@
               "canBeUsedToMatch": true
             },
             {
-              "id": "Company",
-              "displayName": "Company",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
               "id": "POC",
               "displayName": "POC",
               "required": false,
@@ -3666,6 +3613,25 @@
               "canBeUsedToMatch": true
             },
             {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Similar Existing AC Deal",
+              "displayName": "Similar Existing AC Deal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
               "id": "Remark",
               "displayName": "Remark",
               "required": false,
@@ -3687,12 +3653,1118 @@
         3584,
         -2912
       ],
-      "id": "8227ad2a-2340-493c-afe8-eda1a3d530f7",
+      "id": "d6124257-80d2-4f9b-b71f-859b1bf8eb37",
       "name": "Append row in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "F1CKaGz9MR2OlBfo",
           "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        2448,
+        -3248
+      ],
+      "id": "c17d0817-c182-40c8-8c9c-22fa37f1247f",
+      "name": "Schedule Trigger17"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        4864,
+        -3424
+      ],
+      "id": "9a9d5e81-433d-4230-a9ce-4743cc130b0a",
+      "name": "Limit2"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM linkedin_posts\nWHERE is_speaking_engagement = true\nAND org IS NOT NULL\nAND (status != '5A' OR status IS  NULL)",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        5040,
+        -3424
+      ],
+      "id": "4f1874c9-ab5c-428d-a994-c5c3163a15e3",
+      "name": "Execute a SQL query8",
+      "credentials": {
+        "postgres": {
+          "id": "kthnW5Kr1bhfcVQC",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        4640,
+        -3712
+      ],
+      "id": "1bc23230-f88e-438a-8e92-5a3510fc6898",
+      "name": "Schedule Trigger19",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## update leads table\n**linkedin_posts**",
+        "height": 112
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        5040,
+        -3584
+      ],
+      "id": "c072b79a-f04c-410d-89e9-aeea78758242",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "email",
+              "keyValue": "={{ $json.poc_email }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        5504,
+        -3296
+      ],
+      "id": "16dad21d-9207-4455-b7ea-3b8168d0ea34",
+      "name": "Get a row1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        5248,
+        -3424
+      ],
+      "id": "0adf7c98-45e5-47d6-bba8-9e6df5b1b044",
+      "name": "Loop Over Items10"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "28cdfe8e-8eac-41f9-9439-fb40a6d0695c",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        5712,
+        -3296
+      ],
+      "id": "86342a82-d96f-4b53-9de1-047f1cef521e",
+      "name": "If8"
+    },
+    {
+      "parameters": {
+        "tableId": "leads",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "first_name",
+              "fieldValue": "={{ $('Loop Over Items10').item.json.poc_firstname }}"
+            },
+            {
+              "fieldId": "last_name",
+              "fieldValue": "={{ $('Loop Over Items10').item.json.poc_lastname }}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{ $('Loop Over Items10').item.json.poc_email }}"
+            },
+            {
+              "fieldId": "company_name",
+              "fieldValue": "={{ $('Loop Over Items10').item.json.org }}"
+            },
+            {
+              "fieldId": "lead_status",
+              "fieldValue": "={{ $('Loop Over Items10').item.json.status }}"
+            },
+            {
+              "fieldId": "batch_type",
+              "fieldValue": "1"
+            },
+            {
+              "fieldId": "is_referred",
+              "fieldValue": "false"
+            },
+            {
+              "fieldId": "source_table",
+              "fieldValue": "linkedin_posts"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        5920,
+        -3200
+      ],
+      "id": "a06ea3b7-08db-4e48-bd6a-f790d94b8243",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        5536,
+        -3808
+      ],
+      "id": "ef19fe07-e30b-44a9-8d74-35d645832af5",
+      "name": "Limit12"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select * from follow_up_sequence_threads\nwhere status not in (\n    '6A', '8A'\n)",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        5792,
+        -3808
+      ],
+      "id": "d801dd8f-843e-4b63-9d32-618e3cdf73f7",
+      "name": "Execute a SQL query15",
+      "credentials": {
+        "postgres": {
+          "id": "kthnW5Kr1bhfcVQC",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        5552,
+        -4032
+      ],
+      "id": "7be78d20-3063-48b1-9549-c6c4fdabbf94",
+      "name": "Schedule Trigger20",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## update leads table  \n**follow_up_sequence_threads**",
+        "height": 112
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        5792,
+        -3968
+      ],
+      "id": "4bd06e4f-5fb3-4932-a49c-45526ff2bc5a",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "email",
+              "keyValue": "={{ $json.email }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        6256,
+        -3680
+      ],
+      "id": "50de3cb9-4a2d-409f-8abb-f803f5182c45",
+      "name": "Get a row3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        6000,
+        -3808
+      ],
+      "id": "fb7e9e99-856d-43bb-9bd6-34c485d95a9b",
+      "name": "Loop Over Items12"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "28cdfe8e-8eac-41f9-9439-fb40a6d0695c",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        6464,
+        -3680
+      ],
+      "id": "2a58b328-90de-4982-b29d-43c869fac181",
+      "name": "If11"
+    },
+    {
+      "parameters": {
+        "tableId": "leads",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "first_name",
+              "fieldValue": "={{ $('Loop Over Items12').item.json.poc_firstname }}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{ $('Loop Over Items12').item.json.email }}"
+            },
+            {
+              "fieldId": "lead_status",
+              "fieldValue": "={{ $('Loop Over Items12').item.json.status }}"
+            },
+            {
+              "fieldId": "batch_type",
+              "fieldValue": "1"
+            },
+            {
+              "fieldId": "source_table",
+              "fieldValue": "follow_up_sequence_threads"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        6672,
+        -3584
+      ],
+      "id": "09e41592-c946-477f-8680-0ebb8399af13",
+      "name": "Create a row4",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        6368,
+        -4192
+      ],
+      "id": "12a18a8c-1e5b-42c3-8168-eb35906e8ed1",
+      "name": "Limit13"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select * from cold_leads_follow_up_sequence_threads\nwhere status not in (\n    '6A', '8A'\n)",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        6624,
+        -4192
+      ],
+      "id": "65c3bf6e-ba66-424c-a897-d25006b1f586",
+      "name": "Execute a SQL query16",
+      "credentials": {
+        "postgres": {
+          "id": "kthnW5Kr1bhfcVQC",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        6384,
+        -4416
+      ],
+      "id": "fa55338b-701b-4706-ae8f-c4c7b8bbc8bb",
+      "name": "Schedule Trigger21",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## update leads table  \n**cold_leads_follow_up_sequence_threads**",
+        "height": 112
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        6624,
+        -4352
+      ],
+      "id": "4768ddda-e882-43a9-bfff-3fe4be56828b",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "email",
+              "keyValue": "={{ $json.email }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        7088,
+        -4064
+      ],
+      "id": "d70d00f9-a222-4a25-ac38-07bce10ffd74",
+      "name": "Get a row4",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        6832,
+        -4192
+      ],
+      "id": "aabb0afb-8693-47dd-a2d3-dd846f958438",
+      "name": "Loop Over Items13"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "28cdfe8e-8eac-41f9-9439-fb40a6d0695c",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        7296,
+        -4064
+      ],
+      "id": "833e3b04-080f-4e3e-989b-bbcf7302ef3f",
+      "name": "If12"
+    },
+    {
+      "parameters": {
+        "tableId": "leads",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "first_name",
+              "fieldValue": "={{ $('Loop Over Items13').item.json.poc_firstname }}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{ $('Loop Over Items13').item.json.email }}"
+            },
+            {
+              "fieldId": "lead_status",
+              "fieldValue": "={{ $('Loop Over Items13').item.json.status }}"
+            },
+            {
+              "fieldId": "batch_type",
+              "fieldValue": "1"
+            },
+            {
+              "fieldId": "source_table",
+              "fieldValue": "cold_leads_follow_up_sequence_threads"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        7504,
+        -3968
+      ],
+      "id": "f4b37028-2e26-4dc9-8cf2-fdd1b8f2037a",
+      "name": "Create a row5",
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "648bbc55-e92c-4532-9e65-a4abe0c857a4",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        288,
+        -2032
+      ],
+      "id": "e9caff8e-924f-478c-b273-0898c5de1846",
+      "name": "If9"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        2656,
+        -2912
+      ],
+      "id": "42b2b3cd-ba7b-4f60-98af-d7f9b4023a29",
+      "name": "Limit7"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "insert into daily_scraping_logs (source)\nvalues ('linkedin')",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        7264,
+        -4368
+      ],
+      "id": "acc18d53-57f9-425a-b64a-390b8afefc29",
+      "name": "Execute a SQL query9",
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "kthnW5Kr1bhfcVQC",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        7104,
+        -4368
+      ],
+      "id": "b14f6e3e-0238-4c6b-a4be-a02f89442d48",
+      "name": "Limit9"
+    },
+    {
+      "parameters": {
+        "content": "## update daily_scraping_logs",
+        "height": 112,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        7120,
+        -4512
+      ],
+      "id": "27162209-feb3-45c5-ba16-5e087f0a4303",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        6816,
+        -4688
+      ],
+      "id": "8226dc24-6813-4e34-b9ce-9a6293f7f10d",
+      "name": "Schedule Trigger22",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select * from linkedin_posts\nwhere is_speaking_engagement = true",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4272,
+        -2912
+      ],
+      "id": "ff6bd867-ab96-4bdb-a272-133c1e7f39d6",
+      "name": "Execute a SQL query14",
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "kthnW5Kr1bhfcVQC",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4480,
+        -2912
+      ],
+      "id": "03dc273b-3c9c-4d76-bb15-cc43e8e3588b",
+      "name": "Loop Over Items11"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select * from ac_deals_160726 where title ilike '%{{ $json.org.replace(/'/g, \"''\") }}%'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        4704,
+        -2784
+      ],
+      "id": "d79fa2a1-d22a-42c7-94ed-623f3c3d619b",
+      "name": "Execute a SQL query17",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "kthnW5Kr1bhfcVQC",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e851952b-0de4-42bc-b61a-a1b07458ad03",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4912,
+        -2784
+      ],
+      "id": "de455449-4f9f-42b6-a092-4de3d1209375",
+      "name": "If10"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "linkedin_posts",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Loop Over Items11').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "is_in_ac",
+              "fieldValue": "true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        5120,
+        -2912
+      ],
+      "id": "7c83c8be-a90d-490f-809f-09f3847ed26a",
+      "name": "Update a row3",
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "kHRif9Z1yFEMSg4S",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit?pli=1&gid=1745839069#gid=1745839069",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1745839069,
+          "mode": "list",
+          "cachedResultName": "ai_verified_leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1svksxHmNBUx9Z20t2kbtHAT1fThcfdCmz5dEp936L7I/edit#gid=1745839069"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Loop Over Items11').item.json.id }}",
+            "Similar AC Deal": "={{ $('If10').item.json.title }}",
+            "Remark": "5A"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Competitor",
+              "displayName": "Competitor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date of post",
+              "displayName": "Date of post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "engagement date",
+              "displayName": "engagement date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Event Name",
+              "displayName": "Event Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "POC",
+              "displayName": "POC",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DateTime Logged (Aus)",
+              "displayName": "DateTime Logged (Aus)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "poc_firstname",
+              "displayName": "poc_firstname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "poc_lastname",
+              "displayName": "poc_lastname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "poc_role",
+              "displayName": "poc_role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "poc_email",
+              "displayName": "poc_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Similar AC Deal",
+              "displayName": "Similar AC Deal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Remark",
+              "displayName": "Remark",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        5328,
+        -2912
+      ],
+      "id": "85baaf1c-c340-451f-81c8-396437105d50",
+      "name": "Update row in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "F1CKaGz9MR2OlBfo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        4032,
+        -2912
+      ],
+      "id": "6467afb6-f7d4-438e-a1d6-0e18e84fe89a",
+      "name": "Limit14"
+    },
+    {
+      "parameters": {
+        "content": "## Check if deal is_in_ac",
+        "height": 112
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4032,
+        -3056
+      ],
+      "id": "02ab10bd-58c9-4fd0-b540-f1444250b039",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select * from linkedin_posts\nwhere is_speaking_engagement = true\nand (poc_email is null\nor org is null)",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        960,
+        -2464
+      ],
+      "id": "6f9dbb67-34ad-4bfc-939e-d46fcb6eacc8",
+      "name": "Execute a SQL query18",
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "kthnW5Kr1bhfcVQC",
+          "name": "Postgres account"
         }
       }
     }
@@ -4236,7 +5308,7 @@
       "main": [
         [
           {
-            "node": "Limit9",
+            "node": "Limit7",
             "type": "main",
             "index": 0
           }
@@ -4269,7 +5341,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items4",
+            "node": "Execute a SQL query18",
             "type": "main",
             "index": 0
           }
@@ -4638,28 +5710,6 @@
         ]
       ]
     },
-    "Limit9": {
-      "main": [
-        [
-          {
-            "node": "Execute a SQL query9",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute a SQL query9": {
-      "main": [
-        [
-          {
-            "node": "Get row(s) in sheet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Execute a SQL query6": {
       "main": [
         [
@@ -4748,7 +5798,7 @@
       "main": [
         [
           {
-            "node": "Loop Over Items9",
+            "node": "If9",
             "type": "main",
             "index": 0
           }
@@ -4950,6 +6000,454 @@
           }
         ]
       ]
+    },
+    "Schedule Trigger17": {
+      "main": [
+        [
+          {
+            "node": "Limit7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Limit14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit2": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger19": {
+      "main": [
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query8": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items10": {
+      "main": [
+        [
+          {
+            "node": "Limit12",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row1": {
+      "main": [
+        [
+          {
+            "node": "If8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If8": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items10",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query15": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger20": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row3": {
+      "main": [
+        [
+          {
+            "node": "If11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items12": {
+      "main": [
+        [
+          {
+            "node": "Limit13",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a row3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If11": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items12",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a row4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit12": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit13": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query16": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger21": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row4": {
+      "main": [
+        [
+          {
+            "node": "If12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items13": {
+      "main": [
+        [
+          {
+            "node": "Limit9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a row4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If12": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items13",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a row5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If9": {
+      "main": [
+        [
+          {
+            "node": "Limit9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit7": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit9": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger22": {
+      "main": [
+        [
+          {
+            "node": "Limit9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query14": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items11": {
+      "main": [
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute a SQL query17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query17": {
+      "main": [
+        [
+          {
+            "node": "If10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If10": {
+      "main": [
+        [
+          {
+            "node": "Update a row3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row3": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit14": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query18": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -4958,11 +6456,11 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "ec3d67ab-e37a-40d5-bf03-48f75bb72325",
+  "versionId": "b83f8556-1de4-4b67-a5ee-4d88c2cf241f",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
   },
-  "id": "gdwS73MyzrbwJqTW",
+  "id": "d5NAgNp9XRLFIM0R",
   "tags": []
 }
