@@ -572,6 +572,8 @@
       ],
       "id": "3a953f5c-80d1-4608-97d1-9f060a76088f",
       "name": "Message a model3",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
       "credentials": {
         "openAiApi": {
           "id": "LN4EQclawr1eXdrx",
@@ -869,7 +871,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "25e81f70-984a-4444-b88e-4078f17505b4",
+  "versionId": "0602e600-1df7-450e-b792-979fba370d56",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "7f953834d5dd197c4701af67007fb2948e763654d7a2789eb73782d4f33207d3"
